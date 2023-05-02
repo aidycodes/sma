@@ -11,34 +11,41 @@ datasource db {
 }
 
 model AuthUser {
-    userid           String                               @id @unique @default(cuid())
-    username         String
-    email            String                               @unique
-    profile          UserProfile?
-    created_at       DateTime                             @default(now())
-    updated_at       DateTime                             @updatedAt
-    primary_lang     String
-    primary_location Unsupported("geometry(Point, 4326)")
-    theme            String
-    posts            Post[]
-    comments         Comment[]
-    geo_posts        Geo_Post[]
-    geo_comments     Geo_Comment[]
-    likes            Like[]
-    follows          AuthUser[]                           @relation("UserFollows")
-    followers        AuthUser[]                           @relation("UserFollows")
-    blocked_users    AuthUser[]                           @relation("UserBlocks")
-    blocked_by       AuthUser[]                           @relation("UserBlocks")
-    notifications    NotifyUser[]
-    chats            Chat[]
-    Geo_Like         Geo_Like[]
-    Message          Message[]
+    id            String        @id @unique @default(cuid())
+    username      String?
+    email         String?       @unique
+    profile       UserProfile?
+    geouser       GeoUser?
+    created_at    DateTime?     @default(now())
+    updated_at    DateTime?     @updatedAt
+    primary_lang  String?
+    theme         String?
+    posts         Post[]
+    comments      Comment[]
+    geo_posts     Geo_Post[]
+    geo_comments  Geo_Comment[]
+    likes         Like[]
+    follows       AuthUser[]    @relation("UserFollows")
+    followers     AuthUser[]    @relation("UserFollows")
+    blocked_users AuthUser[]    @relation("UserBlocks")
+    blocked_by    AuthUser[]    @relation("UserBlocks")
+    notifications NotifyUser[]
+    chats         Chat[]
+    Geo_Like      Geo_Like[]
+    Message       Message[]
 
     auth_session AuthSession[]
     auth_key     AuthKey[]
 
-    @@index(fields: [userid], type: Hash)
-    @@map("user")
+    @@index(fields: [id])
+    @@map("auth_user")
+}
+
+model GeoUser {
+    id               String                                @id @unique @default(cuid())
+    userid           String                                @unique
+    primary_location Unsupported("geometry(Point, 4326)")?
+    user             AuthUser                              @relation(fields: [userid], references: [id])
 }
 
 model AuthSession {
@@ -46,7 +53,7 @@ model AuthSession {
     user_id        String
     active_expires BigInt
     idle_expires   BigInt
-    auth_user      AuthUser @relation(references: [userid], fields: [user_id], onDelete: Cascade)
+    auth_user      AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
     @@index([user_id])
     @@map("auth_session")
@@ -58,7 +65,7 @@ model AuthKey {
     user_id         String
     primary_key     Boolean
     expires         BigInt?
-    auth_user       AuthUser @relation(references: [userid], fields: [user_id], onDelete: Cascade)
+    auth_user       AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
     @@index([user_id])
     @@map("auth_key")
@@ -67,12 +74,12 @@ model AuthKey {
 model UserProfile {
     profileid String   @id @default(cuid())
     userid    String   @unique
-    bio       String
-    work      String
-    education String
-    avatar    String
-    cover     String
-    user      AuthUser @relation(fields: [userid], references: [userid])
+    bio       String?
+    work      String?
+    education String?
+    avatar    String?
+    cover     String?
+    user      AuthUser @relation(fields: [userid], references: [id])
 
     @@index(fields: [userid], type: Hash)
     @@map("user_profile")
@@ -85,52 +92,47 @@ model Post {
     updated_at        DateTime            @updatedAt
     title             String
     content           String
-    meta              Json
+    meta              Json?
+    tags              String[]
     likes             Like[]
     comments          Comment[]
-    user              AuthUser            @relation(fields: [userid], references: [userid])
-    Geo_Comment       Geo_Comment[]
-    Geo_Like          Geo_Like[]
+    user              AuthUser            @relation(fields: [userid], references: [id])
     Post_Notification Post_Notification[]
 
-    @@index(fields: [userid], type: Hash)
-    @@index(fields: [postid])
+    @@index(fields: [userid, postid])
     @@map("post")
 }
 
 model Comment {
-    commentid      String     @id @default(cuid())
-    userid         String
-    postid         String
-    created_at     DateTime   @default(now())
-    updated_at     DateTime   @updatedAt
-    title          String
-    content        String
-    meta           Json
-    likes          Geo_Like[]
-    user           AuthUser   @relation(fields: [userid], references: [userid])
-    post           Post       @relation(fields: [postid], references: [postid])
-    Geo_Post       Geo_Post?  @relation(fields: [geo_PostPostid], references: [postid])
-    geo_PostPostid String?
-    Like           Like[]
+    commentid  String   @id @default(cuid())
+    userid     String
+    postid     String
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+    title      String
+    content    String
+    meta       Json?
+    user       AuthUser @relation(fields: [userid], references: [id])
+    post       Post     @relation(fields: [postid], references: [postid])
+    likes      Like[]
 
     @@index(fields: [commentid, postid, userid])
     @@map("comment")
 }
 
 model Geo_Post {
-    postid       String                               @id @default(cuid())
+    postid       String                                @id @default(cuid())
     userid       String
     type         String
-    geo_location Unsupported("geometry(Point, 4326)")
-    created_at   DateTime                             @default(now())
-    updated_at   DateTime                             @updatedAt
+    geo_location Unsupported("geometry(Point, 4326)")?
+    created_at   DateTime                              @default(now())
+    updated_at   DateTime                              @updatedAt
     title        String
     content      String
     meta         Json
     likes        Geo_Like[]
-    comments     Comment[]
-    user         AuthUser                             @relation(fields: [userid], references: [userid])
+    comments     Geo_Comment[]
+    user         AuthUser                              @relation(fields: [userid], references: [id])
 
     @@index([geo_location], name: "location_idx", type: Gist)
     @@index(fields: [userid], type: Hash)
@@ -138,47 +140,46 @@ model Geo_Post {
 }
 
 model Geo_Comment {
-    geo_commentid String                               @id @default(cuid())
+    geo_commentid String                                @id @default(cuid())
     userid        String
     postid        String
-    geo_location  Unsupported("geometry(Point, 4326)")
-    created_at    DateTime                             @default(now())
-    updated_at    DateTime                             @updatedAt
+    geo_location  Unsupported("geometry(Point, 4326)")?
+    created_at    DateTime                              @default(now())
+    updated_at    DateTime                              @updatedAt
     title         String
     content       String
     meta          Json
-    likes         Like[]
-    user          AuthUser                             @relation(fields: [userid], references: [userid])
-    post          Post                                 @relation(fields: [postid], references: [postid])
+    likes         Geo_Like[]
+    user          AuthUser                              @relation(fields: [userid], references: [id])
+    post          Geo_Post                              @relation(fields: [postid], references: [postid])
 
     @@index(fields: [postid, userid])
     @@map("geo_comment")
 }
 
 model Like {
-    likeid        String       @id @default(cuid())
+    likeid        String   @id @default(cuid())
     userid        String
+    postid_userid String?  @unique
     postid        String?
     commentid     String?
     geo_commentid String?
-    user          AuthUser     @relation(fields: [userid], references: [userid])
-    post          Post?        @relation(fields: [postid], references: [postid])
-    comment       Comment?     @relation(fields: [commentid], references: [commentid])
-    geo_comment   Geo_Comment? @relation(fields: [geo_commentid], references: [geo_commentid])
+    user          AuthUser @relation(fields: [userid], references: [id])
+    post          Post?    @relation(fields: [postid], references: [postid])
+    comment       Comment? @relation(fields: [commentid], references: [commentid])
 
     @@index(fields: [likeid, postid, userid, commentid])
     @@map("like")
 }
 
 model Geo_Like {
-    likeid         String    @id @default(cuid())
+    likeid         String       @id @default(cuid())
     userid         String
     postid         String?
     commentid      String?
-    user           AuthUser  @relation(fields: [userid], references: [userid])
-    post           Post?     @relation(fields: [postid], references: [postid])
-    comment        Comment?  @relation(fields: [commentid], references: [commentid])
-    Geo_Post       Geo_Post? @relation(fields: [geo_PostPostid], references: [postid])
+    user           AuthUser     @relation(fields: [userid], references: [id])
+    comment        Geo_Comment? @relation(fields: [commentid], references: [geo_commentid])
+    Geo_Post       Geo_Post?    @relation(fields: [geo_PostPostid], references: [postid])
     geo_PostPostid String?
 
     @@index(fields: [likeid, postid, userid, commentid])
@@ -205,7 +206,7 @@ model Message {
     updated_at DateTime @updatedAt
     content    String
     chat       Chat[]
-    user       AuthUser @relation(fields: [userid], references: [userid])
+    user       AuthUser @relation(fields: [userid], references: [id])
 
     @@index(fields: [messageid, chatid, userid])
     @@map("message")
@@ -227,7 +228,7 @@ model NotifyUser {
     userid        String
     content       String
     created_at    DateTime           @default(now())
-    user          AuthUser           @relation(fields: [userid], references: [userid])
+    user          AuthUser           @relation(fields: [userid], references: [id])
     notification  Post_Notification? @relation(fields: [post_NotificationNotificationid], references: [notificationid])
 
     post_NotificationNotificationid String?

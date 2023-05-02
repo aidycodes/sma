@@ -16,9 +16,19 @@
  */
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 
-import { prismaClient } from "~/server/db";
+import { prisma } from "~/server/db";
 
-type CreateContextOptions = Record<string, never>;
+type UserContext = {
+  user: {userId: string} | null
+  session: Session | null
+}
+
+export type AuthedUser = {
+  user: {userId: string} 
+  session: Session 
+} 
+
+type CreateContextOptions = {authRequest: AuthRequest;  currentUser: UserContext, res: NextApiResponse};
 
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use it, you can export
@@ -31,8 +41,12 @@ type CreateContextOptions = Record<string, never>;
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
 const createInnerTRPCContext = (_opts: CreateContextOptions) => {
+  
   return {
-    prismaClient,
+    prisma,
+    authRequest: _opts.authRequest,
+    currentUser: _opts.currentUser,
+    res: _opts.res,
   };
 };
 
@@ -42,8 +56,15 @@ const createInnerTRPCContext = (_opts: CreateContextOptions) => {
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = (_opts: CreateNextContextOptions) => {
-  return createInnerTRPCContext({});
+export const createTRPCContext = async(_opts: CreateNextContextOptions) => {
+    const {req, res} = _opts;
+    const authRequest = auth.handleRequest(req, res)
+    const session = await authRequest.validateUser();
+  return createInnerTRPCContext({
+      authRequest,
+      currentUser:session,
+      res
+  });
 };
 
 /**
@@ -53,9 +74,12 @@ export const createTRPCContext = (_opts: CreateNextContextOptions) => {
  * ZodErrors so that you get typesafety on the frontend if your procedure fails due to validation
  * errors on the backend.
  */
-import { initTRPC } from "@trpc/server";
+import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { auth } from "auth/lucia";
+import { AuthRequest, Session, SessionSchema } from "lucia-auth";
+import { NextApiResponse } from "next";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
@@ -93,3 +117,22 @@ export const createTRPCRouter = t.router;
  * are logged in.
  */
 export const publicProcedure = t.procedure;
+
+/**
+ * Private authenticated procedure
+**/
+
+const userIsAuthed = t.middleware(async ({ ctx, next }) => {
+  if (!ctx.currentUser.session || !ctx.currentUser.user) {
+    throw new TRPCError({message: "You must be logged in to do that.", code: "UNAUTHORIZED"});
+  }
+
+  return next({
+    ctx: {
+      ...ctx,
+      currentUser: ctx.currentUser as AuthedUser
+  }
+  });
+})
+
+export const privateProcedure = t.procedure.use(userIsAuthed);
