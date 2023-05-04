@@ -20,6 +20,8 @@ model AuthUser {
     updated_at    DateTime?     @updatedAt
     primary_lang  String?
     theme         String?
+    followers_cnt Int           @default(0)
+    following_cnt Int           @default(0)
     posts         Post[]
     comments      Comment[]
     geo_posts     Geo_Post[]
@@ -93,6 +95,8 @@ model Post {
     title             String
     content           String
     meta              Json?
+    likes_cnt         Int                 @default(0)
+    comment_cnt       Int                 @default(0)
     tags              String[]
     likes             Like[]
     comments          Comment[]
@@ -111,6 +115,7 @@ model Comment {
     updated_at DateTime @updatedAt
     title      String
     content    String
+    likes_cnt  Int      @default(0)
     meta       Json?
     user       AuthUser @relation(fields: [userid], references: [id])
     post       Post     @relation(fields: [postid], references: [postid])
@@ -130,6 +135,8 @@ model Geo_Post {
     title        String
     content      String
     meta         Json
+    likes_cnt    Int                                   @default(0)
+    comment_cnt  Int                                   @default(0)
     likes        Geo_Like[]
     comments     Geo_Comment[]
     user         AuthUser                              @relation(fields: [userid], references: [id])
@@ -140,18 +147,18 @@ model Geo_Post {
 }
 
 model Geo_Comment {
-    geo_commentid String                                @id @default(cuid())
+    geo_commentid String     @id @default(cuid())
     userid        String
     postid        String
-    geo_location  Unsupported("geometry(Point, 4326)")?
-    created_at    DateTime                              @default(now())
-    updated_at    DateTime                              @updatedAt
+    created_at    DateTime   @default(now())
+    updated_at    DateTime   @updatedAt
     title         String
     content       String
     meta          Json
+    likes_cnt     Int        @default(0)
     likes         Geo_Like[]
-    user          AuthUser                              @relation(fields: [userid], references: [id])
-    post          Geo_Post                              @relation(fields: [postid], references: [postid])
+    user          AuthUser   @relation(fields: [userid], references: [id])
+    post          Geo_Post   @relation(fields: [postid], references: [postid])
 
     @@index(fields: [postid, userid])
     @@map("geo_comment")
@@ -189,7 +196,7 @@ model Geo_Like {
 model Chat {
     chatid      String     @id @default(cuid())
     chatmembers AuthUser[]
-    userchatid  String
+    userchatid  String?
     created_at  DateTime   @default(now())
     updated_at  DateTime   @updatedAt
     messages    Message[]
@@ -205,6 +212,7 @@ model Message {
     created_at DateTime @default(now())
     updated_at DateTime @updatedAt
     content    String
+    viewed     Boolean  @default(false)
     chat       Chat[]
     user       AuthUser @relation(fields: [userid], references: [id])
 
@@ -226,7 +234,10 @@ model Post_Notification {
 model NotifyUser {
     nofiy_user_id String             @id @default(cuid())
     userid        String
+    type          String?
+    relativeId    String?
     content       String
+    viewed        Boolean            @default(false)
     created_at    DateTime           @default(now())
     user          AuthUser           @relation(fields: [userid], references: [id])
     notification  Post_Notification? @relation(fields: [post_NotificationNotificationid], references: [notificationid])

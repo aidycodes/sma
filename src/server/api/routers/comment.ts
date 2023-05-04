@@ -12,13 +12,20 @@ export const commentRouter = createTRPCRouter({
             meta: z.optional(z.object({}))  }))
         .mutation(async ({ input, ctx }) => {
               try{ 
-                const comment = await ctx.prisma.comment.create({
-                 data:{...input,
-                        userid:ctx.currentUser.user.userId,
-                        meta: JSON.stringify(input.meta) || 'JsonNull',
-                 }                
-          })
-                return {
+
+                const comment = await ctx.prisma.post.update({
+                    where: { postid: input.postid },
+                    data:{comment_cnt: {increment: 1},
+                    comments: {
+                        create: {
+                            title: input.title,
+                            content: input.content,
+                            userid: ctx.currentUser.user.userId,
+                            meta: JSON.stringify(input.meta) || 'JsonNull',
+                        }
+                }
+        }})
+                 return {
                  comment
                  }
             }catch(err){
@@ -50,16 +57,20 @@ export const commentRouter = createTRPCRouter({
                 }}
             }),
     delete: privateProcedure
-        .input(z.object({ commentid: z.string() }))
+        .input(z.object({ commentid: z.string(), postid: z.string() }))
         .mutation(async ({ input, ctx }) => {
                 try{
-                    const deletedComment = await ctx.prisma.comment.deleteMany({
-                     where: { commentid: input.commentid,
-                     }
-                    })
-                    return {
-                     deletedComment
+                   const deletedComment = await ctx.prisma.post.update({
+                    where:{postid: input.postid},
+                    data:{comment_cnt: {decrement: 1},
+                    comments: {
+                        delete: {commentid: input.commentid}
                     }
+                   }
+                })
+                     return {
+                        deletedComment
+                        }
                 }catch(err){
                     if(err instanceof Error){
                  throw new TRPCError({message: err.message, code: "INTERNAL_SERVER_ERROR"})
@@ -69,16 +80,27 @@ export const commentRouter = createTRPCRouter({
                 }
         ),
         like: privateProcedure
-        .input(z.object({ commentid: z.string() }))
+        .input(z.object({ commentid: z.string(), userid: z.string(), currentUser: z.string(), postid: z.string() }))
         .mutation(async ({ input, ctx }) => {
                    try{
-            const like = await ctx.prisma.like.create({
-                data: {
-                    commentid: input.commentid,
-                    userid: ctx.currentUser.user.userId,
-                    postid_userid: `${input.commentid}_${ctx.currentUser.user.userId}`,
-                },
-            })
+            const { commentid, userid, currentUser, postid } = input
+                const [comment_updatedAndNotifcation, like] = await Promise.all([ 
+                    ctx.prisma.authUser.update({
+                        where: { id: userid },
+                        data: { notifications: {
+                            create: { content:`${currentUser} liked your comment!`, relativeId:postid, type:'comment'} },    //username will be passed
+                            comments:{update: {where: {commentid: commentid}, data: {likes_cnt: {increment: 1}}}}
+                }
+            }),
+                    ctx.prisma.like.create({
+                        data: { commentid: commentid, userid: ctx.currentUser.user.userId,
+                            postid_userid:`${commentid}_${ctx.currentUser.user.userId}`
+                        }
+                    })
+        ]) 
+                return{
+                    like
+                }
             }catch(err){
                 if(err instanceof Error){
                throw new TRPCError({message: err.message, code: "INTERNAL_SERVER_ERROR"})
@@ -89,11 +111,14 @@ export const commentRouter = createTRPCRouter({
     unlike: privateProcedure
             .input(z.object({ commentid: z.string() }))
         .mutation(async ({ input, ctx }) => {
-           try{
-            const deletedLike = await ctx.prisma.like.deleteMany({
-                where: { commentid: input.commentid,
-                    userid: ctx.currentUser.user.userId },
+             try{
+            const deletedLike = await ctx.prisma.comment.update({
+                where: { commentid: input.commentid },
+                data: { likes_cnt: { decrement: 1 }, 
+                likes: { deleteMany: { postid_userid:`${input.commentid}_${ctx.currentUser.user.userId}` } },
+            }
             })
+        
             return {
                 deletedLike
             }

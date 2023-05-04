@@ -15,16 +15,23 @@ const Home: NextPage = () => {
   const deletePost = api.post.delete.useMutation()
   const likePost = api.post.like.useMutation()
   const unlikePost = api.post.unlike.useMutation()
-  const getPost = api.post.getPost.useQuery({postid:'clh6c6rbc0007v5pgjn7k3u13'})
+ // const getPost = api.post.getPost.useQuery({postid:'clh6c6rbc0007v5pgjn7k3u13'})
   const postComment = api.comment.new.useMutation()
   const editComment = api.comment.edit.useMutation()
   const deleteComment = api.comment.delete.useMutation()
   const likeComment = api.comment.like.useMutation()
   const unlikeComment = api.comment.unlike.useMutation()
 
-  console.log(getPost)
+  const getUser = api.userQuery.getUserProfile.useQuery({id:'DSbzEQK8NeWLKvV'})
+  const getUserPosts = api.userQuery.getUserPosts.useQuery({id:'WQbptH7AdC0sN5q', postAmt:10, postSkip:0, commentAmt:10})
+  const getMoreComments = api.userQuery.getMoreComments.useQuery({id:"clh6c6rbc0007v5pgjn7k3u13", commentAmt:10, commentSkip:0})
+ const followUser = api.follow.followUser.useMutation()
+  const unfollowUser = api.follow.unfollowUser.useMutation()
+  // console.log(getPost)
+  const hasViewed = api.notify.hasViewed.useMutation()
+  const followfollowing = api.follow.isFollowerFollowing.useQuery({id:'WRdW83qzlVMK2qe'})
 
-  let boat 
+
   //console.log(currentUser)
 
   return (
@@ -43,14 +50,19 @@ const Home: NextPage = () => {
              <button onClick={() => post.mutate({title:'bonk', content:'bonkahbonkbonk'})}>BONKPOST</button> 
               <button onClick={() => editedPost.mutate({postid:'clh6c6rbc0007v5pgjn7k3u13', title:'bonk11', content:'return of the bonk', meta:{url:'myurl.co222m'}})}>editbonk</button> 
              <button onClick={() => deletePost.mutate({postid:'clh6c6rbc0007v5pgjn7k3u13'})}>deleteBOnk</button> 
-               <button onClick={() => likePost.mutate({postid:'clh6c6rbc0007v5pgjn7k3u13'})}>likePost</button> 
-                 <button onClick={() => unlikePost.mutate({postid:'clh6c6rbc0007v5pgjn7k3u13'})}>unlikePost</button> 
-                 <button onClick={() => postComment.mutate({title:'commentbonk',content:'commentbonk', postid:'clh6c6rbc0007v5pgjn7k3u13'})}>comment</button> 
+               <button onClick={() => likePost.mutate({postid:'clh8uzhng0001v52ck86fx00v', userid:'WQbptH7AdC0sN5q', currentUser:"WRdW83qzlVMK2qe" })}>likePost</button> 
+                 <button onClick={() => unlikePost.mutate({postid:'clh8uzhng0001v52ck86fx00v'})}>unlikePost</button> 
+                 <button onClick={() => postComment.mutate({title:'commentbonk',content:'commentbonk', postid:'clh8uzhng0001v52ck86fx00v'})}>comment</button> 
                  
                   <button onClick={() => editComment.mutate({commentid:'clh6jclu60001v5ogqxut88xf', title:'bonk11', content:'return of the bonk', meta:{url:'myurl.co222m'}})}>editcomment</button> 
-                  <button onClick={() => deleteComment.mutate({commentid:'clh6jclu60001v5ogqxut88xf'})}>deleteBOnk</button> 
-               <button onClick={() => likeComment.mutate({commentid:'clh6jclu60001v5ogqxut88xf'})}>likeComment</button> 
-                 <button onClick={() => unlikeComment.mutate({commentid:'clh6jclu60001v5ogqxut88xf'})}>unlikeComment</button> 
+                  <button onClick={() => deleteComment.mutate({commentid:'clh8y2x800017v52cb55gf9pl', postid:'clh8uzhng0001v52ck86fx00v'})}>deleteBOnk</button> 
+               <button onClick={() => likeComment.mutate({postid:'clh8uzhng0001v52ck86fx00v', userid:'WQbptH7AdC0sN5q', currentUser:"WRdW83qzlVMK2qe", commentid:'clh8y2x800017v52cb55gf9pl'})}>likeComment</button> 
+                 <button onClick={() => unlikeComment.mutate({commentid:'clh8y2x800017v52cb55gf9pl'})}>unlikeComment</button> 
+           
+                  <button onClick={() => followUser.mutate({currentUser:'bonk', id:'WRdW83qzlVMK2qe' })}>followuser</button>
+                  <button onClick={() => unfollowUser.mutate({id:'WRdW83qzlVMK2qe' })}>unfollowuser</button>
+
+                    <button onClick={() => hasViewed.mutate({notify_user_id:'clh7jyzv60000v5egber1xnkt' })}>mark notify as read</button>
             </main>
     </>
   );

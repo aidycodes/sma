@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { promise, z } from "zod";
 import { auth } from "auth/lucia";
 
 import { createTRPCRouter, publicProcedure, privateProcedure } from "~/server/api/trpc";
@@ -71,16 +71,28 @@ export const postRouter = createTRPCRouter({
             }}
         }),
     like: privateProcedure
-        .input(z.object({ postid: z.string() }))
+        .input(z.object({ postid: z.string(), userid: z.string(), currentUser: z.string() }))
         .mutation(async ({ input, ctx }) => {
             try{
-            const like = await ctx.prisma.like.create({
-                data: {
-                    postid: input.postid,
-                    userid: ctx.currentUser.user.userId,
-                    postid_userid: `${input.postid}_${ctx.currentUser.user.userId}`,
-                },
-            })
+                const { postid, userid, currentUser } = input
+                const [post_updatedAndNotifcation, like] = await Promise.all([ 
+                    ctx.prisma.authUser.update({
+                        where: { id: userid },
+                        data: { notifications: {
+                            create: { content:`${currentUser} liked your post!`, relativeId:postid, type:'like'} },    //username will be passed
+                            posts:{update: {where: {postid: postid}, data: {likes_cnt: {increment: 1}}}}
+                }
+            }),
+                    ctx.prisma.like.create({
+                        data: { postid: postid, userid: ctx.currentUser.user.userId,
+                            postid_userid:`${postid}_${ctx.currentUser.user.userId}`
+                        }
+                    })
+        ]) 
+                return{
+                    like
+                }
+
             }catch(err){
                 if(err instanceof Error){
                throw new TRPCError({message: err.message, code: "INTERNAL_SERVER_ERROR"})
@@ -92,10 +104,13 @@ export const postRouter = createTRPCRouter({
             .input(z.object({ postid: z.string() }))
         .mutation(async ({ input, ctx }) => {
            try{
-            const deletedLike = await ctx.prisma.like.deleteMany({
-                where: { postid: input.postid,
-                    userid: ctx.currentUser.user.userId },
+            const deletedLike = await ctx.prisma.post.update({
+                where: { postid: input.postid },
+                data: { likes_cnt: { decrement: 1 }, 
+                likes: { deleteMany: { postid_userid:`${input.postid}_${ctx.currentUser.user.userId}` } },
+            }
             })
+        
             return {
                 deletedLike
             }
@@ -135,3 +150,25 @@ export const postRouter = createTRPCRouter({
     })
             
 
+/*
+
+            const [like, likeCount] = await Promise.all([ 
+                ctx.prisma.like.create({
+                data: {
+                    postid: input.postid,
+                    userid: ctx.currentUser.user.userId,
+                    postid_userid: `${input.postid}_${ctx.currentUser.user.userId}`,
+                },
+            }),
+            ctx.prisma.post.update({
+                where: { postid: input.postid },
+                data: { likes_cnt: { increment: 1 } },
+            })
+        ])
+
+  const deletedLike =  await ctx.prisma.like.deleteMany({
+                where: { postid: input.postid,
+                    userid: ctx.currentUser.user.userId },
+            })
+
+        */
