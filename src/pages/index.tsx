@@ -31,7 +31,19 @@ const Home: NextPage = () => {
   const hasViewed = api.notify.hasViewed.useMutation()
   const followfollowing = api.follow.isFollowerFollowing.useQuery({id:'WRdW83qzlVMK2qe'})
 
+  const geopost = api.geoPost.create.useMutation()
+  const deletegeopost = api.geoPost.delete.useMutation()
+  const editgeopost = api.geoPost.edit.useMutation()
+  const likegeopost = api.geoPost.like.useMutation()
+  const unlikegeopost = api.geoPost.unlike.useMutation()
 
+    const postgeoComment = api.geoComment.new.useMutation()
+  const editgeoComment = api.geoComment.edit.useMutation()
+  const deletegeoComment = api.geoComment.delete.useMutation()
+  const likegeoComment = api.geoComment.like.useMutation()
+  const unlikegeoComment = api.geoComment.unlike.useMutation()
+
+  const getGeoPost = api.geoPost.getPost.useQuery({postid:'nd7rox72k73bq091f2rc6m0p'})
   //console.log(currentUser)
 
   return (
@@ -63,6 +75,18 @@ const Home: NextPage = () => {
                   <button onClick={() => unfollowUser.mutate({id:'WRdW83qzlVMK2qe' })}>unfollowuser</button>
 
                     <button onClick={() => hasViewed.mutate({notify_user_id:'clh7jyzv60000v5egber1xnkt' })}>mark notify as read</button>
+                    <button onClick={() => geopost.mutate({title:'bonk', content:'bonkahbonkbonk', lat:0, lng:0, type:'local'})}>geopost</button>
+                    <button onClick={() => deletegeopost.mutate({postid:'fh5jmfjficbonxma5rtk6sz0'})}>deletegeopost</button>
+                    <button onClick={() => editgeopost.mutate({postid:'nd7rox72k73bq091f2rc6m0p', type:'boat' ,title:'bonk11', content:'return of the bonk', meta:{url:'myurl.co222m'}})}>editgeopost</button>
+                    <button onClick={() => likegeopost.mutate({postid:'nd7rox72k73bq091f2rc6m0p', postUserid:'WQbptH7AdC0sN5q'})}>likegeopost</button>
+            
+                    <button onClick={() => postgeoComment.mutate({title:'commentbonk',content:'commentbonk', postid:'nd7rox72k73bq091f2rc6m0p'})}>geocomment</button> 
+                 
+                  <button onClick={() => editgeoComment.mutate({geo_commentid:'clhaowelj0007v56sx9l0wedu', title:'bonk11', content:'return of the bonk', meta:{url:'myurl.co222m'}})}>editgeocomment</button> 
+                  <button onClick={() => deletegeoComment.mutate({commentid:'clhaowelj0007v56sx9l0wedu', postid:'nd7rox72k73bq091f2rc6m0p'})}>deletegeoBOnk</button> 
+                 <button onClick={() => likegeoComment.mutate({postid:'nd7rox72k73bq091f2rc6m0p', userid:'WQbptH7AdC0sN5q', currentUser:"WRdW83qzlVMK2qe", commentid:'clhaowelj0007v56sx9l0wedu'})}>likegeoComment</button> 
+                <button onClick={() => unlikegeoComment.mutate({commentid:'clhaowelj0007v56sx9l0wedu'})}>unlikegeoComment</button> 
+                <button onClick={() => unlikegeopost.mutate({postid:'nd7rox72k73bq091f2rc6m0p'})}>unlikeGEOPost</button> 
             </main>
     </>
   );

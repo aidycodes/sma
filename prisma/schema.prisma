@@ -131,10 +131,10 @@ model Geo_Post {
     type         String
     geo_location Unsupported("geometry(Point, 4326)")?
     created_at   DateTime                              @default(now())
-    updated_at   DateTime                              @updatedAt
-    title        String
+    updated_at   DateTime?                             @updatedAt
+    title        String?
     content      String
-    meta         Json
+    meta         Json?
     likes_cnt    Int                                   @default(0)
     comment_cnt  Int                                   @default(0)
     likes        Geo_Like[]
@@ -183,6 +183,7 @@ model Geo_Like {
     likeid         String       @id @default(cuid())
     userid         String
     postid         String?
+    postid_userid  String?      @unique
     commentid      String?
     user           AuthUser     @relation(fields: [userid], references: [id])
     comment        Geo_Comment? @relation(fields: [commentid], references: [geo_commentid])

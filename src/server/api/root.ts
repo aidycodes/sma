@@ -1,17 +1,14 @@
 import { createTRPCRouter } from "~/server/api/trpc";
-import { exampleRouter } from "~/server/api/routers/example";
 import { userRouter } from "./routers/user";
 import { postRouter } from "./routers/post";
 import { commentRouter } from "./routers/comment";
 import { userQueryRouter } from "./routers/userQuery";
 import { followRouter } from "./routers/follows";
 import { notifyRouter } from "./routers/notify";
+import { geoPostRouter } from "./routers/geopost";
+import { geoCommentRouter } from "./routers/geocomment";
 
-/**
- * This is the primary router for your server.
- *
- * All routers added in /api/routers should be manually added here.
- */
+
 export const appRouter = createTRPCRouter({
   user: userRouter,
   post: postRouter,
@@ -19,6 +16,8 @@ export const appRouter = createTRPCRouter({
   userQuery: userQueryRouter,
   follow: followRouter,
   notify: notifyRouter,
+  geoPost: geoPostRouter,
+  geoComment: geoCommentRouter
 });
 
 // export type definition of API

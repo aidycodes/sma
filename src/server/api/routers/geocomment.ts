@@ -1,17 +1,16 @@
 import { z } from "zod";
-
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 
 
-export const commentRouter = createTRPCRouter({
+export const geoCommentRouter = createTRPCRouter({
     new: privateProcedure
         .input(z.object({ title:z.string(), content: z.string(), postid: z.string(),
             meta: z.optional(z.object({}))  }))
         .mutation(async ({ input, ctx }) => {
               try{ 
 
-                const comment = await ctx.prisma.post.update({
+                const comment = await ctx.prisma.geo_Post.update({
                     where: { postid: input.postid },
                     data:{comment_cnt: {increment: 1},
                     comments: {
@@ -34,12 +33,12 @@ export const commentRouter = createTRPCRouter({
                 }}
             }),
     edit: privateProcedure
-        .input(z.object({ title: z.string(), content: z.string(), commentid: z.string(),
+        .input(z.object({ title: z.string(), content: z.string(), geo_commentid: z.string(),
             meta: z.optional(z.object({})) }))
         .mutation(async ({ input, ctx }) => {
               try{
-                const comment = await ctx.prisma.comment.update({
-                 where: { commentid: input.commentid },
+                const comment = await ctx.prisma.geo_Comment.update({
+                 where: { geo_commentid: input.geo_commentid },
                  data: { ...input,
                       meta: input.meta && input.meta,
                  },
@@ -58,11 +57,11 @@ export const commentRouter = createTRPCRouter({
         .input(z.object({ commentid: z.string(), postid: z.string() }))
         .mutation(async ({ input, ctx }) => {
                 try{
-                   const deletedComment = await ctx.prisma.post.update({
+                   const deletedComment = await ctx.prisma.geo_Post.update({
                     where:{postid: input.postid},
                     data:{comment_cnt: {decrement: 1},
                     comments: {
-                        delete: {commentid: input.commentid}
+                        delete: {geo_commentid: input.commentid}
                     }
                    }
                 })
@@ -87,10 +86,10 @@ export const commentRouter = createTRPCRouter({
                         where: { id: userid },
                         data: { notifications: {
                             create: { content:`${currentUser} liked your comment!`, relativeId:postid, type:'comment'} },    //username will be passed
-                            comments:{update: {where: {commentid: commentid}, data: {likes_cnt: {increment: 1}}}}
+                            geo_comments:{update: {where: {geo_commentid: commentid}, data: {likes_cnt: {increment: 1}}}}
                 }
             }),
-                    ctx.prisma.like.create({
+                    ctx.prisma.geo_Like.create({
                         data: { commentid: commentid, userid: ctx.currentUser.user.userId,
                             postid_userid:`${commentid}_${ctx.currentUser.user.userId}`
                         }
@@ -108,10 +107,10 @@ export const commentRouter = createTRPCRouter({
             }),
     unlike: privateProcedure
             .input(z.object({ commentid: z.string() }))
-        .mutation(async ({ input, ctx }) => {
+            .mutation(async ({ input, ctx }) => {
              try{
-            const deletedLike = await ctx.prisma.comment.update({
-                where: { commentid: input.commentid },
+            const deletedLike = await ctx.prisma.geo_Comment.update({
+                where: { geo_commentid: input.commentid },
                 data: { likes_cnt: { decrement: 1 }, 
                 likes: { deleteMany: { postid_userid:`${input.commentid}_${ctx.currentUser.user.userId}` } },
             }
