@@ -48,6 +48,9 @@ model GeoUser {
     userid           String                                @unique
     primary_location Unsupported("geometry(Point, 4326)")?
     user             AuthUser                              @relation(fields: [userid], references: [id])
+
+    @@index(fields: [userid])
+    @@map("geo_user")
 }
 
 model AuthSession {
@@ -223,6 +226,7 @@ model Message {
 
 model Post_Notification {
     notificationid String       @id @default(cuid())
+    userid         String?
     postid         String
     content        String
     post           Post         @relation(fields: [postid], references: [postid])

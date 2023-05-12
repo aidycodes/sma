@@ -9,6 +9,7 @@ const server = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]),
   REDIS_SESSION: z.string().url(),
   REDIS_USER_SESSION: z.string().url(),
+  WEBSOCKET_JWT_SECRET: z.string().min(1),
 });
 
 /**
@@ -33,7 +34,8 @@ const processEnv = {
   DATABASE_URL: process.env.DATABASE_URL,
   NODE_ENV: process.env.NODE_ENV,
   REDIS_SESSION: process.env.REDIS_SESSION,
-  REDIS_USER_SESSION: process.env.REDIS_USER_SESSION
+  REDIS_USER_SESSION: process.env.REDIS_USER_SESSION,
+  WEBSOCKET_JWT_SECRET: process.env.WEBSOCKET_JWT_SECRET,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 

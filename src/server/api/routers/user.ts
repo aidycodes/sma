@@ -3,6 +3,7 @@ import { auth } from "auth/lucia";
 
 import { createTRPCRouter, publicProcedure, privateProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
+import jwt from "jsonwebtoken";
 
 
 export const userRouter = createTRPCRouter({
@@ -22,7 +23,9 @@ export const userRouter = createTRPCRouter({
 });
     const session = await auth.createSession(user.userId);
         const sessionCookie = auth.createSessionCookie(session).serialize();
-        ctx.res.setHeader("Set-Cookie", sessionCookie);
+         const token = jwt.sign({ user: user.userId }, 'secret')
+        ctx.res.setHeader("Set-Cookie", [sessionCookie, 
+            'wstoken='+token+'; path=/; expires=Thu, 01 Jan 2037 00:00:00 GMT;' ]);
       return {
         user
       };
@@ -43,7 +46,12 @@ export const userRouter = createTRPCRouter({
 		const session = await auth.createSession(key.userId);
 		ctx.authRequest.setSession(session); // set cookie
          const sessionCookie = auth.createSessionCookie(session).serialize();
-          ctx.res.setHeader("Set-Cookie", sessionCookie);
+         
+         const token = jwt.sign({ user: key.userId }, 'secret')
+
+         ctx.res.setHeader("Set-Cookie", [sessionCookie, 
+            'wstoken='+token+'; path=/; expires=Thu, 01 Jan 2037 00:00:00 GMT;' ]);
+
           return {
             session
           }
@@ -59,7 +67,8 @@ export const userRouter = createTRPCRouter({
     .mutation(async({ input, ctx }) => {
         try{
         const loggedout = await auth.invalidateSession(ctx.currentUser.session.sessionId);
-         ctx.res.setHeader("Set-Cookie", 'auth_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;');
+         ctx.res.setHeader("Set-Cookie", ['auth_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;',
+         'wstoken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;']);
         return {
             loggedout
         }

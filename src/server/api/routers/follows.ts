@@ -44,7 +44,7 @@ export const followRouter = createTRPCRouter({
                     console.log('unexpected error', err)
                 }}
             }),
-            followUser: privateProcedure
+    followUser: privateProcedure
             .input(z.object({id: z.string(), currentUser: z.string()}))
             .mutation( async({ input, ctx }) => {
                 try{
@@ -77,7 +77,7 @@ export const followRouter = createTRPCRouter({
                             }
                         }
             }),
-            unfollowUser: privateProcedure
+    unfollowUser: privateProcedure
             .input(z.object({id: z.string()}))
             .mutation( async({ input, ctx }) => {
                 try{

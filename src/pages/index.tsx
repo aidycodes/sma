@@ -1,6 +1,9 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { useContext } from "react";
+import Notifcation from "~/components/notifcation";
+
 
 import { api } from "~/utils/api";
 
@@ -54,9 +57,10 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
    
       </Head>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-            <button onClick={() => hello.mutate({email:'bonk', password:'bonk'})}>submit</button> 
-            <button onClick={() => login.mutate({email:'bonk', password:'bonk'})}>LOGIN</button> 
+      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b">
+          <Notifcation />
+            <button onClick={() => hello.mutate({email:'bonk23', password:'bonk23'})}>submit</button> 
+            <button onClick={() => login.mutate({email:'tonk', password:'tonk'})}>LOGIN</button> 
               <button onClick={() => logout.mutate()}>LOGOUT</button> 
               <button onClick={() => updateprofile.mutate({bio:'bonk2', education:'bonk'})}>profile testa</button> 
              <button onClick={() => post.mutate({title:'bonk', content:'bonkahbonkbonk'})}>BONKPOST</button> 
