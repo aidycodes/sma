@@ -7,6 +7,7 @@
   --foreground: #ffdfba;
   --text-primary: #818181;
   --text-secondary: #77dd77;
+  --border-color: #e0e0e0;
   /*#ffb3ba*/
 }
 
@@ -15,6 +16,7 @@
   --foreground: #1f1b24;
   --text-primary: #f5f5f5;
   --text-secondary: #818181;
+  --border-color: #212124;
 }
 
 [data-theme="neon"] {
@@ -22,12 +24,14 @@
   --foreground: #0ff0fc;
   --text-primary: #8a2be2;
   --text-secondary: #7fff00;
+  --border-color: #ffffff;
 }
 [data-theme="dark-blue"] {
   --background: #050a30;
   --foreground: #000c66;
   --text-primary: #7ec8e3;
   --text-secondary: #0000ff;
+  --border-color: #0000ff;
 }
 
 body {
@@ -52,4 +56,48 @@ body {
 
 .text-secondary {
   color: var(--text-secondary);
+}
+
+.border-primary {
+  border: 1px solid var(--border-color);
+}
+
+.light-menu:hover {
+  backdrop-filter: brightness(1) sepia(1) hue-rotate(140deg) saturate(5);
+}
+.dark-menu:hover {
+  backdrop-filter: grayscale(5) brightness(2);
+}
+.neon-menu:hover {
+  backdrop-filter: brightness(1) sepia(2) hue-rotate(270deg) saturate(10);
+  color: blue;
+}
+.dark-blue-menu:hover {
+  backdrop-filter: brightness(2);
+}
+
+.highlight {
+  backdrop-filter: brightness(1) saturate(4);
+}
+
+.light-icon {
+  filter: brightness(0.8) sepia(1) hue-rotate(140deg) saturate(8);
+}
+.light-icon :hover {
+  filter: brightness(1) sepia(1) hue-rotate(140deg) saturate(10);
+}
+.dark-blue-icon {
+  filter: brightness(0.8) sepia(1) hue-rotate(140deg) saturate(8);
+}
+.dark-blue-icon :hover {
+  filter: brightness(1) sepia(1) hue-rotate(140deg) saturate(10);
+}
+
+.neon-icon {
+}
+.neon-icon :hover {
+  filter: brightness(1) sepia(2) hue-rotate(180deg) saturate(10);
+}
+.dark-icon :hover {
+  filter: brightness(0.5) sepia(1) hue-rotate(180deg) saturate(10);
 }

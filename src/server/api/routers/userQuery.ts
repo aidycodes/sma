@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, privateProcedure, publicProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 
 
@@ -82,6 +82,26 @@ export const userQueryRouter = createTRPCRouter({
                     })          
                     return {
                         comments
+                    }
+                }catch(err){
+                    if(err instanceof Error){
+                        throw new TRPCError({message: err.message, code: "INTERNAL_SERVER_ERROR"})
+                    } else {
+                        console.log('unexpected error', err)
+                    }
+                }
+            }),
+
+    getNotifcations: privateProcedure
+            .query( async({ input, ctx }) => {
+                try{
+                    const notifcations = await ctx.prisma.notifyUser.findMany({
+                        where: {userid: ctx.currentUser.session.userId },
+                        orderBy: {created_at: 'desc'},
+                        take: 10
+                    })
+                    return {
+                        notifcations
                     }
                 }catch(err){
                     if(err instanceof Error){

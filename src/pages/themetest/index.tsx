@@ -1,5 +1,6 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { useTheme } from 'next-themes'
+
 
 const ThemeTester = () => {
 
@@ -8,6 +9,8 @@ const ThemeTester = () => {
     console.log({theme})
 
   return (
+    <div className="m-2">
+   
     <div className='bg'>
         <div className="fg">
       <h1 className='text-primary'>Theme Tester</h1>
@@ -16,6 +19,7 @@ const ThemeTester = () => {
         <button onClick={() => setTheme('neon')}>Neon</button>
         <button onClick={() => setTheme('dark-blue')}>Dark Blue</button>
         </div>
+    </div>
     </div>
   )
 }

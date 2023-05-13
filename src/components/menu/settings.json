@@ -1,0 +1,22 @@
+[
+    {
+        "content":"edit profile",
+        "icon":"edit",
+        "realtiveId":"/edit-profile"
+    },  
+    {
+        "content":"theme",
+        "icon":"lock",
+        "realtiveId":"/change-password",
+        "extended": "true"
+    },{
+        "content":"Give feedback",
+        "icon":"feedback",
+        "link":"/feedback"
+    },
+    {
+        "content":"logout",
+        "icon":"logout",
+        "realtiveId":"/logout"
+    }
+]
