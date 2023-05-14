@@ -50,6 +50,7 @@ body {
   background-color: var(--foreground);
 }
 
+
 .text-primary {
   color: var(--text-primary);
 }
@@ -60,6 +61,9 @@ body {
 
 .border-primary {
   border: 1px solid var(--border-color);
+}
+.border-primary-bottom {
+  border-bottom: 1px solid var(--border-color);
 }
 
 .light-menu:hover {
@@ -73,6 +77,20 @@ body {
   color: blue;
 }
 .dark-blue-menu:hover {
+  backdrop-filter: brightness(2);
+}
+
+.light-menu-selected {
+  backdrop-filter: brightness(1) sepia(1) hue-rotate(140deg) saturate(5);
+}
+.dark-menu-selected {
+  backdrop-filter: grayscale(5) brightness(2);
+}
+.neon-menu-selected {
+  backdrop-filter: brightness(1) sepia(2) hue-rotate(270deg) saturate(10);
+  color: blue;
+}
+.dark-blue-menu-selected {
   backdrop-filter: brightness(2);
 }
 
@@ -101,3 +119,106 @@ body {
 .dark-icon :hover {
   filter: brightness(0.5) sepia(1) hue-rotate(180deg) saturate(10);
 }
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: var(--background));
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--text-secondary);
+   border-radius: 50px;
+   height:10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+   background: var(--text-primary);
+}
+
+/* THEME PICKER COLOR PALETTE */
+/*LIGHT THEME*/
+
+.theme-picker-bg-light {
+  background-color: #bae1ff;
+}
+.theme-picker-fg-light {
+  background-color: #ffdfba;
+}
+
+.theme-picker-text1-light {
+ background-color: #818181;
+}
+.theme-picker-text2-light {
+ background-color: #77dd77;
+}
+
+/*DARK THEME*/
+
+.theme-picker-bg-dark {
+  background-color: #212124;
+}
+.theme-picker-fg-dark {
+  background-color:  #1f1b24;
+}
+
+.theme-picker-text1-dark {
+ background-color: #f5f5f5;
+}
+.theme-picker-text2-dark {
+ background-color: #818181;
+}
+
+/*NEON THEME*/
+
+.theme-picker-bg-neon {
+  background-color: #ffb3ba;
+}
+.theme-picker-fg-neon {
+  background-color: #0ff0fc;
+}
+
+.theme-picker-text1-neon {
+ background-color: #8a2be2;
+}
+.theme-picker-text2-neon {
+ background-color: #7fff00;
+}
+
+/*DARK BLUE THEME*/
+
+.theme-picker-bg-dark-blue {
+  background-color:#050a30;
+}
+.theme-picker-fg-dark-blue {
+  background-color: #000c66;
+}
+
+.theme-picker-text1-dark-blue {
+ background-color: #7ec8e3;
+}
+.theme-picker-text2-dark-blue {
+ background-color: #0000ff;
+}
+
+.theme-picker{
+  max-width:100vw;
+  z-index:99;
+  top:0;
+  right:0;
+}
+
+@media  (min-width: 0px) {
+ .theme-picker{
+  width:35vw;
+  top:30px;
+  right:223px;
+ }
+} 
+  

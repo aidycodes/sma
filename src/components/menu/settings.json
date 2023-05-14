@@ -1,22 +1,25 @@
 [
     {
         "content":"edit profile",
-        "icon":"edit",
-        "realtiveId":"/edit-profile"
+        "relativeId":"/edit-profile",
+        "viewed":"true"
     },  
     {
         "content":"theme",
-        "icon":"lock",
-        "realtiveId":"/change-password",
-        "extended": "true"
+        "icon":"angle-left.svg",
+        "relativeId":"/theme",
+        "expandable": "true",
+        "viewed":"true"
     },{
         "content":"Give feedback",
-        "icon":"feedback",
-        "link":"/feedback"
+        "link":"/feedback",
+        "relativeId":"/feedback",
+        "viewed":"true"
     },
     {
         "content":"logout",
-        "icon":"logout",
-        "realtiveId":"/logout"
+        "icon":"signout.svg",
+        "relativeId":"/logout",
+        "viewed":"true"
     }
 ]

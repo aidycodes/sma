@@ -4,14 +4,16 @@ import { api } from '~/utils/api'
 import Icon from '../icon'
 import Popup from './popup'
 import { NotifyUser } from '@prisma/client'
+import ThemePicker from '../themePicker'
 
 type Props = {
     icon: string
     size: number
+    title: string
     items?: NotifyUser[] | undefined | any
 }
 
-const Menu = ({icon, size, items}: Props) => {
+const Menu = ({icon, size, items, title}: Props) => {
 
     const [showPopup, setShowPopup] = React.useState(false)
 
@@ -22,7 +24,7 @@ const Menu = ({icon, size, items}: Props) => {
   return (
     <div ref={ref} className="relative">
     <Icon size={size} color="blue" name={icon} onClick={() => setShowPopup(!showPopup)} />
-    {showPopup && <Popup items={items}/>}
+    {showPopup && <Popup title={title} items={items}/>}
     </div>
   )
 }

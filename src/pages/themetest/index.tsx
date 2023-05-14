@@ -1,10 +1,15 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useTheme } from 'next-themes'
+import ThemePicker from '~/components/themePicker'
 
 
-const ThemeTester = () => {
+const ThemeTester = ({ userTheme = 'light'}: { userTheme: string}) => {
 
     const { theme, setTheme} = useTheme()
+
+    useEffect(() => {
+        setTheme(userTheme)
+    }, [])
 
     console.log({theme})
 
@@ -19,6 +24,7 @@ const ThemeTester = () => {
         <button onClick={() => setTheme('neon')}>Neon</button>
         <button onClick={() => setTheme('dark-blue')}>Dark Blue</button>
         </div>
+       
     </div>
     </div>
   )
