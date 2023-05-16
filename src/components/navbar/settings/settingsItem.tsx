@@ -2,7 +2,7 @@ import { useTheme } from 'next-themes'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
-import ThemePicker from '../themePicker'
+import ThemePicker from '../../themePicker'
 
 type Props = {
     content: string
@@ -27,8 +27,7 @@ const SettingsItem =
     <Link href={`/${link}`}>
     <div  className={ !expanded ?`${theme}-menu shadow-sm py-2 mx-0 px-6 flex  cursor-pointer relative`
     : `${theme}-menu-selected shadow-sm py-2 mx-0 px-6 flex  cursor-pointer relative`
-        }
-       
+        }    
     >
          {icon &&
         <div className={`flex items-center p-1 absolute left-0 ${theme}-icon`}>
@@ -42,10 +41,10 @@ const SettingsItem =
     </div>
     </Link>
        {
-              expandable && expanded &&
-              <div className="">
-                <ThemePicker/>
-                </div>
+        expandable && expanded &&
+        <div>
+          <ThemePicker/>
+        </div>
        }
        </div>
   )

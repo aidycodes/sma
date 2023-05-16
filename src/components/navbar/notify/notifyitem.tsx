@@ -18,8 +18,13 @@ type Props = {
 }
 
 type Note = {
+    pages:Page[]
+    pageParams:  NotifyUser[]
+}
+type Page = {
     notifcations: NotifyUser[]
-} 
+    nextCursor: NotifyUser
+}
 
 const icontable: {[index: string]: string}  = {
     user_post: '📝',
@@ -40,22 +45,24 @@ const Item = ({content, type, link, viewed, id, queryKey}: Props) => {
 
     const hasViewed = api.notify.hasViewed.useMutation({
         async onMutate(data) {
- 
             if(queryKey){
                 console.log(queryKey)
-            const previousTodo = queryClient.getQueryData([...queryKey]) as Note
-            console.log({previousTodo})
-            const updatedTodos = previousTodo?.notifcations.map((note) => (
+            const previousTodo = queryClient.getQueryData([...queryKey]) as Note  
+            const updatedTodos = previousTodo?.pages.map((page, i) => {
+            const notes = page.notifcations.map((note) => (
                 note.nofiy_user_id === data.notify_user_id ? {...note, viewed: true} : note
-            ))
-          
-                queryClient.setQueryData([...queryKey], {notifcations:updatedTodos})
-                return {notifcations:previousTodo.notifcations}
+                ))        
+                return {notifcations:notes, nextCursor: previousTodo.pages[i].nextCursor}
+            })
+   
+          console.log({pages:updatedTodos, pageParams:previousTodo.pageParams})
+                queryClient.setQueryData([...queryKey], {pages:updatedTodos, pageParams:previousTodo.pageParams})
+                return {pages:updatedTodos, pageParams:previousTodo.pageParams}
         }
     },
         onError(err, newTodo, context) {
             if(queryKey && context){
-            queryClient.setQueryData([...queryKey], {notifcations:context.notifcations})
+            queryClient.setQueryData([...queryKey], {pages:context.pages, pageParams:context.pageParams})
             }
         },
         onSuccess(data) {
