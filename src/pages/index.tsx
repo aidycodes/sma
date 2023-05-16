@@ -46,7 +46,7 @@ const Home: NextPage = () => {
   const likegeoComment = api.geoComment.like.useMutation()
   const unlikegeoComment = api.geoComment.unlike.useMutation()
 
-  const getGeoPost = api.geoPost.getPost.useQuery({postid:'nd7rox72k73bq091f2rc6m0p'})
+  const getGeoPost = api.geoPost.getPost.useQuery({postid:'nd7rox72k73bq091f2rc6m0p'}, {keepPreviousData:true})
   //console.log(currentUser)
 
   return (
@@ -58,7 +58,7 @@ const Home: NextPage = () => {
    
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b">
-          <Notifcation />
+          
             <button onClick={() => hello.mutate({email:'bonk23', password:'bonk23'})}>submit</button> 
             <button onClick={() => login.mutate({email:'tonk', password:'tonk'})}>LOGIN</button> 
               <button onClick={() => logout.mutate()}>LOGOUT</button> 

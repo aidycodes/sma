@@ -5,6 +5,7 @@ import { ThemeProvider } from "next-themes";
 import Navbar from '~/components/navbar'
 
 const MyApp: AppType = ({ Component, pageProps }) => {
+  
   return (
     <ThemeProvider themes={['light','dark','neon','darkblue']}>
        <Navbar/>

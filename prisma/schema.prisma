@@ -249,6 +249,7 @@ model NotifyUser {
 
     post_NotificationNotificationid String?
 
+    @@unique([created_at, nofiy_user_id])
     @@index(fields: [userid])
     @@map("notify_user")
 }

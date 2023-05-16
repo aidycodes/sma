@@ -93,15 +93,31 @@ export const userQueryRouter = createTRPCRouter({
             }),
 
     getNotifcations: privateProcedure
-            .query( async({ input, ctx }) => {
+                .input(z.object({
+                    take: z.number().optional(),
+                cursor:  z.object({ nofiy_user_id: z.string(), created_at: z.date() }).optional()
+            })
+                )
+            .query( async({ input:{take = 10, cursor}, ctx }) => {
                 try{
+                    
                     const notifcations = await ctx.prisma.notifyUser.findMany({
                         where: {userid: ctx.currentUser.session.userId },
+                        cursor: cursor ?  { created_at_nofiy_user_id: cursor } : undefined,
                         orderBy: {created_at: 'desc'},
-                        take: 10
+                        take: take+1,
+                        
                     })
+                    let nextCursor: typeof cursor | undefined;
+                    if(notifcations.length > take){
+                        const nextItem = notifcations.pop()
+                        if(nextItem != null){
+                        nextCursor = {nofiy_user_id: nextItem.nofiy_user_id, created_at: nextItem.created_at}
+                    }
+                    }                        
                     return {
-                        notifcations
+                        notifcations,
+                        nextCursor
                     }
                 }catch(err){
                     if(err instanceof Error){

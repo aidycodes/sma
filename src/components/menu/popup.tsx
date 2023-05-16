@@ -1,4 +1,5 @@
 import { NotifyUser } from '@prisma/client'
+import { QueryKey } from '@tanstack/react-query'
 import Image from 'next/image'
 import React, { useEffect, useRef } from 'react'
 import { api } from '~/utils/api'
@@ -8,13 +9,14 @@ import SettingsItem from './settingsItem'
 type Props = {
     title: string
     items: Object[]
+    queryKey?: QueryKey
 }
 
-const Popup = ({items, title} :Props) => {
+const Popup = ({items, title, queryKey} :Props) => {
 
 
   return (
-    <div  className="absolute right-0 lg:left-0 fg w-56 border-primary shadow-sm rounded-md">
+    <div  className="absolute right-0 lg:left-0 fg w-56 border-primary shadow-xl rounded-md">
         
         
         <div>
@@ -25,15 +27,17 @@ const Popup = ({items, title} :Props) => {
             items?.length > 0 ?
             title === 'Notifications' ?
                  items?.map((item: any) =>(
-              <Item content={item.content} type={item.type} link={item.relativeId} 
-                viewed={item.viewed} id={item.nofiy_user_id}           
+                    
+              <Item key={item.nofiy_user_id} content={item.content} type={item.type} link={item.relativeId} 
+                viewed={item.viewed} id={item.nofiy_user_id} queryKey={queryKey} 
+                         
                 />))
          
         :
         
             title === 'Settings' &&
              items?.map((item: any) => (
-                <SettingsItem content={item.content}  link={item.relativeId} 
+                <SettingsItem key={item.id} content={item.content}  link={item.relativeId} 
                 icon={item.icon || false} expandable={item.expandable || false}
                 />
             ))

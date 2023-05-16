@@ -1,3 +1,4 @@
+import { QueryKey, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
@@ -19,8 +20,14 @@ type Notification = {
     relativeId: string,
 }
 
+type Props = {
+    queryKey: QueryKey
+}
 
-export default function Notifcation() {
+
+export default function Notifcation({ queryKey }: Props) {
+
+    const queryClient = useQueryClient()
 
     const notify = (notification: Notification) => toast(
         <span>
@@ -36,7 +43,7 @@ export default function Notifcation() {
         socket.connect()
         socket.once('notification', (data) => {
             const notification: Notification = JSON.parse(data.payload)
-            console.log(data)
+            queryClient.invalidateQueries({ queryKey: queryKey })
             setNotifcationFix(!notifcationFix)
            notify(notification)
         })

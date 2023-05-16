@@ -9,13 +9,13 @@ const ThemePicker = () => {
     const { theme, setTheme } = useTheme()
     const [previousTheme, setpreviousTheme] = React.useState(theme)
 
-    const themeSelectors = themes.map((themeString) => <Theme themeString={themeString} 
+    const themeSelectors = themes.map((themeString) => <Theme themeString={themeString} key={themeString}
                                                             theme={theme} previousTheme={previousTheme}
                                                             setTheme={setTheme} setPreviousTheme={setpreviousTheme}        
                                                                 />)
     return(
         <>
-        <div className="border-primary shadow-md rounded-lg theme-picker absolute ">
+        <div className="border-primary  shadow-md rounded-lg theme-picker absolute ">
             <div className="fg flex justify-center shadow-sm rounded-t-md">
              <h1 className="text-primary">Themes</h1>
             </div>

@@ -95,7 +95,7 @@ body {
 }
 
 .highlight {
-  backdrop-filter: brightness(1) saturate(4);
+  backdrop-filter: brightness(1) saturate(10);
 }
 
 .light-icon {
@@ -217,7 +217,7 @@ body {
 @media  (min-width: 0px) {
  .theme-picker{
   width:35vw;
-  top:30px;
+  top:10px;
   right:223px;
  }
 } 

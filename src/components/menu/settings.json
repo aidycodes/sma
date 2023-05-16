@@ -1,22 +1,26 @@
 [
     {
+        "id":"1",
         "content":"edit profile",
         "relativeId":"/edit-profile",
         "viewed":"true"
     },  
     {
+        "id":"2",
         "content":"theme",
         "icon":"angle-left.svg",
         "relativeId":"/theme",
         "expandable": "true",
         "viewed":"true"
     },{
+        "id":"3",
         "content":"Give feedback",
         "link":"/feedback",
         "relativeId":"/feedback",
         "viewed":"true"
     },
     {
+        "id":"4",
         "content":"logout",
         "icon":"signout.svg",
         "relativeId":"/logout",

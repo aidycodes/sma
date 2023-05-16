@@ -20,7 +20,7 @@ const Theme =
     <div onMouseOver={() => setTheme(themeString)} onMouseLeave={() => previousTheme && setTheme(previousTheme)}
         onClick={() => setPreviousTheme(themeString)}>
         <div
-    className={themeString === theme ? "flex m-4 flex-col justify-center  items-center text-secondary font-semibold cursor-pointer p-2 outline rounded-md"
+    className={themeString === theme ? "flex m-4  flex-col justify-center  items-center text-secondary font-semibold cursor-pointer p-2 outline rounded-md"
     : "flex m-4 flex-col justify-center items-center text-secondary font-semibold  cursor-pointer hover:outline p-2 rounded-md outline-slate-50"    
     }>
         <h2>{themeString.charAt(0).toUpperCase() + themeString.slice(1) }</h2>
