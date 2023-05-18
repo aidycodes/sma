@@ -1,37 +1,44 @@
-import React from 'react'
-import { useForm } from "react-hook-form";
-import Layout from '~/components/Layout';
 
-type FormData = {
-    username: string;
-    work: string;
-    education: string;
-    bio: string;
-};
+import React from 'react'
+import Details from '~/components/editprofile/details';
+import Images from '~/components/editprofile/images';
+import Location from '~/components/editprofile/location';
+import Layout from '~/components/Layout';
+import Loading from '~/components/loading';
+import Tabs from '~/components/tabs';
+import { useSSRTheme } from '~/hooks/useSSRTheme';
+import { prisma } from '~/server/db';
+import { api } from '~/utils/api';
+const tabButtons = require('./tab-buttons.json')
+
+
 
 const EditProfile = () => {
 
-      const { register, handleSubmit } = useForm<FormData>();
-  const onSubmit = handleSubmit(data => console.log(data))
+     useSSRTheme('light')
+     const createProfile = api.user.createProfile.useMutation()
+    const { data, isLoading} = api.userQuery.getUserProfile.useQuery({id:'WRdW83qzlVMK2qe'})
+
+    if(isLoading) return <Loading/>
+    const user = data?.user
+
+   if(!user) {
+    return (
+    <Layout>
+        <div>Failed to load userdata please reload this page...</div>
+    </Layout>
+    )}
   return (
     <Layout>
-        <div className="fg p-8 rounded-md shadow-md">
-        <h1 className="text-center pb-4 font-semibold tracking-widest">Edit Profile</h1>
-            <form className="flex flex-col gap-4" onSubmit={onSubmit}>
-                <h2 className="font-semibold tracking-widest">Username</h2>
-            <input className="rounded-md p-1" {...register("username")} />
-                 <h2 className="font-semibold tracking-widest">Work</h2>
-            <input className="rounded-md p-1" {...register("work")} />
-                <h2 className="font-semibold tracking-widest">Education</h2>
-            <input className="rounded-md p-1" {...register("education")} />
-               <h2 className="font-semibold tracking-widest">Bio</h2> 
-            <textarea className="rounded-md p-1 h-40 w-80" {...register("bio")} />            
-
-            <input className="outline rounded-md hover:highlight cursor-pointer" type="submit" />
-        </form>
-        </div>
+            <Tabs tabs={tabButtons} >
+                {[<Details {...user}  />,<Images {...user}/>,<Location/>]}
+            </Tabs>
+             <button onClick={() => createProfile.mutate({username:'cosmocattt'})}>create profile</button>
+        {/* </form>
+        </div> */}
     </Layout>
   )
+    
 }
 
 export default EditProfile

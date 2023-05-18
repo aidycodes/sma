@@ -47,6 +47,12 @@ model GeoUser {
     id               String                                @id @unique @default(cuid())
     userid           String                                @unique
     primary_location Unsupported("geometry(Point, 4326)")?
+    lat              Float?
+    lng              Float?
+    country          String?
+    city             String?
+    county           String?
+    state            String?
     user             AuthUser                              @relation(fields: [userid], references: [id])
 
     @@index(fields: [userid])
@@ -79,6 +85,7 @@ model AuthKey {
 model UserProfile {
     profileid String   @id @default(cuid())
     userid    String   @unique
+    username  String   @default("user")
     bio       String?
     work      String?
     education String?

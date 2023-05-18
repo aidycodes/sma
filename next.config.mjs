@@ -7,6 +7,12 @@ await import("./src/env.mjs");
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: false,
+  experimental: {
+    esmExternals: false,
+  },
+  images:{
+    domains: ['uploadthing.com'],
+  },
 
   /**
    * If you have `experimental: { appDir: true }` set, then you must comment the below `i18n` config

@@ -10,7 +10,7 @@ const Popup = ({component}: {component:React.ReactNode}) => {
 
 
   return (
-    <div  className="absolute right-0 lg:left-0 fg w-56 border-primary shadow-xl rounded-md">
+    <div  className="absolute right-0 lg:left-0 fg w-56  shadow-xl rounded-md">
             {component}    
     </div>
         

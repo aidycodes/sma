@@ -5,16 +5,14 @@ import React from 'react'
 type Icon = {
     name: string
     size: number
-    color: string
+    isSelected: boolean
     onClick: () => void
-    onHover?: () => void
-    className?: string
 }
 
-const Icon = ({name, size, color, className, onClick, onHover}: Icon) => {
+const Icon = ({name, size, isSelected, onClick}: Icon) => {
     const {theme} = useTheme()
   return (
-  <div className={`cursor-pointer ${theme}-icon`} onClick={onClick} > 
+  <div className={`cursor-pointer ${!isSelected ? theme + '-icon' : theme + '-icon-selected' }`} onClick={onClick}  > 
   <label htmlFor={name}/>
     <Image  src={`/icons/${name}`} alt={name} width={size} height={size} />  
   </div>  

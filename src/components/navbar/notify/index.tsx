@@ -40,6 +40,7 @@ const Notify = () => {
  
     <div>
       <div className="pt-2 max-h-60 overflow-hidden overflow-y-auto">
+           <h2 className="text-lg  p-2 border-b-1 border-primary-bottom shadow-sm">Notifcations</h2>
     {newarray?.map((item: any, i) => {  
            return(   
            <div ref={i === newarray.length-2 ? sentryRef : undefined} >

@@ -10,6 +10,9 @@ const server = z.object({
   REDIS_SESSION: z.string().url(),
   REDIS_USER_SESSION: z.string().url(),
   WEBSOCKET_JWT_SECRET: z.string().min(1),
+  UPLOADTHING_SECRET: z.string(),
+  UPLOADTHING_APP_ID:z.string(),
+  OPENCAGE_API_KEY:z.string(),
 });
 
 /**
@@ -36,6 +39,9 @@ const processEnv = {
   REDIS_SESSION: process.env.REDIS_SESSION,
   REDIS_USER_SESSION: process.env.REDIS_USER_SESSION,
   WEBSOCKET_JWT_SECRET: process.env.WEBSOCKET_JWT_SECRET,
+  UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET,
+  UPLOADTHING_APP_ID: process.env.UPLOADTHING_APP_ID,
+  OPENCAGE_API_KEY: process.env.OPENCAGE_API_KEY,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 

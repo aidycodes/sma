@@ -19,7 +19,7 @@ const Menu = ({icon, size, component}: Props) => {
 
   return (
     <div ref={ref} className="relative">
-    <Icon size={size} color="blue" name={icon} onClick={() => setShowPopup(!showPopup)} />
+    <Icon size={size}  name={icon} onClick={() => setShowPopup(!showPopup)} isSelected={showPopup} />
     {showPopup && <Popup component={component} />}
     </div>
   )

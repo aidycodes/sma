@@ -1,0 +1,10 @@
+[{
+    "name":"Details",
+    "icon":"user-square.svg"
+},{
+    "name":"Images",
+    "icon":"image.svg"
+},{
+    "name":"Location",
+    "icon":"user-location.svg"
+}]

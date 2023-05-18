@@ -69,6 +69,8 @@ body {
 .light-menu:hover {
   backdrop-filter: brightness(1) sepia(1) hue-rotate(140deg) saturate(5);
 }
+
+
 .dark-menu:hover {
   backdrop-filter: grayscale(5) brightness(2);
 }
@@ -88,7 +90,7 @@ body {
 }
 .neon-menu-selected {
   backdrop-filter: brightness(1) sepia(2) hue-rotate(270deg) saturate(10);
-  color: blue;
+  
 }
 .dark-blue-menu-selected {
   backdrop-filter: brightness(2);
@@ -104,20 +106,52 @@ body {
 .light-icon :hover {
   filter: brightness(1) sepia(1) hue-rotate(140deg) saturate(10);
 }
+
+.light-icon-selected {
+  filter: brightness(1) sepia(1) hue-rotate(140deg) saturate(10);
+}
+
 .dark-blue-icon {
   filter: brightness(0.8) sepia(1) hue-rotate(140deg) saturate(8);
 }
 .dark-blue-icon :hover {
   filter: brightness(1) sepia(1) hue-rotate(140deg) saturate(10);
 }
+.dark-blue-icon-selected {
+  filter: brightness(1) sepia(1) hue-rotate(140deg) saturate(10);
+}
 
 .neon-icon {
+filter: brightness(1) sepia(2) hue-rotate(280deg) saturate(8);
 }
 .neon-icon :hover {
-  filter: brightness(1) sepia(2) hue-rotate(180deg) saturate(10);
+  filter: brightness(2) sepia(2) hue-rotate(140deg) saturate(10);
 }
+.neon-icon-selected {
+  filter: brightness(1) sepia(10) hue-rotate(290deg) saturate(10);
+  
+}
+
+
 .dark-icon :hover {
   filter: brightness(0.5) sepia(1) hue-rotate(180deg) saturate(10);
+}
+.dark-icon-selected {
+  filter: brightness(1) sepia(1) hue-rotate(180deg) saturate(10);
+  color:#38bdf8;
+}
+
+
+.zTop{
+  position:relative;
+  z-index:9999;
+}
+.zBottom{
+  position:relative;
+  z-index:0;
+}
+.z99{
+  z-index:9999;
 }
 
 /* width */
@@ -210,18 +244,18 @@ body {
 .tabLeft{
 top:63px;
 left:-1%;
-height:4px;
+height:5px;
 }
 
 .tabMiddle{
-left:35%;
+left:33%;
 top:63px;
-height:4px;
+height:5px;
 }
 .tabRight{
-left:70%;
+left:67%;
 top:63px;
-height:4px;
+height:5px;
 }
 
 .theme-picker{

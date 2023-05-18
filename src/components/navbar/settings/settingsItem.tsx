@@ -25,9 +25,10 @@ const SettingsItem =
     <div  onMouseOver={() => expandable && setExpanded(true)}
          onMouseLeave={() => expandable && setExpanded(false)}>
     <Link href={`/${link}`}>
-    <div  className={ !expanded ?`${theme}-menu shadow-sm py-2 mx-0 px-6 flex  cursor-pointer relative`
-    : `${theme}-menu-selected shadow-sm py-2 mx-0 px-6 flex  cursor-pointer relative`
-        }    
+    <div  className={ !expanded ?`${theme}-menu shadow-sm py-2 mx-0 px-6 flex  cursor-pointer `
+    : `${theme}-menu-selected shadow-sm py-2 mx-0 px-6 flex  cursor-pointer `
+        }
+       
     >
          {icon &&
         <div className={`flex items-center p-1 absolute left-0 ${theme}-icon`}>
@@ -41,7 +42,7 @@ const SettingsItem =
     </div>
     </Link>
        {
-        expandable && expanded &&
+              expandable && expanded &&
         <div>
           <ThemePicker/>
         </div>

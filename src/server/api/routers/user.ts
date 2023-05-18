@@ -81,7 +81,7 @@ export const userRouter = createTRPCRouter({
     }
     }),
     updateProfile: privateProcedure.
-    input(z.object({bio: z.optional(z.string()), work: z.optional(z.string()),
+    input(z.object({bio: z.optional(z.string()), work: z.optional(z.string()), username: z.string(),
          education: z.optional(z.string()), avatar: z.optional(z.string()), cover: z.optional(z.string()),  }))
     .mutation(async({ input, ctx }) => {
       try{
@@ -122,6 +122,29 @@ export const userRouter = createTRPCRouter({
         }
     }
     }),
+    createProfile: privateProcedure.
+    input(z.object({ username: z.string()}))
+    .mutation(async({ input, ctx }) => {
+      try{
+        const profile = await ctx.prisma.authUser.update({
+            where: {id: ctx.currentUser.user.userId},
+            data: {
+              profile:{
+                create: {
+                  username: input.username,
+              }
+               
+            }
+          }
+        })
+      } catch(err){
+        if(err instanceof Error){
+       throw new TRPCError({message: err.message, code: "INTERNAL_SERVER_ERROR"})
+        } else {
+            console.log('unexpected error', err)
+        }}
+    }),
+
   isAuthed: privateProcedure.query(async({ ctx }) => {
     if(ctx.currentUser){
     const user = await ctx.prisma.authUser.findUnique({where: {id: ctx.currentUser.user.userId}})

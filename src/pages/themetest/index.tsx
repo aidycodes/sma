@@ -1,12 +1,18 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useLayoutEffect } from 'react'
 import { useTheme } from 'next-themes'
 import ThemePicker from '~/components/themePicker'
 import Loading from '~/components/loading'
+import Layout from '~/components/Layout'
 
 
-const ThemeTester = ({ userTheme = 'light'}: { userTheme: string}) => {
+const ThemeTester = ({ userTheme = 'dark-blue'}: { userTheme: string}) => {
 
     const { theme, setTheme} = useTheme()
+
+    useLayoutEffect(() => {
+      setTheme('none')
+       
+    }, [])
 
     useEffect(() => {
         setTheme(userTheme)
@@ -15,7 +21,7 @@ const ThemeTester = ({ userTheme = 'light'}: { userTheme: string}) => {
     console.log({theme})
 
   return (
-    <div className="m-2">
+    <Layout >
    
     <div className='bg'>
         <div className="fg">
@@ -28,7 +34,7 @@ const ThemeTester = ({ userTheme = 'light'}: { userTheme: string}) => {
         <Loading/>
        
     </div>
-    </div>
+    </Layout>
   )
 }
 

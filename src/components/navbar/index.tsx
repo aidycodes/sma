@@ -10,9 +10,11 @@ const Navbar = () => {
 
   const notificationQueryKey = getQueryKey(api.userQuery.getNotifcations, {take:10}, 'query')
 
+  
+
   return (
-    <div className="sticky top-0 p-6 flex justify-around mb-8 fg">
-    
+    <div className="fixed w-full top-0 p-6 flex justify-around mb-8 fg z-50">
+   
       <Notifcation queryKey={notificationQueryKey}/>
         <h1 className="text-primary text-xl ">
         Social
@@ -24,7 +26,9 @@ const Navbar = () => {
             <Menu size={35} icon={"bell.svg"} component={<Notify/>}/>
             <label htmlFor='settings'/>
             <Menu size={35}  icon={"setting.svg"} component={<SettingsMenu/>}/>
-        </div>
+
+          </div>
+       
     </div>
   )
 }
