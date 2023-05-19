@@ -99,6 +99,9 @@ body {
 .highlight {
   backdrop-filter: brightness(1) saturate(10);
 }
+.highlight-1 {
+  backdrop-filter: brightness(1) saturate(2);
+}
 
 .light-icon {
   filter: brightness(0.8) sepia(1) hue-rotate(140deg) saturate(8);
@@ -248,12 +251,12 @@ height:5px;
 }
 
 .tabMiddle{
-left:33%;
+left:34%;
 top:63px;
 height:5px;
 }
 .tabRight{
-left:67%;
+left:69%;
 top:63px;
 height:5px;
 }
@@ -296,6 +299,91 @@ height:5px;
 }
 
 
+/* Shadow behind the sticky note */
+.sticky:before {
+  box-shadow: -2px 2px 15px 0 rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.25);
+  content: '';
+  width: 90%;
+  left: 5px;
+  height: 75%;
+  position: absolute;
+  top: 30%;
+}
+
+/* The sticky note itself */
+.sticky-content {
+  background: linear-gradient(
+    180deg,
+    rgba(187, 235, 255, 1) 0%,
+    rgba(187, 235, 255, 1) 12%,
+    rgba(170, 220, 241, 1) 75%,
+    rgba(195, 229, 244, 1) 100%
+  );
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Kalam', cursive;
+  font-size: 1.25rem;
+
+  clip-path: url(#stickyClip);
+}
+
+.sticky2{
+
+  background: linear-gradient(
+    180deg,
+    rgba(187, 235, 255, 1) 0%,
+    rgba(187, 235, 255, 1) 12%,
+    rgba(170, 220, 241, 1) 75%,
+    rgba(195, 229, 244, 1) 100%
+  );
+  width: 100%;
+  height: 100%;
+    font-family: 'Kalam', cursive;
+  font-size: 1.25rem;
+
+  clip-path: url(#stickyClip);
+}
+.sticky-dark{
+background-color:#111827;
+    font-family: 'Kalam', cursive;
+  font-size: 1.25rem;
+}
+
+.sticky-content-dark{
+background: #0F2027;  /* fallback for old browsers */
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Kalam', cursive;
+  font-size: 1.25rem;
+
+  clip-path: url(#stickyClip);
+}
+
+
+.sticky-container {
+  max-width: 270px;
+  position: relative;
+}
+
+.sticky-outer {
+  display: flex;
+  padding-top: 92.5925926%;
+  position: relative;
+
+  width: 100%;
+}
+
+
+
 @media  (min-width: 0px) {
  .theme-picker{
   width:35vw;
@@ -304,5 +392,26 @@ height:5px;
  }
 } 
   
+.loader {
+    width: 48px;
+    height: 48px;
+    border: 5px solid #FFF;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+    }
 
+    @keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+    } 
 
+.submit{
+background-color:#1d4ed8!important;
+}

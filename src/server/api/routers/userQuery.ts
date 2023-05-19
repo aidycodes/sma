@@ -127,5 +127,22 @@ export const userQueryRouter = createTRPCRouter({
                     }
                 }
             }),
+            getUsersGeoData: privateProcedure
+            .query( async({ ctx }) => {
+                try{
+                    const geoData = await ctx.prisma.geoUser.findFirst({
+                        where: { userid: ctx.currentUser.session.userId },
+                    })
+                    return {
+                        geoData
+                    }
+                }catch(err){
+                    if(err instanceof Error){
+                        throw new TRPCError({message: err.message, code: "INTERNAL_SERVER_ERROR"})
+                    } else {
+                        console.log('unexpected error', err)
+                    }
+                }
+            })
     
 })

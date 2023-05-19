@@ -24,6 +24,9 @@ export const useGeolocation = () => {
         
     }, [])
    
-
-    return location
+    if(location){ 
+           return location
+    } else {
+        return {lat: 0, lng:0}
+    }
 }

@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { auth } from "auth/lucia";
-
+import { Prisma } from "@prisma/client";
 import { createTRPCRouter, publicProcedure, privateProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 import jwt from "jsonwebtoken";
-
+import { createId } from '@paralleldrive/cuid2';
 
 export const userRouter = createTRPCRouter({
   create: publicProcedure
@@ -137,6 +137,9 @@ export const userRouter = createTRPCRouter({
             }
           }
         })
+        return {
+          profile
+        }
       } catch(err){
         if(err instanceof Error){
        throw new TRPCError({message: err.message, code: "INTERNAL_SERVER_ERROR"})
@@ -144,6 +147,33 @@ export const userRouter = createTRPCRouter({
             console.log('unexpected error', err)
         }}
     }),
+    createGeoUser: privateProcedure.
+    input(z.object({ lat: z.number(), lng: z.number(), country: z.optional(z.string()), 
+      city: z.optional(z.string()), county: z.optional(z.string()), state: z.optional(z.string()) }))
+    .mutation(async({ input, ctx }) => {
+      try{
+        const {lat, lng, country, city, county, state} = input
+          const newId = createId()
+          const userid = ctx.currentUser.user.userId
+   
+      const geoUser = await ctx.prisma.$queryRaw<{id: string}>(
+      Prisma.sql`INSERT INTO "geo_user" (id, userid, city, country, county, lat, lng, state, primary_location )
+                VALUES (${newId}, ${userid}, ${city}, ${country},
+                ${county}, ${lat}, ${lng}, ${state},
+                ST_SetSRID(ST_Point(${lng}, ${lat}),4326))
+                RETURNING id`
+          )
+            return {
+              geoUser
+            }
+      } catch(err){
+        if(err instanceof Error){
+        throw new TRPCError({message: err.message, code: "INTERNAL_SERVER_ERROR"})
+        } else {
+            console.log('unexpected error', err)
+        }}
+    }),
+
 
   isAuthed: privateProcedure.query(async({ ctx }) => {
     if(ctx.currentUser){

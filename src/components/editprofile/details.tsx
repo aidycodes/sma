@@ -42,10 +42,10 @@ const Details = ( user: UserProfile  ) => {
 
 
   return (
-     <div className="fg p-8 rounded-md shadow-md mt-12">
+     <div className="fg p-8 rounded-md shadow-md mt-12 ">
         <h1 className="text-center pb-4 font-semibold tracking-widest">Edit Profile</h1>
         
-        <form className="flex flex-col gap-4" onSubmit={onSubmit}>
+        <form className="flex flex-col gap-4 " onSubmit={onSubmit}>
             <div className="relative max-w-full flex flex-col h-20">
                 <h2 className=" font-semibold tracking-widest pb-2">Username</h2>                 
                     <input className={`rounded-md p-1 w-full outline-none 
@@ -67,12 +67,13 @@ const Details = ( user: UserProfile  ) => {
 
         <div className="relative max-w-full flex flex-col h-20">
             <h2 className="font-semibold tracking-widest ">Bio</h2> 
-                <textarea className="rounded-md p-1 h-40 w-80 outline-none" {...register("bio")} />            
+                <textarea className="rounded-md p-1 h-40 w-full outline-none" {...register("bio")} />            
         </div>
-
-        <button   className={`outline rounded-md p-1 cursor-pointer ${theme}-menu `} type="submit" >
-            Submit
+       
+        <button   className={`!bg-blue-700 p-2 rounded-md  text-slate-300 hover:text-slate-200 hover:!bg-blue-600`} type="submit" >
+            Update
         </button>
+ 
         </form> 
     </div>
   )
