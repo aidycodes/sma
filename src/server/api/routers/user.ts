@@ -173,6 +173,30 @@ export const userRouter = createTRPCRouter({
             console.log('unexpected error', err)
         }}
     }),
+        updateGeoUser: privateProcedure.
+    input(z.object({ lat: z.number(), lng: z.number(), country: z.optional(z.string()), 
+      city: z.optional(z.string()), county: z.optional(z.string()), state: z.optional(z.string()) }))
+    .mutation(async({ input, ctx }) => {
+      try{
+        const {lat, lng, country, city, county, state} = input
+          const userid = ctx.currentUser.user.userId
+   
+      const geoUser = await ctx.prisma.$executeRaw<{county: string}>(
+      Prisma.sql`UPDATE "geo_user"
+      SET county = ${county}, city = ${city}, country = ${country}, state = ${state}, 
+      lat = ${lat}, lng = ${lng}, primary_location = ST_SetSRID(ST_Point(${lng}, ${lat}),4326)   
+      WHERE "userid" = ${userid}`
+          )
+            return {
+              geoUser
+            }
+      } catch(err){
+        if(err instanceof Error){
+        throw new TRPCError({message: err.message, code: "INTERNAL_SERVER_ERROR"})
+        } else {
+            console.log('unexpected error', err)
+        }}
+    }),
 
 
   isAuthed: privateProcedure.query(async({ ctx }) => {

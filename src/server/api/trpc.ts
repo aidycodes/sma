@@ -20,7 +20,7 @@ export type AuthedUser = {
   session: Session 
 } 
 
-type CreateContextOptions = {authRequest: AuthRequest;  currentUser: UserContext, res: NextApiResponse};
+type CreateContextOptions = {authRequest: AuthRequest;  currentUser: UserContext, res: NextApiResponse | ServerResponse<IncomingMessage> };
 
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use it, you can export
@@ -70,8 +70,9 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { auth } from "auth/lucia";
-import { AuthRequest, Session, SessionSchema } from "lucia-auth";
+import { AuthRequest, Session } from "lucia-auth";
 import { NextApiResponse } from "next";
+import { IncomingMessage, ServerResponse } from "http";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,

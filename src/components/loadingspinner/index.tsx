@@ -1,8 +1,9 @@
 import React from 'react'
 
-const LoadingSpinner = () => {
+const LoadingSpinner = 
+({size = 'med'}: {size?: string}) => {
   return (
-   <span className="loader"></span>
+   <span className={`${size === 'small' ? 'loader-small' : 'loader'} `}></span>
   )
 }
 

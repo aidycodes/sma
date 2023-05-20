@@ -1,86 +1,77 @@
-import { useTheme } from 'next-themes';
 import React from 'react'
+import Details from '~/components/editprofile/details';
+import Images from '~/components/editprofile/images';
+import Location from '~/components/editprofile/location';
+import Layout from '~/components/Layout';
 import Tabs from '~/components/tabs';
+import { useSSRTheme } from '~/hooks/useSSRTheme';
+import { api } from '~/utils/api';
+import { createServerSideHelpers } from '@trpc/react-query/server';
+import { createTRPCContext } from '~/server/api/trpc';
+import { appRouter } from '~/server/api/root';
 const tabButtons = require('./tab-buttons.json')
-const Page = () => {
 
-    const [activeTab, setActiveTab] = React.useState(1);
-    const { theme } = useTheme()
+
+const EditProfile = () => {
+
+     useSSRTheme('light')
+     const createProfile = api.user.createGeoUser.useMutation()
+    const { data, isLoading, isError } = api.userQuery.getUserProfile.useQuery({id:'WRdW83qzlVMK2qe'})
+    const {data: geoquery, isLoading: geoQueryLoading, isError: isErrorGeo } = api.userQuery.getUsersGeoData.useQuery()
+
+    const profileQueryKey = getQueryKey(api.userQuery.getUserProfile, {id:'WRdW83qzlVMK2qe'}, 'query')
+    const geoQueryKey = getQueryKey(api.userQuery.getUsersGeoData, undefined, 'query')
+
+    const user = data?.user
+    const geoData = geoquery?.geoData
+
+   if(!user || !geoData) {
+    return (
+    <Layout>
+        <PageError isLoading={[isLoading, geoQueryLoading]} queryKeys={[profileQueryKey, geoQueryKey]} isError={[isError, isErrorGeo ]}/>
+    </Layout>
+    )}
 
   return (
-<>
-    <div className='w-full max-w-lg px-10 py-8 mx-auto fg rounded-lg shadow-xl flex'>
+    <Layout>
+            <Tabs tabs={tabButtons} >
+                {[<Details {...user}  />,<Images {...user}/>,<Location geoquery={geoData} loading={geoQueryLoading} />]}
+            </Tabs>
+             <button onClick={() => createProfile.mutate({lat:51.4776883, lng:-2.5115698, country:'united kingdom', county:'South Gloucestershire', state:'england'})}>create geo data</button>
 
-  
-
-        <div className='max-w-md mx-auto space-y-6'>
-            <div className='text-xl text-center '>
-                <p className='font-medium '>Edit Profile</p>
-            </div>       
-            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
-             
-                <div className="flex flex-col">
-              
-                <div className="relative flex flex-row  items-center">
-                   <div className={`${theme === 'light' && theme }-icon ${theme === 'neon' && theme }-icon
-                    ${activeTab === 1 && theme}-icon`}>
-                        <button  onClick={() => setActiveTab(1)}
-                        className={`w-1/3 md:w-[120px] h-16 px-4 flex flex-col items-center gap-1  py-2    `}>
-                            <span className={`material-symbols-outlined`}>person</span>
-                            <p className="text-sm ">Details</p>
-                        </button>
-                   </div>
-                   <div className={`${theme === 'light' && theme }-icon ${theme === 'neon' && theme }-icon`}>
-                        <button onClick={() => setActiveTab(2)} 
-                        className={`w-1/3 md:w-[120px] h-16 px-4 flex flex-col items-center gap-1  py-2 ${activeTab === 2 && theme}-icon `}>
-                            <span className="material-symbols-outlined">image</span>
-                            <p className="text-sm">Images</p>
-                        </button>
-                    </div>
-                    <div className={`${theme === 'light' && theme }-icon ${theme === 'neon' && theme }-icon`}>
-                        <button onClick={() => setActiveTab(3)}
-                        className={`w-1/3 md:w-[120px] h-16 px-4 flex flex-col items-center gap-1  py-2 ${activeTab === 3 && theme}-icon`}>
-                            <span className="material-symbols-outlined z-0">landscape</span>
-                            <p className="text-sm ">Location</p>
-                        </button>
-                    </div>                 
-                    <div role="indicator" className={`absolute ${activeTab === 1 ? 'tabLeft' : activeTab === 2 ? 'tabMiddle' : 'tabRight' }  bottom-0 transition-all duration-200 ease-in-out bg-purple-600  w-1/3 md:w-[120px] h-0.5 rounded-t-full`}></div>
-               
-                </div>
-                
-              
-                <div className="flex flex-col">
-                    {activeTab === 1 && 
-                    <div  className="active [&amp;.active]:block  py-4 transition duration-400 ease-in-out">
-                    <h3>Tabs content 1</h3>
-                    
-                    </div>
-}
-                  {activeTab === 2 && 
-                    <div  className="active [&amp;.active]:block  py-4 transition duration-400 ease-in-out">
-                    <h3>Tabs content 2</h3>
-                    
-                    </div>
-}
-                  {activeTab === 3 && 
-                    <div className="active [&amp;.active]:block  py-4 transition duration-400 ease-in-out">
-                    <h3>Tabs content 3</h3>
-                    
-                    </div>
-}
-                    
-                </div>
-                </div>
-                </div>
-                
-            </div>
-          
-      
- </>   
-
+    </Layout>
   )
+    
 }
 
-export default Page
+import { prisma } from '~/server/db';
+import { auth } from 'auth/lucia';
+import SuperJSON from 'superjson';
+import { GetServerSideProps, GetServerSidePropsContext } from 'next';
+import PageError from '~/components/error';
+import { getQueryKey } from '@trpc/react-query';
 
-//left-${activeTab === 1 ? 0 : activeTab === 2 ? 32 : 52}
+export const getServerSideProps: GetServerSideProps = async ({ req, res}) => {
+
+
+    const authRequest = auth.handleRequest(req, res)
+    const session = await authRequest.validateUser();
+
+    const ssg = createServerSideHelpers({
+        router: appRouter,
+        ctx: { prisma, currentUser: session, res, authRequest },
+        transformer: SuperJSON
+    })
+        if(session && session.user) {
+            console.log(session.user.userId)
+    await ssg.userQuery.getUserProfile.prefetch({id: session.user.userId})
+    await ssg.userQuery.getUsersGeoData.prefetch()
+        }
+    return {
+        props: {
+            trpcState: ssg.dehydrate(),
+        }
+    }
+}
+
+export default EditProfile

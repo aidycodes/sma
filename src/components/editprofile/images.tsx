@@ -67,7 +67,6 @@ const Images = ( user: UserProfile) => {
           }
         }}
         onUploadError={(error: Error) => {
-          // Do something with the error.
           toast.error('Upload Failed')
         }}
       />

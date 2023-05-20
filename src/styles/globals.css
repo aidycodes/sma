@@ -402,6 +402,16 @@ background: #0F2027;  /* fallback for old browsers */
     box-sizing: border-box;
     animation: rotation 1s linear infinite;
     }
+.loader-small {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #FFF;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+    }
 
     @keyframes rotation {
     0% {

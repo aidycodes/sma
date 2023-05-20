@@ -2,7 +2,9 @@ import { UserProfile } from '@prisma/client';
 import { useTheme } from 'next-themes';
 import React from 'react'
 import { useForm } from "react-hook-form";
+import { toast } from 'react-hot-toast';
 import { api } from '~/utils/api';
+import SubmitButton from '../submitbutton';
 
 
 type FormData = {
@@ -18,7 +20,13 @@ const Details = ( user: UserProfile  ) => {
         formState: { errors, isValid} } = useForm<FormData>();
     
     const { theme } = useTheme()
-    const editProfile = api.user.updateProfile.useMutation() 
+    const editProfile = api.user.updateProfile.useMutation({
+        onSuccess: () => toast.success('Profile Updated'),
+        onError: () => {
+            toast.error('Failed to update profile')
+        },
+
+    }) 
 
     register("username", { required: 'Username Required',
         value: user?.username,
@@ -70,9 +78,7 @@ const Details = ( user: UserProfile  ) => {
                 <textarea className="rounded-md p-1 h-40 w-full outline-none" {...register("bio")} />            
         </div>
        
-        <button   className={`!bg-blue-700 p-2 rounded-md  text-slate-300 hover:text-slate-200 hover:!bg-blue-600`} type="submit" >
-            Update
-        </button>
+            <SubmitButton isLoading={editProfile.isLoading} label="Update" type="submit" />
  
         </form> 
     </div>
@@ -81,4 +87,6 @@ const Details = ( user: UserProfile  ) => {
 
 export default Details
 
-
+{/* <button disabled={editProfile.isLoading}  className={`!bg-blue-700 p-2 rounded-md  text-slate-300 hover:text-slate-200 hover:!bg-blue-600 ${editProfile.isLoading && 'opacity-80'}`} type="submit" >
+            Update
+        </button> */}
