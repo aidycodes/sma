@@ -5,6 +5,26 @@ import { TRPCError } from "@trpc/server";
 
 export const userQueryRouter = createTRPCRouter({
     getUserProfile: publicProcedure
+            
+            .query( async({ input, ctx }) => {
+                try{
+                if(ctx.currentUser?.user?.userId == null){
+                    throw new TRPCError({message: "no user", code: "INTERNAL_SERVER_ERROR"})
+                }
+                const { userId } = ctx.currentUser.user
+                    const user = await ctx.prisma.userProfile.findUnique({where: {userid: userId}});
+                    return {
+                        user
+                    }
+                }catch(err){
+                    if(err instanceof Error){
+                        throw new TRPCError({message: err.message, code: "INTERNAL_SERVER_ERROR"})
+                    } else {
+                        console.log('unexpected error', err)
+                    }
+                }
+            }),
+    getProfile: publicProcedure
             .input(z.object({id: z.string()}))
             .query( async({ input, ctx }) => {
                 try{

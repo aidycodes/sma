@@ -6,20 +6,19 @@ import Layout from '~/components/Layout';
 import Tabs from '~/components/tabs';
 import { useSSRTheme } from '~/hooks/useSSRTheme';
 import { api } from '~/utils/api';
-import { createServerSideHelpers } from '@trpc/react-query/server';
-import { createTRPCContext } from '~/server/api/trpc';
-import { appRouter } from '~/server/api/root';
-const tabButtons = require('./tab-buttons.json')
+import PageError from '~/components/error';
+import { getQueryKey } from '@trpc/react-query';
 
+const tabButtons = require('./tab-buttons.json')
 
 const EditProfile = () => {
 
      useSSRTheme('light')
      const createProfile = api.user.createGeoUser.useMutation()
-    const { data, isLoading, isError } = api.userQuery.getUserProfile.useQuery({id:'WRdW83qzlVMK2qe'})
+    const { data, isLoading, isError } = api.userQuery.getUserProfile.useQuery()
     const {data: geoquery, isLoading: geoQueryLoading, isError: isErrorGeo } = api.userQuery.getUsersGeoData.useQuery()
 
-    const profileQueryKey = getQueryKey(api.userQuery.getUserProfile, {id:'WRdW83qzlVMK2qe'}, 'query')
+    const profileQueryKey = getQueryKey(api.userQuery.getUserProfile, undefined, 'query')
     const geoQueryKey = getQueryKey(api.userQuery.getUsersGeoData, undefined, 'query')
 
     const user = data?.user
@@ -47,15 +46,16 @@ const EditProfile = () => {
 import { prisma } from '~/server/db';
 import { auth } from 'auth/lucia';
 import SuperJSON from 'superjson';
-import { GetServerSideProps, GetServerSidePropsContext } from 'next';
-import PageError from '~/components/error';
-import { getQueryKey } from '@trpc/react-query';
+import { GetServerSideProps } from 'next';
+import { createServerSideHelpers } from '@trpc/react-query/server';
+import { appRouter } from '~/server/api/root';
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res}) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, res, resolvedUrl}) => {
 
 
     const authRequest = auth.handleRequest(req, res)
     const session = await authRequest.validateUser();
+    console.log(resolvedUrl)
 
     const ssg = createServerSideHelpers({
         router: appRouter,
@@ -63,13 +63,22 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res}) => {
         transformer: SuperJSON
     })
         if(session && session.user) {
-            console.log(session.user.userId)
-    await ssg.userQuery.getUserProfile.prefetch({id: session.user.userId})
+    await ssg.userQuery.getUserProfile.prefetch()
     await ssg.userQuery.getUsersGeoData.prefetch()
-        }
+        
     return {
         props: {
             trpcState: ssg.dehydrate(),
+            }
+        }   
+    }
+    return {
+        redirect:{
+            permanent:false,
+            destination:"/login"
+        },
+        props:{
+            resolvedUrl
         }
     }
 }

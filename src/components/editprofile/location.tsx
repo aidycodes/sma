@@ -70,7 +70,7 @@ const Location = ( {geoquery, loading}:
     <div className={`fg p-8 rounded-md shadow-md mt-12 flex flex-col ${theme === 'dark-blue' && 'items-center'}  `}>
         <h1 className="text-center pb-4 font-semibold tracking-widest">Location</h1>
             <div className="flex justify-center ">
-    <div className="flex flex-col justify-center gap-4 w-full mb-4 ">
+    <div className="flex flex-col justify-center items-center gap-4 w-full mb-4 ">
         <DisplayLocation data={geoquery} isLoading={loading} type={"Primary"} />  
        
        <DisplayLocation data={currentLocation} isLoading={isLoading} type={"Current"}/> 

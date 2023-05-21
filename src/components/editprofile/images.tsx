@@ -24,11 +24,14 @@ const Images = ( user: UserProfile) => {
   console.log({avatar})
   const { theme } = useTheme()
 
+
   return (
     <div className="fg p-8 rounded-md shadow-md mt-12">
         <h1 className="text-center pb-4 font-semibold tracking-widest">Profile Images</h1>
       <div>  
-         <div className={`${theme === 'light' || theme === 'neon' ? 'sticky2' : 'sticky-dark'} 
+         <div className={`${theme === 'light' || theme === 'neon' ? 'sticky2' :
+           theme === 'dark-blue' ? 'highlight-1 border-blue-600 border-2 '    
+         :'sticky-dark'} 
                           rounded-xl p-4 shadow-lg mt-2`}>
         <h2 className="font-semibold tracking-widest pb-4">Avatar</h2>   
         <div className="pb-10 flex gap-8 items-center">
@@ -50,7 +53,9 @@ const Images = ( user: UserProfile) => {
     </div>  
       </div>
     </div>
-         <div className={`${theme === 'light' || theme === 'neon' ? 'sticky2' : 'sticky-dark'} 
+         <div className={`${theme === 'light' || theme === 'neon' ? 'sticky2' : 
+          theme === 'dark-blue' ? 'highlight-1 border-blue-600 border-2 ' :
+         'sticky-dark'} 
                           rounded-xl p-4 shadow-lg mt-6`}>      
         <h2 className="font-semibold tracking-widest pb-4 ">Banner</h2>
 
