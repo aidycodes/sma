@@ -29,8 +29,8 @@ const Images = ( user: UserProfile) => {
     <div className="fg p-8 rounded-md shadow-md mt-12">
         <h1 className="text-center pb-4 font-semibold tracking-widest">Profile Images</h1>
       <div>  
-         <div className={`${theme === 'light' || theme === 'neon' ? 'sticky2' :
-           theme === 'dark-blue' ? 'highlight-1 border-blue-600 border-2 '    
+         <div className={`${theme === 'light' || theme === 'lightFix' || theme === 'lightFix' || theme === 'neon' || theme === 'neonFix' || theme === 'neonFix' ? 'sticky2' :
+           theme === 'dark-blue' || theme === 'dark-blueFix' || theme === 'dark-blueFix' ? 'highlight-1 border-blue-600 border-2 '    
          :'sticky-dark'} 
                           rounded-xl p-4 shadow-lg mt-2`}>
         <h2 className="font-semibold tracking-widest pb-4">Avatar</h2>   
@@ -53,8 +53,8 @@ const Images = ( user: UserProfile) => {
     </div>  
       </div>
     </div>
-         <div className={`${theme === 'light' || theme === 'neon' ? 'sticky2' : 
-          theme === 'dark-blue' ? 'highlight-1 border-blue-600 border-2 ' :
+         <div className={`${theme === 'light' || theme === 'lightFix' || theme === 'neon' || theme === 'neonFix' ? 'sticky2' : 
+          theme === 'dark-blue' || theme === 'dark-blueFix' ? 'highlight-1 border-blue-600 border-2 ' :
          'sticky-dark'} 
                           rounded-xl p-4 shadow-lg mt-6`}>      
         <h2 className="font-semibold tracking-widest pb-4 ">Banner</h2>

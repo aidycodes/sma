@@ -13,7 +13,7 @@ const tabButtons = require('./tab-buttons.json')
 
 const EditProfile = () => {
 
-     useSSRTheme('light')
+   
      const createProfile = api.user.createGeoUser.useMutation()
     const { data, isLoading, isError } = api.userQuery.getUserProfile.useQuery()
     const {data: geoquery, isLoading: geoQueryLoading, isError: isErrorGeo } = api.userQuery.getUsersGeoData.useQuery()
@@ -23,7 +23,8 @@ const EditProfile = () => {
 
     const user = data?.user
     const geoData = geoquery?.geoData
-
+    console.log(user)
+    useSSRTheme(user?.theme ? user.theme : 'light')
    if(!user || !geoData) {
     return (
     <Layout>
@@ -36,7 +37,7 @@ const EditProfile = () => {
             <Tabs tabs={tabButtons} >
                 {[<Details {...user}  />,<Images {...user}/>,<Location geoquery={geoData} loading={geoQueryLoading} />]}
             </Tabs>
-             <button onClick={() => createProfile.mutate({lat:51.4776883, lng:-2.5115698, country:'united kingdom', county:'South Gloucestershire', state:'england'})}>create geo data</button>
+  
 
     </Layout>
   )

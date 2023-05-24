@@ -10,7 +10,7 @@ const TabIcons = ({ name, icon, isSelected, onClick }: TabButton) => {
 
   return (
     <div className="relative flex flex-row  items-center -z-0">
-                   <div className={`${theme === 'light' && theme }-icon ${theme === 'neon' && theme }-icon  ${theme === 'dark' && 'dark-text'}
+                   <div className={`${theme === 'light' || theme === 'lightFix' && theme }-icon ${theme === 'neon' || theme === 'neonFix' && theme }-icon  ${theme === 'dark' || theme === 'darkFix' && 'dark-text'}
                     ${isSelected  && theme}-icon-selected `}>
                         <button  onClick={() => onClick(1)}
                         className={`w-[120px] h-16 px-4 flex flex-col items-center gap-1  py-2    `}>

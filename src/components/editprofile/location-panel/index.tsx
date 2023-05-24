@@ -9,16 +9,16 @@ const DisplayLocation = ( { data, isLoading, type }: {data: GeoUser | undefined 
   const { theme } = useTheme()
 
   if(isLoading) return (
-    <div className={`flex flex-col   shadow-xl ${theme === 'light' ? 'highlight-1 sticky-content text-slate-700' :
-       theme === 'dark' ? 'highlight-1 sticky-content-dark' :
-       theme === 'dark-blue' ? 'highlight-1 border-blue-600 border-2 px-[62px] py-[32px]' :
+    <div className={`flex flex-col   shadow-xl ${theme === 'light' || theme === 'lightFix' ? 'highlight-1 sticky-content text-slate-700' :
+       theme === 'dark' || theme === 'darkFix' ? 'highlight-1 sticky-content-dark' :
+       theme === 'dark-blue' || theme === 'dark-blueFix' ? 'highlight-1 border-blue-600 border-2 px-[62px] py-[32px]' :
        'highlight sticky-content'}
          w-fit  rounded-lg p-12  `}><LoadingSpinner/></div>
   )
   if(!data) return (
-     <div className={`flex flex-col   shadow-xl ${theme === 'light' ? 'highlight-1 sticky-content text-slate-700' :
-       theme === 'dark' ? 'highlight-1 sticky-content-dark' :
-       theme === 'dark-blue' ? 'highlight-1 border-blue-600 border-2 ' :
+     <div className={`flex flex-col   shadow-xl ${theme === 'light' || theme === 'lightFix' ? 'highlight-1 sticky-content text-slate-700' :
+       theme === 'dark' || theme === 'darkFix' ? 'highlight-1 sticky-content-dark' :
+       theme === 'dark-blue' || theme === 'dark-blueFix' ? 'highlight-1 border-blue-600 border-2 ' :
        'highlight sticky-content'}
          p-2 w-fit  rounded-lg   `}>
         <div className="flex justify-center items-center flex-col"> 
@@ -41,9 +41,9 @@ const DisplayLocation = ( { data, isLoading, type }: {data: GeoUser | undefined 
     })(Object.keys(data))).slice(4)
 
   return (
-      <div className={`flex flex-col   shadow-xl ${theme === 'light' ? 'highlight-1 sticky-content text-slate-700' :
-       theme === 'dark' ? 'highlight-1 sticky-content-dark' :
-       theme === 'dark-blue' ? 'highlight-1 border-blue-600 border-2 ' :
+      <div className={`flex flex-col   shadow-xl ${theme === 'light' || theme === 'lightFix' ? 'highlight-1 sticky-content text-slate-700' :
+       theme === 'dark' || theme === 'darkFix' ? 'highlight-1 sticky-content-dark' :
+       theme === 'dark-blue' || theme === 'dark-blueFix' ? 'highlight-1 border-blue-600 border-2 ' :
        'highlight sticky-content'}
          p-2 w-fit  rounded-lg   `}>
             <h2 className="font-semibold tracking-widest pb-2 ">{type} Location</h2>

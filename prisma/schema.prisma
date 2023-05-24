@@ -86,6 +86,7 @@ model UserProfile {
     profileid String   @id @default(cuid())
     userid    String   @unique
     username  String   @default("user")
+    theme     String?  @default("light")
     bio       String?
     work      String?
     education String?

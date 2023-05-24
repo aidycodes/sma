@@ -7,7 +7,7 @@ import Navbar from '~/components/navbar'
 const MyApp: AppType = ({ Component, pageProps }) => {
   
   return (
-    <ThemeProvider enableSystem={false} themes={['light','dark','neon','darkblue']}>
+    <ThemeProvider enableSystem={false} themes={['light','dark','neon','darkblue', 'darkFix', 'lightFix', 'dark-blueFix', 'neonFix']}>
        <Navbar/>
       <Component {...pageProps} />
   </ThemeProvider>

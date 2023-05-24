@@ -87,6 +87,4 @@ const Details = ( user: UserProfile  ) => {
 
 export default Details
 
-{/* <button disabled={editProfile.isLoading}  className={`!bg-blue-700 p-2 rounded-md  text-slate-300 hover:text-slate-200 hover:!bg-blue-600 ${editProfile.isLoading && 'opacity-80'}`} type="submit" >
-            Update
-        </button> */}
+

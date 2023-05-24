@@ -1,12 +1,23 @@
 import { useTheme } from "next-themes"
-import { useEffect, useLayoutEffect } from "react"
+import { useEffect, useState, useLayoutEffect } from "react"
 
-export const useSSRTheme = (userTheme = 'light') => {
-    const { setTheme } = useTheme()
+
+export const useSSRTheme = (userTheme: string | undefined | null) => {
+
+
+  const { setTheme } = useTheme()
+ 
     useLayoutEffect(() => {
-      setTheme('none')
+    if(userTheme){
+      setTheme(`${userTheme}Fix`)
+    }
     }, [])
     useEffect(() => {
+      if(userTheme){
         setTheme(userTheme)
+      }
+      
     }, [])
+    
+  
 }

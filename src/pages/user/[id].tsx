@@ -1,0 +1,106 @@
+import React from 'react'
+import PageError from '~/components/error'
+import Layout from '~/components/Layout'
+import { api } from '~/utils/api'
+import Banner from '~/components/profile/banner'
+import { useRouter } from 'next/router'
+import { appRouter } from '~/server/api/root';
+import { useSSRTheme } from '~/hooks/useSSRTheme'
+import { getQueryKey } from '@trpc/react-query'
+import { useTheme } from 'next-themes'
+import Profile from '~/components/profile'
+
+const UserPage = () => {
+
+    const { theme } = useTheme()
+    const [isMounted, setIsMounted] = React.useState(false)
+    const router = useRouter()
+    const  id  = router.query.id as string 
+
+   const { data, isLoading, isError } = api.userQuery.getProfile.useQuery({id:id})
+   const profileQueryKey = getQueryKey(api.userQuery.getProfile, {id:id}, 'query')
+
+   const { data: userData, isLoading: userLoading, isError: userError } = api.userQuery.getUserProfile.useQuery()
+   const userQueryKey = getQueryKey(api.userQuery.getUserProfile, undefined, 'query')
+
+    const { data: followInfo } = api.follow.isFollowerFollowing.useQuery({id})
+    
+   
+
+   const user = userData?.user
+   const profile = data?.user
+    useSSRTheme(user?.theme)
+    React.useLayoutEffect(() => {
+    setIsMounted(true)
+ }, [])
+        if(!isMounted) return null
+ 
+    if(!user && !profile && !followInfo) {
+        return (
+            <Layout>
+                <PageError isLoading={[isLoading]} queryKeys={[profileQueryKey, userQueryKey]} isError={[isError, userError]}/>
+            </Layout>
+        )}
+  
+
+  return (
+    <ProfileLayout>
+        <div className="  w-full h-full ">
+               <Banner image={profile.cover}/>
+           <Profile {...profile} {...followInfo} userid={id}/>
+               sssss  UserPage
+        </div>
+  
+    </ProfileLayout>
+  )
+}
+
+export default UserPage
+
+
+import { prisma } from '~/server/db';
+import { auth } from 'auth/lucia';
+import SuperJSON from 'superjson';
+import { GetServerSideProps } from 'next';
+import { createServerSideHelpers } from '@trpc/react-query/server';
+import ProfileLayout from '~/components/profile/ProfileLayout'
+
+
+
+
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res, params, resolvedUrl}) => {
+
+
+    const authRequest = auth.handleRequest(req, res)
+    const session = await authRequest.validateUser();
+    console.log(resolvedUrl)
+    const id = params?.id as string
+    const ssg = createServerSideHelpers({
+        router: appRouter,
+        ctx: { prisma, currentUser: session, res, authRequest },
+        transformer: SuperJSON
+    })
+        if(session && session.user) {
+    await ssg.userQuery.getUserProfile.prefetch()
+    if(id){
+    await ssg.userQuery.getProfile.prefetch({id})
+    await ssg.follow.isFollowerFollowing.prefetch({id})
+    }
+    return {
+        props: {
+            trpcState: ssg.dehydrate(),
+            serverTheme:'dark-blue'
+            }
+        }   
+    }
+    return {
+        redirect:{
+            permanent:false,
+            destination:"/login"
+        },
+        props:{
+            resolvedUrl
+        }
+    }
+}

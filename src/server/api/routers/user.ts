@@ -197,6 +197,28 @@ export const userRouter = createTRPCRouter({
             console.log('unexpected error', err)
         }}
     }),
+    updateTheme: privateProcedure.
+    input(z.object({ theme: z.string() }))
+    .mutation(async({ input, ctx }) => {
+      try{
+        const { theme } = input
+          const userid = ctx.currentUser.user.userId
+          const updated = await ctx.prisma.userProfile.update({
+            where: {userid},
+            data: {
+              theme
+            }
+          })
+            return {
+              updated
+            }
+      } catch(err){
+        if(err instanceof Error){
+        throw new TRPCError({message: err.message, code: "INTERNAL_SERVER_ERROR"})
+        } else {
+            console.log('unexpected error', err)
+        }}
+    }),
 
 
   isAuthed: privateProcedure.query(async({ ctx }) => {

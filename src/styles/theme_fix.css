@@ -1,0 +1,181 @@
+[data-theme="darkFix"] {
+  --background: #212124;
+  --foreground: #1f1b24;
+  --text-primary: #f5f5f5;
+  --text-secondary: #818181;
+  --border-color: #212124;
+}
+
+[data-theme="neonFix"] {
+  --background: #ffb3ba;
+  --foreground: #0ff0fc;
+  --text-primary: #8a2be2;
+  --text-secondary: #7fff00;
+  --border-color: #ffffff;
+}
+[data-theme="dark-blueFix"] {
+  --background: #050a30;
+  --foreground: #000c66;
+  --text-primary: #7ec8e3;
+  --text-secondary: #0000ff;
+  --border-color: #0000ff;
+}
+
+.lightFix-menu:hover {
+  backdrop-filter: brightness(1) sepia(1) hue-rotate(140deg) saturate(5);
+}
+
+.darkFix-menu:hover {
+  backdrop-filter: grayscale(5) brightness(2);
+}
+.neonFix-menu:hover {
+  backdrop-filter: brightness(1) sepia(2) hue-rotate(270deg) saturate(10);
+  color: blue;
+}
+.dark-blueFix-menu:hover {
+  backdrop-filter: brightness(2);
+}
+
+.lightFix-menu-selected {
+  backdrop-filter: brightness(1) sepia(1) hue-rotate(140deg) saturate(5);
+}
+.darkFix-menu-selected {
+  backdrop-filter: grayscale(5) brightness(2);
+}
+.neonFix-menu-selected {
+  backdrop-filter: brightness(1) sepia(2) hue-rotate(270deg) saturate(10);
+}
+.dark-blueFix-menu-selected {
+  backdrop-filter: brightness(2);
+}
+
+.highlightFix {
+  backdrop-filter: brightness(1) saturate(10);
+}
+.highlightFix-1 {
+  backdrop-filter: brightness(1) saturate(2);
+}
+
+.lightFix-icon {
+  filter: brightness(0.8) sepia(1) hue-rotate(140deg) saturate(8);
+}
+.lightFix-icon :hover {
+  filter: brightness(1) sepia(1) hue-rotate(140deg) saturate(10);
+}
+
+.lightFix-icon-selected {
+  filter: brightness(1) sepia(1) hue-rotate(140deg) saturate(10);
+}
+
+.dark-blueFix-icon {
+  filter: brightness(0.8) sepia(1) hue-rotate(140deg) saturate(8);
+}
+.dark-blueFix-icon :hover {
+  filter: brightness(1) sepia(1) hue-rotate(140deg) saturate(10);
+}
+.dark-blueFix-icon-selected {
+  filter: brightness(1) sepia(1) hue-rotate(140deg) saturate(10);
+}
+
+.neonFix-icon {
+  filter: brightness(1) sepia(2) hue-rotate(280deg) saturate(8);
+}
+.neonFix-icon :hover {
+  filter: brightness(2) sepia(2) hue-rotate(140deg) saturate(10);
+}
+.neonFix-icon-selected {
+  filter: brightness(1) sepia(10) hue-rotate(290deg) saturate(10);
+}
+
+.darkFix-icon :hover {
+  filter: brightness(0.5) sepia(1) hue-rotate(180deg) saturate(10);
+}
+.darkFix-icon-selected {
+  filter: brightness(1) sepia(1) hue-rotate(180deg) saturate(10);
+  color: #38bdf8;
+}
+
+/* THEME PICKER COLOR PALETTE */
+/*lightFix THEME*/
+
+.theme-picker-bg-lightFix {
+  background-color: #bae1ff;
+}
+.theme-picker-fg-lightFix {
+  background-color: #ffdfba;
+}
+
+.theme-picker-text1-lightFix {
+  background-color: #818181;
+}
+.theme-picker-text2-lightFix {
+  background-color: #77dd77;
+}
+
+/*darkFix THEME*/
+
+.theme-picker-bg-darkFix {
+  background-color: #212124;
+}
+.theme-picker-fg-darkFix {
+  background-color: #1f1b24;
+}
+
+.theme-picker-text1-darkFix {
+  background-color: #f5f5f5;
+}
+.theme-picker-text2-darkFix {
+  background-color: #818181;
+}
+
+/*neonFix THEME*/
+
+.theme-picker-bg-neonFix {
+  background-color: #ffb3ba;
+}
+.theme-picker-fg-neonFix {
+  background-color: #0ff0fc;
+}
+
+.theme-picker-text1-neonFix {
+  background-color: #8a2be2;
+}
+.theme-picker-text2-neonFix {
+  background-color: #7fff00;
+}
+
+/*darkFix BLUE THEME*/
+
+.theme-picker-bg-dark-blueFix {
+  background-color: #050a30;
+}
+.theme-picker-fg-dark-blueFix {
+  background-color: #000c66;
+}
+
+.theme-picker-text1-dark-blueFix {
+  background-color: #7ec8e3;
+}
+.theme-picker-text2-dark-blueFix {
+  background-color: #0000ff;
+}
+
+.sticky-darkFix {
+  background-color: #111827;
+  font-family: "Kalam", cursive;
+  font-size: 1.25rem;
+}
+
+.sticky-content-darkFix {
+  background: #0f2027; /* fallback for old browsers */
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Kalam", cursive;
+  font-size: 1.25rem;
+
+  clip-path: url(#stickyClip);
+}
