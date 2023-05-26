@@ -45,10 +45,13 @@ const UserPage = () => {
 
   return (
     <ProfileLayout>
-        <div className="  w-full h-full ">
-               <Banner image={profile.cover}/>
+        <div className="  w-full h-full 2xl:w-11/12 ">
+            <div className="flex flex-col items-center justify-center">
+               <Banner image={profile?.cover}/>
+               </div>
            <Profile {...profile} {...followInfo} userid={id}/>
                sssss  UserPage
+               
         </div>
   
     </ProfileLayout>
