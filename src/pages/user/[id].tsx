@@ -9,6 +9,7 @@ import { useSSRTheme } from '~/hooks/useSSRTheme'
 import { getQueryKey } from '@trpc/react-query'
 import { useTheme } from 'next-themes'
 import Profile from '~/components/profile'
+import useIsFollowerFollowing  from '../../hooks/api/useIsFollowerFollowing'
 
 const UserPage = () => {
 
@@ -23,13 +24,15 @@ const UserPage = () => {
    const { data: userData, isLoading: userLoading, isError: userError } = api.userQuery.getUserProfile.useQuery()
    const userQueryKey = getQueryKey(api.userQuery.getUserProfile, undefined, 'query')
 
-    const { data: followInfo } = api.follow.isFollowerFollowing.useQuery({id})
+    //const { data: followInfo } = api.follow.isFollowerFollowing.useQuery({id})
     
-   
+    const { data: followInfo } = useIsFollowerFollowing(id)
+   //const followInfo = {userFollows:false, followsUSer:false}
 
    const user = userData?.user
-   const profile = data?.user
-    useSSRTheme(user?.theme)
+   const profile = data
+
+    useSSRTheme(user?.profile?.theme)
     React.useLayoutEffect(() => {
     setIsMounted(true)
  }, [])
@@ -72,12 +75,13 @@ import ProfileLayout from '~/components/profile/ProfileLayout'
 
 
 
+
 export const getServerSideProps: GetServerSideProps = async ({ req, res, params, resolvedUrl}) => {
 
 
     const authRequest = auth.handleRequest(req, res)
     const session = await authRequest.validateUser();
-    console.log(resolvedUrl)
+
     const id = params?.id as string
     const ssg = createServerSideHelpers({
         router: appRouter,

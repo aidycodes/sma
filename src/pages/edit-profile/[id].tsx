@@ -63,7 +63,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res}) => {
         transformer: SuperJSON
     })
         if(session && session.user) {
-            console.log(session.user.userId)
+
     await ssg.userQuery.getUserProfile.prefetch({id: session.user.userId})
     await ssg.userQuery.getUsersGeoData.prefetch()
         }

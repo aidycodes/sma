@@ -19,7 +19,7 @@ const FeedbackPage = () => {
    const { data, isLoading, isError } = api.userQuery.getUserProfile.useQuery()
    const profileQueryKey = getQueryKey(api.userQuery.getUserProfile, undefined, 'query')
 
-   const user = data?.user
+   const user = data?.user?.profile
     useSSRTheme(user?.theme)
     React.useLayoutEffect(() => {
     setIsMounted(true)
@@ -50,7 +50,7 @@ const FeedbackPage = () => {
             <div className="flex items-center gap-8 w-[240px] ">
                 <Image className="rounded-[50px] w-16 h-16" src={user?.avatar ? user.avatar : '/icons/user.svg'} 
                 alt="avatar" width={50} height={50} />
-            <h2> {data?.user?.username} </h2>
+            <h2> {user?.username} </h2>
             </div>
             <p> Tell us what you think!</p>
         <textarea />
@@ -79,7 +79,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, resolve
 
     const authRequest = auth.handleRequest(req, res)
     const session = await authRequest.validateUser();
-    console.log(resolvedUrl)
+
 
     const ssg = createServerSideHelpers({
         router: appRouter,

@@ -8,9 +8,10 @@ type Props = {
     icon: string
     size: number
     component: React.ReactNode
+    width?: number
 }
 
-const Menu = ({icon, size, component}: Props) => {
+const Menu = ({icon, size, component, width}: Props) => {
 
     const [showPopup, setShowPopup] = React.useState(false)
 
@@ -20,7 +21,7 @@ const Menu = ({icon, size, component}: Props) => {
   return (
     <div ref={ref} className="relative">
     <Icon size={size}  name={icon} onClick={() => setShowPopup(!showPopup)} isSelected={showPopup} />
-    {showPopup && <Popup component={component} />}
+    {showPopup && <Popup component={component} width={width}/>}
     </div>
   )
 }

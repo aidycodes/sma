@@ -15,6 +15,5 @@ const geocoder = NodeGeocoder(options);
 
 export default async function handler (req: NextApiRequest, res: NextApiResponse) {
     const geoData = await geocoder.reverse({lat:req.body.lat  , lon: req.body.lng});
-    console.log(geoData)
   res.status(200).json(geoData as any);
 }

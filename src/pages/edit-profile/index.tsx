@@ -21,9 +21,9 @@ const EditProfile = () => {
     const profileQueryKey = getQueryKey(api.userQuery.getUserProfile, undefined, 'query')
     const geoQueryKey = getQueryKey(api.userQuery.getUsersGeoData, undefined, 'query')
 
-    const user = data?.user
+    const user = data?.user?.profile
     const geoData = geoquery?.geoData
-    console.log(user)
+
     useSSRTheme(user?.theme ? user.theme : 'light')
    if(!user || !geoData) {
     return (
@@ -56,7 +56,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, resolve
 
     const authRequest = auth.handleRequest(req, res)
     const session = await authRequest.validateUser();
-    console.log(resolvedUrl)
+
 
     const ssg = createServerSideHelpers({
         router: appRouter,

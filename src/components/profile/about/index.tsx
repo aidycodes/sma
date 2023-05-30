@@ -12,7 +12,7 @@ type Props = {
 
 const About = ({ bio, work, education, joined, location }: Props) => {
   return (
-    <div className="fg w-[90%] rounded-lg shadow-lg m-4 dbo-border   xl:pb-2 xl:w-full   ">
+    <div className="fg w-[90%] rounded-lg shadow-lg m-4 dbo-border lg:my-4 lg:ml-2 lg:mr-0  xl:pb-2 lg:w-full 2xl:max-w-[680px]  ">
         <div className="pt-2 flex flex-col ">
             <div className="pl-2">
                 <h2 className="text-3xl font-bold font-cursive">About</h2>

@@ -30,7 +30,7 @@ const Home: NextPage = () => {
   const getMoreComments = api.userQuery.getMoreComments.useQuery({id:"clh6c6rbc0007v5pgjn7k3u13", commentAmt:10, commentSkip:0})
  const followUser = api.follow.followUser.useMutation()
   const unfollowUser = api.follow.unfollowUser.useMutation()
-  // console.log(getPost)
+
   const hasViewed = api.notify.hasViewed.useMutation()
   const followfollowing = api.follow.isFollowerFollowing.useQuery({id:'WRdW83qzlVMK2qe'})
 
@@ -47,7 +47,7 @@ const Home: NextPage = () => {
   const unlikegeoComment = api.geoComment.unlike.useMutation()
 
   const getGeoPost = api.geoPost.getPost.useQuery({postid:'nd7rox72k73bq091f2rc6m0p'}, {keepPreviousData:true})
-  //console.log(currentUser)
+
 
   return (
     <>

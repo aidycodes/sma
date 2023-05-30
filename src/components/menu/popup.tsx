@@ -6,11 +6,11 @@ import SettingsItem from '../navbar/settings/settingsItem'
 
 
 
-const Popup = ({component}: {component:React.ReactNode}) => {
+const Popup = ({component, width = 56}: {component:React.ReactNode, width?: number}) => {
 
 
   return (
-    <div  className="absolute right-0 lg:left-0 fg w-56  shadow-xl rounded-md">
+    <div  className={`absolute right-0 lg:left-0 fg w-${width}  shadow-xl rounded-md`}>
             {component}    
     </div>
         

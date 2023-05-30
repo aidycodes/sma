@@ -114,6 +114,7 @@ model Post {
     user              AuthUser            @relation(fields: [userid], references: [id])
     Post_Notification Post_Notification[]
 
+    @@unique([created_at, postid])
     @@index(fields: [userid, postid])
     @@map("post")
 }

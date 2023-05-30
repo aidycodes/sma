@@ -46,7 +46,7 @@ const Item = ({content, type, link, viewed, id, queryKey}: Props) => {
     const hasViewed = api.notify.hasViewed.useMutation({
         async onMutate(data) {
             if(queryKey){
-                console.log(queryKey)
+              
             const previousTodo = queryClient.getQueryData([...queryKey]) as Note  
             const updatedTodos = previousTodo?.pages.map((page, i) => {
             const notes = page.notifcations.map((note) => (
@@ -55,7 +55,7 @@ const Item = ({content, type, link, viewed, id, queryKey}: Props) => {
                 return {notifcations:notes, nextCursor: previousTodo.pages[i].nextCursor}
             })
    
-          console.log({pages:updatedTodos, pageParams:previousTodo.pageParams})
+         
                 queryClient.setQueryData([...queryKey], {pages:updatedTodos, pageParams:previousTodo.pageParams})
                 return {pages:updatedTodos, pageParams:previousTodo.pageParams}
         }

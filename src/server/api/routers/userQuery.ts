@@ -12,7 +12,9 @@ export const userQueryRouter = createTRPCRouter({
                     throw new TRPCError({message: "no user", code: "INTERNAL_SERVER_ERROR"})
                 }
                 const { userId } = ctx.currentUser.user
-                    const user = await ctx.prisma.userProfile.findUnique({where: {userid: userId}});
+                    const user = await ctx.prisma.authUser.findUnique({where: {id: userId},
+                        select:{followers_cnt:true, created_at:true, profile:true}
+                    });
                     return {
                         user
                     }
@@ -29,9 +31,13 @@ export const userQueryRouter = createTRPCRouter({
             .query( async({ input, ctx }) => {
                 try{
                     const { id } = input;
-                    const user = await ctx.prisma.userProfile.findUnique({where: {userid: id}});
+                    const user = await ctx.prisma.authUser.findUniqueOrThrow({where: {id: id},
+                      select:{followers_cnt:true, created_at:true, profile:true}
+                    });
                     return {
-                        user
+                        followers_cnt:user.followers_cnt,
+                        created_at:user.created_at,
+                        ...user.profile
                     }
                 }catch(err){
                     if(err instanceof Error){
@@ -42,38 +48,53 @@ export const userQueryRouter = createTRPCRouter({
                 }
             }),
     getUserPosts: publicProcedure
-            .input(z.object({id: z.string(), postAmt:z.number(), postSkip: z.number(), commentAmt: z.number()}))
-            .query( async({ input, ctx }) => {
+            .input(z.object({id: z.string(), postAmt:z.number(), cursor: z.object({created_at: z.date(), postid: z.string()}).optional()}))
+            .query( async({ input: {id, postAmt, cursor}, ctx }) => {  
                 try{
-                    const { id, commentAmt, postAmt, postSkip } = input;
+                 
                     const posts = await ctx.prisma.post.findMany({
                         where: {userid: id},
-                        orderBy: {created_at: 'asc'},
-                        take:postAmt,
-                        skip:postSkip,
-                        include: {comments: {
+                        orderBy: {created_at: 'desc'},
+                        take:postAmt + 1,
+                        cursor: cursor ? {created_at_postid: cursor } : undefined,
+                        include: {
+                            user: {
+                                select: {followers_cnt:true, following_cnt:true, profile:true}},
+                            comments: {
                             include: {user: true, likes:{
                                 select: {user: {
                                     select:{
                                         username:true, id:true}}
                                     },
-                                take:2
                             }},
-                            orderBy: {created_at: 'desc'},
-                            take:commentAmt,
-                            
+                            orderBy: {created_at: 'desc'},         
                         },
                         likes:{
                             select: {user: {
-                                select:{username:true, id:true}
-                                }},
-                            take:2
+                                    select:{
+                                        profile:{
+                                            select:{
+                                                avatar:true, username:true, userid:true}
+                                            }
+                                        }
+                                    }
+                                }
+                                }
                         }
+                    })
+
+                    let nextCursor: typeof cursor | undefined;
+                    if(posts.length > postAmt){
+                        const nextItem = posts.pop()
+                        if(nextItem != null){
+                        nextCursor = {created_at: nextItem.created_at, postid: nextItem.postid}
                     }
-                    });
-                    return {
-                        posts
                     }
+                     return {           
+                        posts,
+                        nextCursor
+                    }
+                           
                 }catch(err){
                     if(err instanceof Error){
                         throw new TRPCError({message: err.message, code: "INTERNAL_SERVER_ERROR"})
