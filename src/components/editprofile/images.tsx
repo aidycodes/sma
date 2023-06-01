@@ -21,7 +21,7 @@ const Images = ( user: UserProfile) => {
   const [avatarImg, setAvatarImg] = React.useState<string | null>(avatar)
   const [coverImg, setCoverImg] = React.useState<string | null>(cover)
 
-  console.log({avatar})
+
   const { theme } = useTheme()
 
 

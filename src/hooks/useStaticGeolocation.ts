@@ -10,7 +10,7 @@ export const useStaticGeoLocation = () => {
     useEffect(() => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(position => {
-                //console.log(position)
+        
                 setLocation({lat: position.coords.latitude, lng: position.coords.longitude})
             }, (error) => {
                 console.log({error, message: 'geolocation error'})

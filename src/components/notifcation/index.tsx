@@ -41,9 +41,9 @@ export default function Notifcation({ queryKey }: Props) {
 
     useEffect(() => {        
         socket.connect()
-         console.log('dkdkdk')
+      
         socket.once('notification', (data) => {
-            console.log('dkdkdk')
+     
             const notification: Notification = JSON.parse(data.payload)
             queryClient.invalidateQueries({ queryKey: queryKey })
             setNotifcationFix(!notifcationFix)

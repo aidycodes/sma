@@ -10,6 +10,7 @@ import PostItem from '../post'
 import useFollowUser from '~/hooks/api/useFollowUser'
 import useUnfollowUser from '~/hooks/api/useUnfollowUser'
 import ProfileFeed from './postfeed';
+import PostSkeleton from '../post/skeleton';
 
 type Props = {
     userid: string
@@ -43,7 +44,7 @@ const Profile = ({ userid, cover, avatar, username,  followsUser,
   const { data } =   api.userQuery.getUserPosts.useInfiniteQuery({id:'WRdW83qzlVMK2qe', postAmt:3 }, {
     getNextPageParam: (lastPage) => lastPage ? lastPage.nextCursor : undefined
   })
-    console.log({data})
+
         
   return (
 <div>
@@ -80,7 +81,8 @@ const Profile = ({ userid, cover, avatar, username,  followsUser,
         <div className=" lg:w-1/2">
         <About {...about}/>
         </div>
-        <div className=" h-[800px] border-2 border-white rounded-md m-8 lg:m-4 w-11/12">
+        <div className="  border-2rounded-md  w-11/12">
+            <div className="w-[100px] ml-8 px-2 fg py-2 rounded-md text-2xl text-center">Posts</div>
                 <ProfileFeed/>
         </div>
         </div>

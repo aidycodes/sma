@@ -1,19 +1,18 @@
 import Image from 'next/image'
 import React from 'react'
 import useCurrentUserProfile from '~/hooks/api/useCurrentUserProfile'
-import useLikePost from '~/hooks/api/profileFeed/useLikePost'
-import { api } from '~/utils/api'
-import useUnlikePost from '~/hooks/api/profileFeed/useUnlikePost-profile'
-import { Unlike } from '~/components/profile/postfeed'
 
-const LikeComment = ({ postid, userLikes, like, unlike }:
+const LikeComment = ({ postid, userLikes, like, unlike, commentRef }:
      { postid: string, userLikes: boolean
-       like: any, unlike: any }) => {
+       like: any, unlike: any 
+      commentRef: React.RefObject<HTMLDivElement>}) => {
 
-   // const like = useLikePost('WRdW83qzlVMK2qe')
- //   const unlike = useUnlikePost('WRdW83qzlVMK2qe', postid)
     const profile = useCurrentUserProfile()
 
+    const moveToComment = () => {
+      console.log(commentRef)
+        commentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
 
   return (
     <div>
@@ -37,7 +36,8 @@ const LikeComment = ({ postid, userLikes, like, unlike }:
                 </div>                                  }
                 </div>
                 <div className={`flex items-center gap-2 p-4  justify-center cursor-pointer
-                                     hover:backdrop-brightness-200 basis-1/2 `}>
+                                     hover:backdrop-brightness-200 basis-1/2 `}
+                                     onClick={() => moveToComment()}>
                     <Image width={30} height={30}  src='/icons/comment.svg'  alt="icon"  />
                 <h2>Comment</h2>
                </div>

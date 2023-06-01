@@ -14,27 +14,21 @@ const useUnlikePost = (profileId: string) => {
                 if(old){
                    
                  
-            const post =  old.pages.flatMap((page: any) => page.posts)
+            const unliked =  old.pages.flatMap((page: any) => page.posts)
                        .find((post: any) => post.postid === unlikedPost.postid)
-                       
-                    
-                 console.log({old})   
-                   //const post = old.posts.find((post: any) => post.postid === unlikedPost.postid)
+                      .likes.filter((like: any) => like.user.profile.userid !== profile?.userid)
 
-                    const unliked = post.likes.filter((like: any) => like.user.profile.userid !== profile?.userid)
-                   //return {...old, pages: 
-                       const wtf =     old.pages.map((page: any) => {
-                       const post = page.posts.map((post: any) => {
-                          if(post.postid === unlikedPost.postid){
-                            return {...post, likes_cnt: post.likes_cnt - 1, likes: unliked}
+                       const pages = old.pages.map((page: any) => {
+                            const post = page.posts.map((post: any) => {
+                             if(post.postid === unlikedPost.postid){
+                                return {...post, likes_cnt: post.likes_cnt - 1, likes: unliked}
                           }
-                          return post
+                            return post
                     })
-                            return {...page, posts: post}
+                        return {...page, posts: post}
                    
                 })
-                    console.log({wtf})
-                return {...old, pages: wtf}
+                return {...old, pages }
                
         }})
     },

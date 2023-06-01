@@ -13,8 +13,7 @@ type Props = {
 
 }
 
-
-const UserToolTip = ({username, userid: id, avatar }: Props) => {
+const CommentUserToolTip = ({username, userid: id, avatar }: Props) => {
 
     if(!id) return null
    const { followUser } = useFollowUser(id) 
@@ -23,7 +22,7 @@ const UserToolTip = ({username, userid: id, avatar }: Props) => {
    if(!data) return null
     
     return(
-   <div className="w-80 h-40 fg absolute top-10 p-2 shadow-2xl z-50 border-slate-600 rounded-md border-[1px] ">
+   <div className="w-80 h-40 fg absolute bottom-10 left-[-305px] p-2 shadow-2xl z-50 border-slate-600 rounded-md border-[1px] ">
     <Link href={`/user/${id}`}>
         <div className="fg flex items-center gap-4">
         <div className="h-20 w-20 relative mt-1">
@@ -52,4 +51,4 @@ const UserToolTip = ({username, userid: id, avatar }: Props) => {
     )
 }
 
-export default UserToolTip
+export default CommentUserToolTip

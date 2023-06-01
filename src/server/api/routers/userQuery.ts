@@ -61,13 +61,21 @@ export const userQueryRouter = createTRPCRouter({
                             user: {
                                 select: {followers_cnt:true, following_cnt:true, profile:true}},
                             comments: {
-                            include: {user: true, likes:{
+                               
+                            include: {user: {
+                                select:{
+                                    profile:{
+                                        select:{
+                                            avatar:true, username:true, userid:true}
+                                    }
+                                }
+                            }, likes:{
                                 select: {user: {
                                     select:{
                                         username:true, id:true}}
                                     },
                             }},
-                            orderBy: {created_at: 'desc'},         
+                            orderBy: {created_at: 'asc'},         
                         },
                         likes:{
                             select: {user: {
