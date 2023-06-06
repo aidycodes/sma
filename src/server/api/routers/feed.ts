@@ -51,6 +51,9 @@ export const feedRouter = createTRPCRouter({
                                 }
                             },
                             comments: {
+                                orderBy: {
+                                    created_at: "asc",
+                                },
                                 include:{
                                     user: {
                                         select: {
@@ -67,6 +70,7 @@ export const feedRouter = createTRPCRouter({
                                             }}
                                     }},
                             },
+                            
                         }},
                         orderBy: {
                             created_at: "desc",
@@ -202,6 +206,9 @@ export const feedRouter = createTRPCRouter({
                             }
                         },
                         comments: {
+                            orderBy:{
+                                created_at: "asc",
+                            },
                             include: {
                                 user: {
                                     select: {

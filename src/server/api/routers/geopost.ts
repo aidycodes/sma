@@ -86,10 +86,10 @@ export const geoPostRouter = createTRPCRouter({
                 }}
         }),
     like: privateProcedure
-        .input(z.object({ postid: z.string(), postUserid: z.string() }))
+        .input(z.object({ postid: z.string(), userid: z.string(), currentUser: z.string() }))
         .mutation(async ({ input, ctx }) => {
           try{  
-            const { postid, postUserid } = input
+            const { postid, userid, currentUser } = input
             const [liked, notify_user] = await Promise.all([ ctx.prisma.geo_Post.update({
                 where: {
                     postid
@@ -106,9 +106,9 @@ export const geoPostRouter = createTRPCRouter({
             }),
             ctx.prisma.notifyUser.create({
                 data: {
-                    userid: postUserid,
+                    userid: userid,
                     type: 'like',
-                    content: `${ctx.currentUser.user.userId} liked your post!`,
+                    content: `${currentUser} liked your post!`,
                     relativeId: postid,
                 }
             })

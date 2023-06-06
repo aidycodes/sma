@@ -38,7 +38,7 @@ export const geoCommentRouter = createTRPCRouter({
         .mutation(async ({ input, ctx }) => {
               try{
                 const comment = await ctx.prisma.geo_Comment.update({
-                 where: { geo_commentid: input.geo_commentid },
+                 where: { commentid: input.geo_commentid },
                  data: { ...input,
                       meta: input.meta && input.meta,
                  },
@@ -61,7 +61,7 @@ export const geoCommentRouter = createTRPCRouter({
                     where:{postid: input.postid},
                     data:{comment_cnt: {decrement: 1},
                     comments: {
-                        delete: {geo_commentid: input.commentid}
+                        delete: {commentid: input.commentid}
                     }
                    }
                 })
@@ -86,7 +86,7 @@ export const geoCommentRouter = createTRPCRouter({
                         where: { id: userid },
                         data: { notifications: {
                             create: { content:`${currentUser} liked your comment!`, relativeId:postid, type:'comment'} },    //username will be passed
-                            geo_comments:{update: {where: {geo_commentid: commentid}, data: {likes_cnt: {increment: 1}}}}
+                            geo_comments:{update: {where: {commentid: commentid}, data: {likes_cnt: {increment: 1}}}}
                 }
             }),
                     ctx.prisma.geo_Like.create({
@@ -110,7 +110,7 @@ export const geoCommentRouter = createTRPCRouter({
             .mutation(async ({ input, ctx }) => {
              try{
             const deletedLike = await ctx.prisma.geo_Comment.update({
-                where: { geo_commentid: input.commentid },
+                where: { commentid: input.commentid },
                 data: { likes_cnt: { decrement: 1 }, 
                 likes: { deleteMany: { postid_userid:`${input.commentid}_${ctx.currentUser.user.userId}` } },
             }

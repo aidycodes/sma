@@ -1,4 +1,7 @@
+import { useAtom } from "jotai"
 import { useEffect, useState } from "react"
+import { toast } from "react-hot-toast"
+import { currentLocationAtom } from "~/jotai/store"
 
 interface LocationData {
     lat: number,
@@ -8,15 +11,16 @@ interface LocationData {
 export const useGeolocation = () => {
    const [location, setLocation] = useState<LocationData | null>(null)
    const [isLoading, setIsLoading] = useState<boolean>(true)
+   const [, setLocationAtom] = useAtom(currentLocationAtom)
     useEffect(() => {
         if (navigator.geolocation) {
            setIsLoading(true)
             const watch = navigator.geolocation.watchPosition(position => {
             
                 setLocation({lat: position.coords.latitude, lng: position.coords.longitude})
+                setLocationAtom({lat: position.coords.latitude, lng: position.coords.longitude})
             }, (error) => {
-               
-                setLocation({lat: 51.5074, lng: 0.1278})
+               toast.error('Please enable location services')     
             },{enableHighAccuracy: true, timeout: 50000, maximumAge: 5000}
             )
             setIsLoading(false)

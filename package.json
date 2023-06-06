@@ -22,6 +22,7 @@
     "@types/jsonwebtoken": "^9.0.2",
     "@uploadthing/react": "^3.0.4",
     "dayjs": "^1.11.7",
+    "jotai": "^2.1.1",
     "jsonwebtoken": "^9.0.0",
     "lucia-auth": "^1.4.0",
     "millify": "^6.1.0",

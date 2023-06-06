@@ -3,7 +3,6 @@ import React from 'react'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import Icon from '../icon'
-import Image from 'next/image'
 import { useTheme } from 'next-themes'
 import PostHeader from './header'
 import PostSettings from './settings'
@@ -11,7 +10,6 @@ import Menu from '../menu'
 import PostCounter from './counter'
 import LikeComment from './likeComment'
 import { useRemoveFromFeed } from '~/hooks/api/profileFeed/useRemoveFromFeed-profile'
-import { api } from '~/utils/api'
 import CommentItem from './comment/commentItem'
 import PostComment from './comment/postComment'
 import Content from './content'
@@ -74,11 +72,15 @@ const PostItem = ( {postid, created_at, title,
            { comments.map(({ content, commentid, user, created_at, postid, likes, likes_cnt }: any, i) => {
                 if(i < commentCount){
                    
-                   return <CommentItem key={commentid} content={content} 
+                   return (
+                   <div  key={commentid}>
+                   <CommentItem content={content} 
                     profile={user.profile} created_at={created_at}
                     postid={postid} likes={likes} likes_cnt={likes_cnt} 
                     commentid={commentid}
                     />
+                    </div>
+                   )
                   }
                 if(i === commentCount && comments.length > commentCount){
                         return <div className="text-center text-blue-500 hover:text-blue-400 cursor-pointer"

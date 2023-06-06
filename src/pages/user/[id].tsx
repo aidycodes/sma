@@ -23,18 +23,17 @@ const UserPage = () => {
 
    const { data: userData, isLoading: userLoading, isError: userError } = api.userQuery.getUserProfile.useQuery()
    const userQueryKey = getQueryKey(api.userQuery.getUserProfile, undefined, 'query')
-
-    //const { data: followInfo } = api.follow.isFollowerFollowing.useQuery({id})
-    
+ 
     const { data: followInfo } = useIsFollowerFollowing(id)
-   //const followInfo = {userFollows:false, followsUSer:false}
 
    const user = userData?.user
    const profile = data
+   const [, setValue] = useAtom(FeedDirectorAtom)
 
     useSSRTheme(user?.profile?.theme)
     React.useLayoutEffect(() => {
     setIsMounted(true)
+     setValue(['feed', 'getProfileFeed'])   
  }, [])
         if(!isMounted) return null
  
@@ -68,6 +67,8 @@ import SuperJSON from 'superjson';
 import { GetServerSideProps } from 'next';
 import { createServerSideHelpers } from '@trpc/react-query/server';
 import ProfileLayout from '~/components/profile/ProfileLayout'
+import { useAtom } from 'jotai'
+import { FeedDirectorAtom } from '~/jotai/store'
 
 
 

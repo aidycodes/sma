@@ -13,14 +13,11 @@ const GeoFeed = ({lat, lng}: GeoFeedProps) => {
 
     const [filterFeed, setFilterFeed] = React.useState<string[]>([])
 
-    if(!lat || !lng ) return <div className="mt-16">you must enable your location settings</div>
-
-
     const profile = api.userQuery.getUserProfile.useQuery()   
     const {  data:geoData, isLoading } = api.userQuery.getUsersGeoData.useQuery()
-    const { data, hasNextPage, fetchNextPage } = api.feed.getGeoFeed_current.useInfiniteQuery({ lat:lat, lng:lng}, 
-        {getNextPageParam: (lastPage) => lastPage ? lastPage.nextCursor : undefined}) 
 
+    const { data, hasNextPage, fetchNextPage, isLoading:mainLoading } = api.feed.getGeoFeed_current.useInfiniteQuery({ lat:lat, lng:lng}, 
+        {getNextPageParam: (lastPage) => lastPage ? lastPage.nextCursor : undefined}) 
 
 const posts = data?.pages.flatMap(page => page?.posts)
     const postFeed = posts?.map((post: any) => ( <PostItem key={post.postid} {...post} setFilterFeed={setFilterFeed} /> 
@@ -35,17 +32,16 @@ const posts = data?.pages.flatMap(page => page?.posts)
     })
 
      const dateid = Date.now() + 'ddds'
- console.log({hasNextPage})
 
   return (
-               <div>{isLoading && posts?.length === 0 && 
+               <div>{mainLoading && !posts && 
             <div>
             <PostSkeleton/>
             <PostSkeleton/>
             <PostSkeleton/>
             </div>
             }
-        <div >
+        <div>
            <div className="">
                 {postFeed}
                 {isLoading || hasNextPage &&
@@ -54,6 +50,12 @@ const posts = data?.pages.flatMap(page => page?.posts)
                     <PostSkeleton/>
                     <PostSkeleton/>
                 </div>
+            }
+            {!hasNextPage && posts?.length > 0
+            && <div className="text-center text-xl text-gray-500 mt-2">No more posts</div>
+            }
+            {
+                !isLoading && posts?.length === 0 && <div className="text-center text-xl text-gray-500 mt-2">No posts</div>
             }
             </div>
             </div>
