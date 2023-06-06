@@ -138,20 +138,22 @@ model Comment {
 }
 
 model Geo_Post {
-    postid       String                                @id @default(cuid())
-    userid       String
-    type         String
-    geo_location Unsupported("geometry(Point, 4326)")?
-    created_at   DateTime                              @default(now())
-    updated_at   DateTime?                             @updatedAt
-    title        String?
-    content      String
-    meta         Json?
-    likes_cnt    Int                                   @default(0)
-    comment_cnt  Int                                   @default(0)
-    likes        Geo_Like[]
-    comments     Geo_Comment[]
-    user         AuthUser                              @relation(fields: [userid], references: [id])
+    postid            String                                @id @default(cuid())
+    userid            String
+    type              String
+    geo_location      Unsupported("geometry(Point, 4326)")?
+    created_at        DateTime                              @default(now())
+    updated_at        DateTime?                             @updatedAt
+    created_at_postid String                                @unique
+    timestamp         BigInt
+    title             String?
+    content           String
+    meta              Json?
+    likes_cnt         Int                                   @default(0)
+    comment_cnt       Int                                   @default(0)
+    likes             Geo_Like[]
+    comments          Geo_Comment[]
+    user              AuthUser                              @relation(fields: [userid], references: [id])
 
     @@index([geo_location], name: "location_idx", type: Gist)
     @@index(fields: [userid], type: Hash)

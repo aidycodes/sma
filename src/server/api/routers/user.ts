@@ -37,7 +37,7 @@ export const userRouter = createTRPCRouter({
         }
     }
     }),
-    login: publicProcedure
+  login: publicProcedure
     .input(z.object({ email: z.string(), password: z.string() }))
     .mutation(async({ input, ctx }) => {
       try{  
@@ -63,7 +63,7 @@ export const userRouter = createTRPCRouter({
         }
     }
     }),
-     logout: privateProcedure
+  logout: privateProcedure
     .mutation(async({ input, ctx }) => {
         try{
         const loggedout = await auth.invalidateSession(ctx.currentUser.session.sessionId);
@@ -80,7 +80,7 @@ export const userRouter = createTRPCRouter({
         }
     }
     }),
-    updateProfile: privateProcedure.
+  updateProfile: privateProcedure.
     input(z.object({bio: z.optional(z.string()), work: z.optional(z.string()), username: z.string(),
          education: z.optional(z.string()), avatar: z.optional(z.string()), cover: z.optional(z.string()),  }))
     .mutation(async({ input, ctx }) => {
@@ -101,7 +101,7 @@ export const userRouter = createTRPCRouter({
         }
     }
     }),
-    updateUser: privateProcedure.
+  updateUser: privateProcedure.
     input(z.object({username: z.optional(z.string()), email: z.optional(z.string()),
          theme: z.optional(z.string()), primary_lang: z.optional(z.string())  }))
     .mutation(async({ input, ctx }) => {
@@ -122,7 +122,7 @@ export const userRouter = createTRPCRouter({
         }
     }
     }),
-    createProfile: privateProcedure.
+  createProfile: privateProcedure.
     input(z.object({ username: z.string()}))
     .mutation(async({ input, ctx }) => {
       try{
@@ -147,7 +147,7 @@ export const userRouter = createTRPCRouter({
             console.log('unexpected error', err)
         }}
     }),
-    createGeoUser: privateProcedure.
+  createGeoUser: privateProcedure.
     input(z.object({ lat: z.number(), lng: z.number(), country: z.optional(z.string()), 
       city: z.optional(z.string()), county: z.optional(z.string()), state: z.optional(z.string()) }))
     .mutation(async({ input, ctx }) => {
@@ -173,7 +173,7 @@ export const userRouter = createTRPCRouter({
             console.log('unexpected error', err)
         }}
     }),
-        updateGeoUser: privateProcedure.
+  updateGeoUser: privateProcedure.
     input(z.object({ lat: z.number(), lng: z.number(), country: z.optional(z.string()), 
       city: z.optional(z.string()), county: z.optional(z.string()), state: z.optional(z.string()) }))
     .mutation(async({ input, ctx }) => {
@@ -197,7 +197,7 @@ export const userRouter = createTRPCRouter({
             console.log('unexpected error', err)
         }}
     }),
-    updateTheme: privateProcedure.
+  updateTheme: privateProcedure.
     input(z.object({ theme: z.string() }))
     .mutation(async({ input, ctx }) => {
       try{

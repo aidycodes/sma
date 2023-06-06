@@ -1,8 +1,7 @@
-import React from 'react'
 import { api } from '~/utils/api'
 
-const useProfileFeed = (profileId: string) => {
- const { data, isError, isLoading, hasNextPage, fetchNextPage } = api.userQuery.getUserPosts.useInfiniteQuery({id:profileId, postAmt:3},
+const useFollowFeed = () => {
+ const { data, isError, isLoading, hasNextPage, fetchNextPage } = api.feed.getFollowerFeed.useInfiniteQuery({postAmt:5},
   {getNextPageParam: (lastPage) => lastPage ? lastPage.nextCursor : undefined
 })
 
@@ -24,4 +23,4 @@ const useProfileFeed = (profileId: string) => {
     }
 }
 
-export default useProfileFeed
+export default useFollowFeed

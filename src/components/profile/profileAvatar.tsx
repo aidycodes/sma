@@ -8,7 +8,7 @@ const ProfileAvatar = ({ avatar }: { avatar?: string | null}) => {
             xl-w[100px]
       ">
             <Image className="rounded-[50%]" fill 
-                alt="user avatar" src={avatar ? avatar : '/icons/user'}/>
+                alt="user avatar" src={avatar ? avatar : '/icons/user.svg'}/>
                 
     </div>
           {/* <div className="absolute bottom-[-130px]   w-full h-[130px] z-0 "> */}

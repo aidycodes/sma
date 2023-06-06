@@ -8,25 +8,82 @@ import type { Post} from "@prisma/client"
 
 export const feedRouter = createTRPCRouter({
     getFollowerFeed: privateProcedure
-        .input(z.object({ postId: z.string(), page: z.number(), additional_websocket_items: z.array(z.string()) }))
+        .input(z.object({ postAmt:z.number(),
+             cursor: z.object({created_at: z.date(), postid: z.string()}).optional() }))
         .query(async ({ input, ctx }) => {
             const user = ctx.currentUser.user.userId
-            const { postId, page, additional_websocket_items } = input
+            const { cursor, postAmt } = input
                 try{
-                    const feed = await ctx. prisma.$queryRaw<{posts: Post[]}>(
-        Prisma.sql`
-            SELECT  "_UserFollows"."B", "_UserFollows"."A", content, "Post"."id", "Post"."userId", username
-            FROM "_UserFollows"
-            JOIN "Post" ON "Post"."userId" = "_UserFollows"."A"       
-            JOIN "auth_user" ON "auth_user"."id" = "Post"."userId"
-            WHERE "_UserFollows"."B" = ${user} 
-            ORDER BY "Post"."createdAt" DESC
-            OFFSET ${page} + ${additional_websocket_items.length} * 10
-            LIMIT 10
-            `
-        )
+                    const following = await ctx.prisma.authUser.findFirst({
+                        where: {
+                            id: user,
+                        },
+                        select: {
+                            follows: {
+                                select: {
+                                    id: true,
+                    
+                        }}}
+                    }) 
+                    const feed = await ctx.prisma.post.findMany({
+                        where:{
+                            user:{
+                                id: { in: following?.follows.map((user) => user.id) },
+                            }
+                        },
+                        take: postAmt + 1,
+                        cursor: cursor ? {created_at_postid: cursor } : undefined,
+                        include: {
+                            user: {
+                                select:{
+                                    profile:true,
+                                    id: true,
+                                }
+                            },
+                            likes: {
+                                include:{
+                                    user: {
+                                        select:{
+                                            profile:true,
+                                            id: true,
+                                        }
+                                    }
+                                }
+                            },
+                            comments: {
+                                include:{
+                                    user: {
+                                        select: {
+                                            id: true,
+                                            profile: true,
+                                        }
+                                    },
+                                    likes:{
+                                        include:{
+                                            user:{ 
+                                            select:{
+                                                profile:true,
+                                                id: true,
+                                            }}
+                                    }},
+                            },
+                        }},
+                        orderBy: {
+                            created_at: "desc",
+                        },
+                      
+                    })
+
+                let nextCursor: typeof cursor | undefined;
+                    if(feed.length > postAmt){
+                        const nextItem = feed.pop()
+                        if(nextItem != null){
+                        nextCursor = {created_at: nextItem.created_at, postid: nextItem.postid}
+                    }
+                }
                     return {
-                        feed
+                        nextCursor,
+                        posts: feed
                     }
                 }catch(err){
                     if(err instanceof Error){
@@ -37,18 +94,18 @@ export const feedRouter = createTRPCRouter({
                 }
         ),
     getGeoInnerFeed_primary: privateProcedure
-        .input(z.object({ postId: z.string(), page: z.number(),  primary_location: z.string() }))
+        .input(z.object({ page: z.number(),  lat: z.number(), lng: z.number() }))
         .query(async ({ input, ctx }) => {
             const user = ctx.currentUser.user.userId
-            const { postId, page, primary_location } = input
+            const {  page, lat, lng } = input
             const r = 10
                 try{
                     const feed = await ctx. prisma.$queryRaw<{posts: Post[]}>(
-        Prisma.sql`SELECT "auth_user"."id", "auth_user"."id", "GeoPost"."created_at", username, content, "GeoPost"."coords"::text 
-                FROM "GeoPost" 
-            RIGHT JOIN "auth_user" ON "GeoPost"."userid" = "auth_user"."id" 
-            WHERE ST_DWithin("GeoPost"."coords"
-            , ${primary_location}, ${r} * 1)
+        Prisma.sql`SELECT "auth_user"."id", "geo_post"."created_at", username, content, "geo_post"."coords"::text 
+                FROM "geo_post" 
+            RIGHT JOIN "auth_user" ON "geo_posts"."userid" = "auth_user"."id" 
+            WHERE ST_DWithin("geo_post"."coords"
+            , ST_SetSRID(ST_Point(${lng}, ${lat}),4326), ${r} * 1)
             ORDER BY created_at desc
             OFFSET ${page}* 10
             `) 
@@ -87,24 +144,97 @@ export const feedRouter = createTRPCRouter({
                     }}
                 }),
     getGeoFeed_current: privateProcedure
-        .input(z.object({ postId: z.string(), page: z.number(),
+        .input(z.object({ cursor:z.object({created_at_postid:z.string()}).optional(),
              lat: z.number(), lng: z.number() }))
         .query(async ({ input, ctx }) => {
-            const { postId, page, lat, lng } = input
-             const feed = await ctx.prisma.$queryRaw<{ id: string }[]>(
-            Prisma.sql`SELECT id, content, coords::text 
-            FROM "GeoPost" 
-            WHERE ST_DWithin(coords, ST_SetSRID(ST_Point(${lng}, ${lat}),4326), 50) 
-                and ST_Distance(coords, ST_SetSRID(ST_Point(${lng}, ${lat}),4326)) > 1
-            ORDER BY created_at desc
-            OFFSET ${page} * 10
+            const { cursor, lat, lng } = input
+
+            const cursorDate = cursor ? cursor.created_at_postid : '0'
+            console.log(cursorDate)
+            let feed 
+            if(cursor){
+              feed = await ctx.prisma.$queryRaw<{ postid: string, created_at_postid: string }[]>(
+            Prisma.sql`SELECT postid, geo_post.userid, content, geo_location::text, created_at_postid, timestamp, created_at
+            FROM "geo_post" 
+            WHERE ST_DWithin(geo_location, ST_SetSRID(ST_Point(${lng}, ${lat}),4326), 5)
+              AND created_at_postid <= ${cursorDate}
+            ORDER BY created_at_postid desc
+            LIMIT 6   
                 ` )
-            
+             } else {
+                   feed = await ctx.prisma.$queryRaw<{ postid: string, created_at_postid: string }[]>(
+            Prisma.sql`SELECT postid, geo_post.userid, content, geo_location::text, created_at_postid, timestamp, created_at
+            FROM "geo_post" 
+            WHERE ST_DWithin(geo_location, ST_SetSRID(ST_Point(${lng}, ${lat}),4326), 5)
+              AND created_at_postid > '0'
+            ORDER BY created_at_postid desc
+            LIMIT 6 `)
+
+             }
+ 
+                let nextCursor: typeof cursor | undefined;
+                    if(feed.length > 5){
+                        const nextItem = feed.pop()
+                        if(nextItem != null){                     
+                        nextCursor = {created_at_postid: nextItem.created_at_postid}
+                    }
+                }
+
+                const posts = await ctx.prisma.geo_Post.findMany({
+                    where: {
+                        postid: { in: feed.map(({ postid }) => postid )},
+                    },
+                    include: {                       
+                        user: {
+                            select: {
+                                profile: true,
+                                id: true,
+                            }
+                        },
+                        likes: {
+                            include: {
+                                user: {
+                                    select: {
+                                        profile: true,
+                                        id: true,
+                                    }
+                                }
+                            }
+                        },
+                        comments: {
+                            include: {
+                                user: {
+                                    select: {
+                                        id: true,
+                                        profile: true,
+                                    }
+                                },
+                                likes: {
+                                    include: {
+                                        user: {
+                                            select: {
+                                                profile: true,
+                                                id: true,
+                                            }
+                                        }
+                                    }
+                                },
+                            },
+                        },
+                    },
+                    orderBy: {
+                        created_at: "desc",
+                    },
+                })
+   
                 return {
-                    feed
+                    nextCursor,
+                    posts
                 }
                 
-            })
-
-                
+            }),
+ 
 })
+
+
+//and ST_Distance(geo_location, ST_SetSRID(ST_Point(${lng}, ${lat}),4326)) > 100

@@ -8,6 +8,7 @@ import { notifyRouter } from "./routers/notify";
 import { geoPostRouter } from "./routers/geopost";
 import { geoCommentRouter } from "./routers/geocomment";
 import { geoCodeRouter } from "./routers/geocoding";
+import { feedRouter } from "./routers/feed";
 
 
 export const appRouter = createTRPCRouter({
@@ -19,7 +20,8 @@ export const appRouter = createTRPCRouter({
   notify: notifyRouter,
   geoPost: geoPostRouter,
   geoComment: geoCommentRouter,
-  geoCode: geoCodeRouter
+  geoCode: geoCodeRouter,
+  feed: feedRouter
 });
 
 // export type definition of API

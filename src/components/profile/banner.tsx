@@ -14,7 +14,7 @@ const Banner = ({ image }: Props) => (
         <Image className="object-cover"  src={image} fill   alt="banner" />
     </div>
     :
-    <div className="w-full h-[100px] bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% ... opacity-70"/>
+    <div className="w-full h-[280px] bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% ... opacity-70"/>
     }
     </>
   )

@@ -643,6 +643,16 @@ input, textarea {
   
 }
 
+@media  (max-width: 1000px) {
+ body::-webkit-scrollbar {
+  display: none;
+
+-ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+
+} 
+}
+
 .skeleton-box {
   
   cursor: progress; 

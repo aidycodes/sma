@@ -29,7 +29,7 @@ const Content = ({ meta, content }: { meta: Prisma.JsonValue, content: string}) 
         </Link>
   )
     }
-    if(testObject){
+    if(testObject.image){
     return (
         <>
         <div className=" w-full border-gray-600 border-[1px] rounded-xl">
@@ -44,7 +44,9 @@ const Content = ({ meta, content }: { meta: Prisma.JsonValue, content: string}) 
     )
     }
     return (
+        <div>
         {content}
+        </div>
     )
 }
 

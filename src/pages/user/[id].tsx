@@ -52,9 +52,7 @@ const UserPage = () => {
             <div className="flex flex-col items-center justify-center">
                <Banner image={profile?.cover}/>
                </div>
-           <Profile {...profile} {...followInfo} userid={id}/>
-               sssss  UserPage
-               
+           <Profile {...profile} {...followInfo} userid={id}/>   
         </div>
   
     </ProfileLayout>

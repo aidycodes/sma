@@ -14,15 +14,18 @@ export const geoPostRouter = createTRPCRouter({
         ).mutation(async ({ input, ctx }) => {
             const newId = createId()  //new cuid
              try{
-                const {content, type /*lat, lng,*/ } = input 
-                const lat = 38.8951
-                const lng = -77.0364                           //this needs to be changed for correct outputs
+                const {content, type, lat, lng, } = input 
+                // const lat = 38.8951
+                // const lng = -77.0364                           //this needs to be changed for correct outputs
                 const metaData = {meta:'hello'}
                 const title = 'hello'
+                const cursorField = Date.now() + newId
+              
+
             //sql query to insert a geopost into the database
             const query = await ctx.prisma.$queryRaw<{ postid: string }[]>(
-            Prisma.sql`INSERT INTO "geo_post" (postid, title, content, type, meta, updated_at, geo_location, "userid")
-                VALUES (${newId}, ${title}, ${content}, ${type}, ${metaData}, ${new Date()}, ST_SetSRID(ST_Point(${lng}, ${lat}),4326),${ctx.currentUser.user.userId})
+            Prisma.sql`INSERT INTO "geo_post" (postid, title, content, type, meta, updated_at, geo_location, timestamp, created_at_postid, "userid")
+                VALUES (${newId}, ${title}, ${content}, ${type}, ${metaData}, ${new Date()}, ST_SetSRID(ST_Point(${lng}, ${lat}),4326), ${Date.now()}, ${cursorField}, ${ctx.currentUser.user.userId})
                 RETURNING postid`)
 
                 return {

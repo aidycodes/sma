@@ -32,23 +32,16 @@ type Profile = {
 
 const CommentItem = ({ 
   content, created_at, commentid, 
-  postid, likes_cnt, likes, 
+  postid, likes, 
   profile: { avatar, userid, username}}: Comment ) => {
 
     const [showUserToolTip, setShowUserToolTip] = React.useState(false)
-
-    const trpc = api.useContext()
     const router = useRouter()
-    const { id: profileid } = router.query
-  
-    if(typeof profileid !== 'string') return null
-    const likeComment = useLikeComment(postid, commentid, {id:profileid, postAmt:3} )
-    const unlikeComment = useUnlikeComment(postid, commentid, {id:profileid, postAmt:3} )
-    
-
+ 
+    const likeComment = useLikeComment(postid, commentid)
+    const unlikeComment = useUnlikeComment(postid, commentid )
   return (
-    <div className="  rounded-md  mr-4 ">
-     
+    <div className="  rounded-md  mr-4 ">    
       <div className="flex gap-2">
        <div className="flex flex-col items-center gap-2 w pl-8 mt-2">
             <div className="w-12 h-12 rounded-[50px] relative mr-auto  ">
@@ -57,31 +50,28 @@ const CommentItem = ({
                             alt="avatar"  />
             </div>    
             </div>  
-    <div className=" py-2 rounded-md  fg ">
-   
+    <div className=" py-2 rounded-md  fg ">  
       <div className=" items-stretch flex-col flex" >
         <div className=" pl-4 p-2 rounded-xl  backdrop-brightness-200" >
-                 <div 
-                 >
+          <div>
             <div className="flex items-center gap-2" > 
               <div  onMouseOver={() => setShowUserToolTip(true)}  onMouseLeave={() => setShowUserToolTip(false)}>
-            <Link href={`/user/${userid}`}>
-            <h2 className="text-md font-semibold cursor-pointer hover:underline" 
-            >{username}</h2>
-            </Link>
+                <Link href={`/user/${userid}`}>
+                <h2 className="text-md font-semibold cursor-pointer hover:underline" 
+                >{username}</h2>
+                 </Link>
             {showUserToolTip && <CommentUserToolTip userid={userid} avatar={avatar} username={username}/>}
-              </div>  
+            </div>  
             <span>·</span>
-             <h4 className="text-xs " >{dayjs(created_at).fromNow()}</h4>
-             </div>
+            <h4 className="text-xs " >{dayjs(created_at).fromNow()}</h4>
+          </div>
         </div>
-
         <div className="text-lg pl-2">
            {content}
-           </div>
         </div>
+      </div>
         <div className="flex justify-between relative">
-        <div className="pl-6 cursor-pointer ">
+          <div className="pl-6 cursor-pointer ">
           { commentid.startsWith('opitmistic') ? <span className="opacity-20">Like</span> : 
           likes.some((like: any) => like.user.id === userid) ? <span  className="hover:font-bold" 
                                                                   onClick={() => unlikeComment.mutate({commentid})}
@@ -90,17 +80,17 @@ const CommentItem = ({
                                                                   onClick={() => 
                                                                     likeComment.mutate({commentid, postid, userid, currentUser:username})}
                                                                 >Like</span>  }
-        </div>
+          </div>
         {likes.length > 0  &&
         <div className="fg border-2 border-blue-700 p-1 rounded-xl absolute bottom-0 right-[-15px]">        
           {likes.length} Likes   
         </div>
 }
-        </div>
-        </div>
+          </div>
+       </div>
       </div>
      
-    </div>
+     </div>
     </div>
 
   )

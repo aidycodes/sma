@@ -12,6 +12,11 @@ const options = {
 };
 const geocoder = NodeGeocoder(options);
 
+export interface DetailedGeoUser extends GeoUser {
+    streetName: string;
+    zipcode: string;
+}
+
 export const geoCodeRouter = createTRPCRouter({
     reverseGeoCode: privateProcedure
             .input(z.object({lat: z.number(), lng: z.number()}))
@@ -19,9 +24,9 @@ export const geoCodeRouter = createTRPCRouter({
                 try{
                     const { lat, lng } = input;
                     const [ {latitude, longitude,
-                        country, city, state, county } ] = await geocoder.reverse({lat, lon:lng})
-                 
-                    const geoUser: GeoUser = {
+                        country, city, state, county, streetName, zipcode } ] = await geocoder.reverse({lat, lon:lng})
+
+                    const geoUser: DetailedGeoUser = {
                         id: ctx.currentUser.user.userId,
                         userid: ctx.currentUser.user.userId,
                         lat: latitude,
@@ -29,7 +34,9 @@ export const geoCodeRouter = createTRPCRouter({
                          country,
                             city,
                             county,
-                            state
+                            state,
+                            streetName,
+                            zipcode
                     }
                   
                     return {

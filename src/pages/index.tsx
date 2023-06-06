@@ -79,7 +79,7 @@ const Home: NextPage = () => {
                   <button onClick={() => unfollowUser.mutate({id:'WRdW83qzlVMK2qe' })}>unfollowuser</button>
 
                     <button onClick={() => hasViewed.mutate({notify_user_id:'clh7jyzv60000v5egber1xnkt' })}>mark notify as read</button>
-                    <button onClick={() => geopost.mutate({title:'bonk', content:'bonkahbonkbonk', lat:0, lng:0, type:'local'})}>geopost</button>
+                    <button onClick={() => geopost.mutate({title:'bonk', content:'bonkahbonkbonk', lat:51.4776883, lng:-2.5115698, type:'local2'})}>geopost</button>
                     <button onClick={() => deletegeopost.mutate({postid:'fh5jmfjficbonxma5rtk6sz0'})}>deletegeopost</button>
                     <button onClick={() => editgeopost.mutate({postid:'nd7rox72k73bq091f2rc6m0p', type:'boat' ,title:'bonk11', content:'return of the bonk', meta:{url:'myurl.co222m'}})}>editgeopost</button>
                     <button onClick={() => likegeopost.mutate({postid:'nd7rox72k73bq091f2rc6m0p', postUserid:'WQbptH7AdC0sN5q'})}>likegeopost</button>
