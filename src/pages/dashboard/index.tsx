@@ -2,61 +2,92 @@ import { useAtom } from 'jotai'
 import Link from 'next/link'
 import React from 'react'
 import Feed from '~/components/feed'
-import GeoFeed from '~/components/geofeed'
-import Layout from '~/components/Layout'
+import GeoFeed from '~/components/geofeed/currentLocation'
 import Loading from '~/components/loading'
 import { useGeolocation } from '~/hooks/useGeolocation'
 import { FeedDirectorAtom } from '~/jotai/store'
 import { api } from '~/utils/api'
+import CreatePost from '~/components/dashboard/createpost'
+import LocationDisplay from '~/components/dashboard/locationDisplay'
+import FeedSelector from '~/components/dashboard/feedSelector'
+import useActivityFeed from '~/hooks/api/feeds/useActivityFeed'
+import FeedDisplay from '~/components/dashboard/feedSelector/feedDisplay'
+
 
 const Dashboard = () => {
 
-      const [feed, setFeed] = React.useState(true)
-       const [, setValue] = useAtom(FeedDirectorAtom)
 
-       const handleCurrentFeed = () => {
-        if(feed){
-          setFeed(!feed)
-          setValue(['feed', 'getFollowerFeed'])
-        } else {
-          setFeed(!feed)
-          setValue(['geo', 'getGeoFeed_current'])
-        }
-       }
+      const [feed, setFeed] = React.useState('following')
+      const [disableLocationDisplay, setDisableLocationDisplay] = React.useState(false)
 
       const {lat , lng, isLoading } = useGeolocation()
-      console.log(lat, lng, isLoading)
       const { data, isLoading:locationLoading } = api.geoCode.reverseGeoCode.useQuery({lat: lat, lng: lng})
-      if(isLoading) return <Loading/>
+
+      const { hasNextPage } = useActivityFeed()
+
+     // const { data:feedData, isLoading:feedLoading } = api.feed.getActivityFeed.useQuery()
+      if(isLoading) return null
 
   return (
         <div className="  w-full h-full lg:w-3/4 2xl:w-1/2 my-32 mx-auto ">
-                  <button className="p-4 rounded-[100px] bg-blue-700 " onClick={() => handleCurrentFeed()}>{feed ? 'Follow' : 'Geo'}</button>
-                   <Link href={`/user/Q7tMwuMnhQ1sNIX`}>
-                   <button className="p-4 rounded-[100px] bg-blue-700 ">{'move to profile'}</button>
-                   </Link>
-            {!feed
-              ?
-        <Feed/>
-        :
-         lat && lng ?
-         <div>
-            <div className="text-center text-xl ">Your Location</div>
-            <div className="text-center text-xl font-semibold">{data?.geoUser.streetName}</div>
-            <div className="text-center text-xl font-semibold">{data?.geoUser.city}</div>
-            <div className="text-center text-xl font-semibold">{data?.geoUser.county}</div>
-            <div className="text-center text-xl font-semibold">{data?.geoUser.state}</div>
-
-
-        <GeoFeed lat={lat} lng={lng} />
-        </div>
-        : 
-        <div className="mt-16">you must enable your location settings</div>
-   
-            }
+          {feed === 'current' && !disableLocationDisplay ? 
+          <LocationDisplay {...data?.geoUser} isGeo={lat ? true : false} isLoading={locationLoading}
+            disable={setDisableLocationDisplay}/> 
+            : <div className="py-[10px]"></div>
+  }
+     
+        <FeedSelector setFeed={setFeed} feed={feed}/>
+        <CreatePost/>        
+        <FeedDisplay feed={feed} lat={lat} lng={lng}/>
        
     </div>
   )
 }
 
+
+import { prisma } from '~/server/db';
+import { auth } from 'auth/lucia';
+import SuperJSON from 'superjson';
+import { GetServerSideProps } from 'next';
+import { createServerSideHelpers } from '@trpc/react-query/server';
+import { appRouter } from '~/server/api/root'
+
+
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res, resolvedUrl}) => {
+
+
+    const authRequest = auth.handleRequest(req, res)
+    const session = await authRequest.validateUser();
+
+    const ssg = createServerSideHelpers({
+        router: appRouter,
+        ctx: { prisma, currentUser: session, res, authRequest },
+        transformer: SuperJSON
+    })
+        if(session && session.user) {
+    await ssg.userQuery.getUserProfile.prefetch()
+
+    return {
+        props: {
+            trpcState: ssg.dehydrate(),
+            serverTheme:'dark-blue'
+            }
+        }   
+    }
+    return {
+        redirect:{
+            permanent:false,
+            destination:"/login"
+        },
+        props:{
+            resolvedUrl
+        }
+    }
+}
+
 export default Dashboard
+
+/*
+  
+            */

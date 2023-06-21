@@ -5,7 +5,7 @@ import React from 'react'
 const PostSkeleton = () => {
 
   return (
-    <div className="fg m-8 rounded-xl dbo-border animate-pulse pb-8 ">
+    <div className="fg m-4 lg:m-8 rounded-xl dbo-border animate-pulse pb-8 ">
                                          {/*heading component*/}
         <div className="fg rounded-xl">
             <div className="flex p-4 gap-2">

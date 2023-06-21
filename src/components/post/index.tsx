@@ -3,18 +3,18 @@ import React from 'react'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import Icon from '../icon'
-import { useTheme } from 'next-themes'
 import PostHeader from './header'
 import PostSettings from './settings'
 import Menu from '../menu'
 import PostCounter from './counter'
 import LikeComment from './likeComment'
-import { useRemoveFromFeed } from '~/hooks/api/profileFeed/useRemoveFromFeed-profile'
 import CommentItem from './comment/commentItem'
 import PostComment from './comment/postComment'
 import Content from './content'
-import useLikePost from '~/hooks/api/profileFeed/useLikePost-profile'
-import useUnlikePost from '~/hooks/api/profileFeed/useUnlikePost-profile'
+import useLikePost from '~/hooks/api/useLikePost'
+import useUnlikePost from '~/hooks/api/useUnlikePost'
+import { Josefin_Sans  } from 'next/font/google';
+const jose = Josefin_Sans({ subsets: ['latin'], weight:'400' });
 
 dayjs.extend(relativeTime)
 
@@ -23,7 +23,11 @@ interface ExtendedUser {
     profile: UserProfile 
 }
 
-interface Props extends Post {
+interface ExtendedPost extends Post {
+    type?: string
+}
+
+interface Props extends ExtendedPost {
     user: ExtendedUser
     comments: Comment[]
     likes: Like[]
@@ -33,26 +37,22 @@ interface Props extends Post {
 
 const PostItem = ( {postid, created_at, title, 
     content, meta, user, comments,
-    likes_cnt, comment_cnt, likes, setFilterFeed }: Props ) => {
-
-        const { theme } = useTheme()
-        const remove = useRemoveFromFeed(user?.profile?.userid, postid)
+    likes_cnt, comment_cnt, likes, setFilterFeed, type }: Props ) => {
         const [commentCount, setCommentCount] = React.useState(5)
-
         const ref = React.useRef<HTMLDivElement>(null)
-
-        const like = useLikePost()
-        const unlike = useUnlikePost()
+        const like = useLikePost(type)
+        const unlike = useUnlikePost(type)
 
     if(!user) return null
   return (
     <div className="fg xs:m-2 md:m-8 rounded-xl dbo-border">
     {/*heading component*/}
         <div className="fg rounded-xl">
-            <div className="flex p-4">
+            <div className="flex p-4 ">
                 <PostHeader avatar={user?.profile?.avatar} userid={user?.profile?.userid} 
-                    username={user?.profile?.username} created_at={created_at} />          
-                <div className="ml-auto flex items-start gap-2 ">
+                    username={user?.profile?.username} created_at={created_at}  />  
+                { title && <div className={`self-auto mt-[8px] ml-2 text-gray-400 text-lg  ${jose.className}`}>{title}</div>   }     
+                <div className="ml-auto flex items-start gap-2 "> 
                 <Menu icon='/setting.svg' size={30} component={<PostSettings/>} width={48}></Menu>
                   <Icon size={30} isSelected={false} name='/cross.svg' onClick={() => setFilterFeed((prevData) => [...prevData, postid])}  />
                 </div>
@@ -77,7 +77,7 @@ const PostItem = ( {postid, created_at, title,
                    <CommentItem content={content} 
                     profile={user.profile} created_at={created_at}
                     postid={postid} likes={likes} likes_cnt={likes_cnt} 
-                    commentid={commentid}
+                    commentid={commentid} type={type}
                     />
                     </div>
                    )
@@ -92,7 +92,7 @@ const PostItem = ( {postid, created_at, title,
             </div>
         {/* comment input component */}
             <div ref={ref}>
-                 <PostComment postid={postid} profileId={user.profile.userid} />
+                 <PostComment postid={postid} profileId={user.profile.userid} type={type} />
             </div>
         </div>
 

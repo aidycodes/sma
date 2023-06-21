@@ -2,13 +2,9 @@ import Image from 'next/image'
 import React from 'react'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { api } from '~/utils/api'
-import { toast } from 'react-hot-toast'
-import useLikeComment from '~/hooks/api/profileFeed/useLikeComment-profile'
-import useCurrentUserProfile from '~/hooks/api/useCurrentUserProfile'
+import useLikeComment from '~/hooks/api/useLikeComment'
 import { useRouter } from 'next/router'
-import useUnlikeComment from '~/hooks/api/profileFeed/useUnlikeComment-profile'
-import UserToolTip from '~/components/userToolTip'
+import useUnlikeComment from '~/hooks/api/useUnlikeComment'
 import CommentUserToolTip from '~/components/userToolTip/commentUserTip'
 import Link from 'next/link'
 dayjs.extend(relativeTime)
@@ -21,6 +17,7 @@ type Comment = {
     likes_cnt: number
     likes: any
     commentid: string
+    type?: string
 }
 
 type Profile = {
@@ -32,14 +29,14 @@ type Profile = {
 
 const CommentItem = ({ 
   content, created_at, commentid, 
-  postid, likes, 
+  postid, likes, type, 
   profile: { avatar, userid, username}}: Comment ) => {
 
     const [showUserToolTip, setShowUserToolTip] = React.useState(false)
     const router = useRouter()
  
-    const likeComment = useLikeComment(postid, commentid)
-    const unlikeComment = useUnlikeComment(postid, commentid )
+    const likeComment = useLikeComment(postid, commentid, type)
+    const unlikeComment = useUnlikeComment(postid, commentid, type )
   return (
     <div className="  rounded-md  mr-4 ">    
       <div className="flex gap-2">

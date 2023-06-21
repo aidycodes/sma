@@ -1,0 +1,104 @@
+.temani {
+  --s: 120px; /* control the size*/
+  --_g: radial-gradient(#0000 70%, #1a2030 71%);
+  background: var(--_g), var(--_g) calc(var(--s) / 2) calc(var(--s) / 2),
+    conic-gradient(#0f9177 25%, #fdebad 0 50%, #d34434 0 75%, #b5d999 0);
+  background-size: var(--s) var(--s);
+}
+
+.xmas {
+  --s: 75px; /* control the size */
+
+  --_c: #0000, #fff 1deg 79deg, #0000 81deg;
+  --g0: conic-gradient(from 140deg at 50% 87.5%, var(--_c));
+  --g1: conic-gradient(from 140deg at 50% 81.25%, var(--_c));
+  --g2: conic-gradient(from 140deg at 50% 75%, var(--_c));
+  --g3: conic-gradient(at 10% 20%, #0000 75%, #fff 0);
+  background: var(--g0) 0 calc(var(--s) / -4),
+    var(--g0) var(--s) calc(3 * var(--s) / 4), var(--g1),
+    var(--g1) var(--s) var(--s), var(--g2) 0 calc(var(--s) / 4),
+    var(--g2) var(--s) calc(5 * var(--s) / 4),
+    var(--g3) calc(var(--s) / -10) var(--s),
+    var(--g3) calc(9 * var(--s) / 10) calc(2 * var(--s)),
+    repeating-conic-gradient(from 45deg, #a31e39 0 25%, #31570e 0 50%);
+  background-size: calc(2 * var(--s)) calc(2 * var(--s));
+}
+
+.swirls {
+  --r: 56px; /* control the size */
+  --c1: #3fb8af /*color 1*/ 99%, #0000 101%;
+  --c2: #ff9e9d /*color 2*/ 99%, #0000 101%;
+
+  --s: calc(var(--r) * 0.866); /* .866 = cos(30deg) */
+  --g0: radial-gradient(var(--r), var(--c1));
+  --g1: radial-gradient(var(--r), var(--c2));
+  --f: radial-gradient(var(--r) at calc(100% + var(--s)) 50%, var(--c1));
+  --p: radial-gradient(var(--r) at 100% 50%, var(--c2));
+  background: var(--f) 0 calc(-5 * var(--r) / 2),
+    var(--f) calc(-2 * var(--s)) calc(var(--r) / 2),
+    var(--p) 0 calc(-2 * var(--r)), var(--g0) var(--s) calc(-5 * var(--r) / 2),
+    var(--g1) var(--s) calc(5 * var(--r) / 2),
+    radial-gradient(var(--r) at 100% 100%, var(--c1)) 0 calc(-1 * var(--r)),
+    radial-gradient(var(--r) at 0% 50%, var(--c1)) 0 calc(-4 * var(--r)),
+    var(--g1) calc(-1 * var(--s)) calc(-7 * var(--r) / 2),
+    var(--g0) calc(-1 * var(--s)) calc(-5 * var(--r) / 2),
+    var(--p) calc(-2 * var(--s)) var(--r),
+    var(--g0) calc(-1 * var(--s)) calc(var(--r) / 2),
+    var(--g1) calc(-1 * var(--s)) calc(var(--r) / -2),
+    var(--g0) 0 calc(-1 * var(--r)), var(--g1) var(--s) calc(var(--r) / -2),
+    var(--g0) var(--s) calc(var(--r) / 2) #ff9e9d; /*color 2 again here (yes I got lazy defining a variable ) */
+  background-size: calc(4 * var(--s)) calc(6 * var(--r));
+}
+
+.swirls-small {
+  --r: 56px; /* control the size */
+  --c1: #3fb8af /*color 1*/ 99%, #0000 101%;
+  --c2: #ff9e9d /*color 2*/ 99%, #0000 101%;
+
+  --s: calc(var(--r) * 0.866); /* .866 = cos(30deg) */
+  --g0: radial-gradient(var(--r), var(--c1));
+  --g1: radial-gradient(var(--r), var(--c2));
+  --f: radial-gradient(var(--r) at calc(100% + var(--s)) 50%, var(--c1));
+  --p: radial-gradient(var(--r) at 100% 50%, var(--c2));
+  background: var(--f) 0 calc(-5 * var(--r) / 2),
+    var(--f) calc(-2 * var(--s)) calc(var(--r) / 2),
+    var(--p) 0 calc(-2 * var(--r)), var(--g0) var(--s) calc(-5 * var(--r) / 2),
+    var(--g1) var(--s) calc(5 * var(--r) / 2),
+    radial-gradient(var(--r) at 100% 100%, var(--c1)) 0 calc(-1 * var(--r)),
+    radial-gradient(var(--r) at 0% 50%, var(--c1)) 0 calc(-4 * var(--r)),
+    var(--g1) calc(-1 * var(--s)) calc(-7 * var(--r) / 2),
+    var(--g0) calc(-1 * var(--s)) calc(-5 * var(--r) / 2),
+    var(--p) calc(-2 * var(--s)) var(--r),
+    var(--g0) calc(-1 * var(--s)) calc(var(--r) / 2),
+    var(--g1) calc(-1 * var(--s)) calc(var(--r) / -2),
+    var(--g0) 0 calc(-1 * var(--r)), var(--g1) var(--s) calc(var(--r) / -2),
+    var(--g0) var(--s) calc(var(--r) / 2) #ff9e9d; /*color 2 again here (yes I got lazy defining a variable ) */
+  background-size: cover;
+  transform: scale(1);
+}
+
+.waves {
+  --s: 100px; /* control the size */
+  --c1: #f8b195;
+  --c2: #355c7d;
+
+  --_g: var(--c2) 6% 14%, var(--c1) 16% 24%, var(--c2) 26% 34%,
+    var(--c1) 36% 44%, var(--c2) 46% 54%, var(--c1) 56% 64%, var(--c2) 66% 74%,
+    var(--c1) 76% 84%, var(--c2) 86% 94%;
+  background: radial-gradient(
+      100% 100% at 100% 0,
+      var(--c1) 4%,
+      var(--_g),
+      #0008 96%,
+      #0000
+    ),
+    radial-gradient(
+        100% 100% at 0 100%,
+        #0000,
+        #0008 4%,
+        var(--_g),
+        var(--c1) 96%
+      )
+      var(--c1);
+  background-size: var(--s) var(--s);
+}

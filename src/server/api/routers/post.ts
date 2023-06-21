@@ -6,13 +6,16 @@ import { TRPCError } from "@trpc/server";
 export const postRouter = createTRPCRouter({
     new: privateProcedure
         .input(z.object({ title: z.string(), content: z.string(),
-             tags: z.optional(z.array(z.string())), meta: z.optional(z.object({})) }))
+             tags: z.optional(z.array(z.string())), meta: z.optional(z.object
+                ({color:z.string(), background:z.string(), image:z.string()})
+                ) }))
         .mutation(async ({ input, ctx }) => {
+            console.log({input})
            try{ 
             const post = await ctx.prisma.post.create({
                 data:{...input,
                      userid:ctx.currentUser.user.userId,
-                     meta: JSON.stringify(input.meta) || 'JsonNull',
+                     meta: input.meta || 'JsonNull',
                 }
             
         })

@@ -38,6 +38,25 @@ export const ourFileRouter = {
         })
 
     }),
+    postImageUploader: f
+    // Set permissions and file types for this FileRoute
+    .fileTypes(["image"])
+    .maxSize("1GB")
+    .middleware(async (req, res) => {
+      // This code runs on your server before upload
+          const authRequest = auth.handleRequest(req, res)
+        const { user } = await authRequest.validateUser();
+       
+      // If you throw, the user will not be able to upload
+      if (!user) throw new Error("Unauthorized");
+ 
+      // Whatever is returned here is accessible in onUploadComplete as `metadata`
+      return { userId: user.userId };
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      // This code RUNS ON YOUR SERVER after upload
+      console.log("Upload complete for userId:", metadata.userId);
+    }),
     bannerUploader: f
     // Set permissions and file types for this FileRoute
     .fileTypes(["image"])

@@ -36,8 +36,8 @@ const UserPage = () => {
      setValue(['feed', 'getProfileFeed'])   
  }, [])
         if(!isMounted) return null
- 
-    if(!user && !profile && !followInfo) {
+
+    if(!user || !profile || !followInfo) {
         return (
             <Layout>
                 <PageError isLoading={[isLoading]} queryKeys={[profileQueryKey, userQueryKey]} isError={[isError, userError]}/>
@@ -90,7 +90,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, params,
         if(session && session.user) {
     await ssg.userQuery.getUserProfile.prefetch()
     if(id){
-    await ssg.userQuery.getProfile.prefetch({id})
+   const profile = await ssg.userQuery.getProfile.prefetch({id})
     await ssg.follow.isFollowerFollowing.prefetch({id})
     }
     return {

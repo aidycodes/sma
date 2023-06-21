@@ -4,28 +4,25 @@ import { TRPCError } from "@trpc/server";
 import { Prisma } from "@prisma/client";
 import { createId } from "@paralleldrive/cuid2";
 
-
 export const geoPostRouter = createTRPCRouter({
-    create: privateProcedure
+    new: privateProcedure
         .input(z.object({ title: z.string(), content: z.string(),
             lat: z.number(), lng: z.number(),
-            meta: z.optional(z.object({})), type: z.string(), tags: z.optional(z.array(z.string())),
+            meta: z.optional(z.object
+                ({color:z.string(), background:z.string(), image:z.string()}))
+                ,type: z.string(), tags: z.optional(z.array(z.string())),
         })
-        ).mutation(async ({ input, ctx }) => {
+        ).mutation(async ({ input, ctx}) => {
             const newId = createId()  //new cuid
              try{
-                const {content, type, lat, lng, } = input 
-                // const lat = 38.8951
-                // const lng = -77.0364                           //this needs to be changed for correct outputs
-                const metaData = {meta:'hello'}
-                const title = 'hello'
+                const {content, meta, title, lat, lng } = input 
+                const type = 'geo'
                 const cursorField = Date.now() + newId
               
-
             //sql query to insert a geopost into the database
             const query = await ctx.prisma.$queryRaw<{ postid: string }[]>(
-            Prisma.sql`INSERT INTO "geo_post" (postid, title, content, type, meta, updated_at, geo_location, timestamp, created_at_postid, "userid")
-                VALUES (${newId}, ${title}, ${content}, ${type}, ${metaData}, ${new Date()}, ST_SetSRID(ST_Point(${lng}, ${lat}),4326), ${Date.now()}, ${cursorField}, ${ctx.currentUser.user.userId})
+            Prisma.sql`INSERT INTO "geo_post" (postid, title, content, type, meta, updated_at, geo_location, timestamp, created_at_postid_raw, "userid")
+                VALUES (${newId}, ${title}, ${content}, ${type}, ${meta}, ${new Date()}, ST_SetSRID(ST_Point(${lng}, ${lat}),4326), ${Date.now()}, ${cursorField}, ${ctx.currentUser.user.userId})
                 RETURNING postid`)
 
                 return {

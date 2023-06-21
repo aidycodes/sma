@@ -17,11 +17,12 @@ const LikeComment = ({ postid, userLikes, like, unlike, commentRef }:
   return (
     <div>
         <hr className="border-gray-600"/>
-            <div className="flex  justify-center text-xl items-center 2  ">
-                <div className=" flex items-center gap-2 p-4  justify-center cursor-pointer
-                                     hover:backdrop-brightness-200 basis-1/2 "
+            <div className="flex  justify-center text-xl items-center 2 transition-opacity  ">
+                <button className={`${postid === 'optimistic' ? 'opacity-30' : 'opacity-100'} flex items-center gap-2 p-4 transition-opacity justify-center cursor-pointer
+                                     hover:backdrop-brightness-200 basis-1/2 `}
+                                     disabled={postid === 'optimistic'}
                         onClick={userLikes ? () => unlike.mutate({postid:postid}) : 
-                    () => like.mutate({postid:postid, userid:profile.userid, currentUser:profile.username})}
+                    () => like.mutate({postid:postid, userid:profile?.userid, currentUser:profile?.username})}
                                      >
                                         {userLikes ?
                 <div className="flex items-center gap-2"> 
@@ -34,7 +35,7 @@ const LikeComment = ({ postid, userLikes, like, unlike, commentRef }:
                      <Image width={30} height={30}  src='/icons/thumbs-up.svg'  alt="icon"  />
                       <h2>Like</h2>
                 </div>                                  }
-                </div>
+                </button>
                 <div className={`flex items-center gap-2 p-4  justify-center cursor-pointer
                                      hover:backdrop-brightness-200 basis-1/2 `}
                                      onClick={() => moveToComment()}>

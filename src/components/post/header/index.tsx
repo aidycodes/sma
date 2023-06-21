@@ -11,6 +11,7 @@ type Props = {
     created_at?: Date
     username?: string
     userid?: string
+
 }
 
 const PostHeader = ({ avatar, created_at, username, userid}: Props) => {

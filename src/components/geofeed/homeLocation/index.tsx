@@ -1,25 +1,23 @@
 import React from 'react'
 import useInfiniteScroll from 'react-infinite-scroll-hook'
 import PostSkeleton from '~/components/post/skeleton'
+import useHomeLocationFeed from '~/hooks/api/feeds/useHomeLocation'
 import { api } from '~/utils/api'
-import PostItem from '../post'
+import PostItem from '../../post'
 
-type GeoFeedProps = {
+type HomeFeedProps = {
     lat: number
     lng: number
 }
 
-const GeoFeed = ({lat, lng}: GeoFeedProps) => {
+const HomeFeed = ({lat, lng}: HomeFeedProps) => {
 
     const [filterFeed, setFilterFeed] = React.useState<string[]>([])
-
-    const profile = api.userQuery.getUserProfile.useQuery()   
+  
     const {  data:geoData, isLoading } = api.userQuery.getUsersGeoData.useQuery()
 
-    const { data, hasNextPage, fetchNextPage, isLoading:mainLoading } = api.feed.getGeoFeed_current.useInfiniteQuery({ lat:lat, lng:lng}, 
-        {getNextPageParam: (lastPage) => lastPage ? lastPage.nextCursor : undefined}) 
+    const { posts, hasNextPage, fetchNextPage, isLoading:feedIsLoading } = useHomeLocationFeed()
 
-const posts = data?.pages.flatMap(page => page?.posts)
     const postFeed = posts?.map((post: any) => ( <PostItem key={post.postid} {...post} setFilterFeed={setFilterFeed} /> 
     )).filter((post: any) => !filterFeed.includes(post.props.postid))
   
@@ -32,35 +30,38 @@ const posts = data?.pages.flatMap(page => page?.posts)
     })
 
      const dateid = Date.now() + 'ddds'
-
+    if(!feedIsLoading && posts.length === 0){
+         return(
+            <div className="text-center text-xl fg p-8 
+            rounded-xl text-gray-500 mt-2"
+            >No posts here yet, Be the first to post in this area!</div>
+            )
+     }
   return (
-               <div>{mainLoading && !posts && 
+        <div>{feedIsLoading && posts.length === 0 && 
             <div>
-            <PostSkeleton/>
-            <PostSkeleton/>
-            <PostSkeleton/>
+                <PostSkeleton/>
+                <PostSkeleton/>
+                <PostSkeleton/>
             </div>
             }
-        <div>
-           <div className="">
+           <div>
                 {postFeed}
-                {isLoading || hasNextPage &&
+                {isLoading || hasNextPage ?
                 <div ref={sentryRef}>
                     <PostSkeleton/>
                     <PostSkeleton/>
                     <PostSkeleton/>
                 </div>
-            }
-            {!hasNextPage && posts?.length > 0
-            && <div className="text-center text-xl text-gray-500 mt-2">No more posts</div>
-            }
-            {
-                !isLoading && posts?.length === 0 && <div className="text-center text-xl text-gray-500 mt-2">No posts</div>
-            }
-            </div>
-            </div>
+       :
+ 
+        <div className="text-center text-xl text-gray-500 mt-2">End of posts</div>
+     
+        }</div>
+                
         </div>
+    
   )
 }
 
-export default GeoFeed
+export default HomeFeed

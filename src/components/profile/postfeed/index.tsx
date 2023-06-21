@@ -2,9 +2,9 @@ import React from 'react'
 import useInfiniteScroll from 'react-infinite-scroll-hook'
 import PostSkeleton from '~/components/post/skeleton'
 import PostItem from '~/components/post'
-import useLikePost from '~/hooks/api/profileFeed/useLikePost-profile'
-import useProfileFeed from '~/hooks/api/profileFeed/useProfileFeed'
-import useUnlikePost from '~/hooks/api/profileFeed/useUnlikePost-profile'
+import useLikePost from '~/hooks/api/useLikePost'
+import useProfileFeed from '~/hooks/api/feeds/useProfileFeed'
+import useUnlikePost from '~/hooks/api/useUnlikePost'
 import { useRouter } from 'next/router'
 
 

@@ -11,24 +11,25 @@ interface LocationData {
 export const useGeolocation = () => {
    const [location, setLocation] = useState<LocationData | null>(null)
    const [isLoading, setIsLoading] = useState<boolean>(true)
-   const [, setLocationAtom] = useAtom(currentLocationAtom)
+   const [LA, setLocationAtom] = useAtom(currentLocationAtom)
+
     useEffect(() => {
         if (navigator.geolocation) {
            setIsLoading(true)
             const watch = navigator.geolocation.watchPosition(position => {
-            
+            console.log({position})
                 setLocation({lat: position.coords.latitude, lng: position.coords.longitude})
                 setLocationAtom({lat: position.coords.latitude, lng: position.coords.longitude})
-            }, (error) => {
-               toast.error('Please enable location services')     
-            },{enableHighAccuracy: true, timeout: 50000, maximumAge: 5000}
+            }, (error) => {              
+            },{enableHighAccuracy: false, timeout: 50000, maximumAge: 5000}
             )
             setIsLoading(false)
                  return () => {
                     navigator.geolocation.clearWatch(watch)
                     }
-        }        
+        }            
     }, [])
+
    
     if(location){
         
@@ -37,3 +38,4 @@ export const useGeolocation = () => {
         return {lat: 0, lng:0, isLoading}
     }
 }
+

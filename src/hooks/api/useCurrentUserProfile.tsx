@@ -4,9 +4,9 @@ import { api } from "~/utils/api"
 const useCurrentUserProfile = () => {
 
     const trpc = api.useContext()
-    const { data:{user:{profile}} } = api.userQuery.getUserProfile.useQuery()
+    const { data } = api.userQuery.getUserProfile.useQuery()
 
-    return profile
+    return data?.user?.profile
 }
 
 export default useCurrentUserProfile

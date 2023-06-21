@@ -1,16 +1,13 @@
 import React from 'react'
-import useFollowFeed from '~/hooks/api/followingFeed/followfeed'
+import useFollowFeed from '~/hooks/api/feeds/followfeed'
 import useInfiniteScroll from 'react-infinite-scroll-hook'
 import PostSkeleton from '~/components/post/skeleton'
-import { api } from '~/utils/api'
 import PostItem from '../post'
 
 const Feed = () => {
 
     const [filterFeed, setFilterFeed] = React.useState<string[]>([])
 
-    const profile = api.userQuery.getUserProfile.useQuery()
-   
     const { posts, isError, isLoading, hasNextPage, fetchNextPage } = useFollowFeed()
     
     const postFeed = posts.map((post: any) => ( <PostItem key={post.postid} {...post} setFilterFeed={setFilterFeed} /> 
@@ -37,12 +34,13 @@ const Feed = () => {
            <div className="">
   
                 {postFeed}
-                {isLoading || hasNextPage &&
+                {isLoading || hasNextPage ?
                 <div ref={sentryRef}>
                     <PostSkeleton/>
                     <PostSkeleton/>
                     <PostSkeleton/>
                 </div>
+            : <div className="text-center text-xl text-gray-500 mt-2">No more posts</div> 
             }
             </div>
             </div>
