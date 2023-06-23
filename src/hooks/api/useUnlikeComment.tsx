@@ -72,8 +72,7 @@ const useUnlikeComment = (postid: string, commentid: string, type: string = 'nor
     },
     
     onError: (error: any) => {
-        console.log({error})
-        toast.error('error unliking comment')
+        toast.error('error removing like from comment')
     },
     onSettled: () => {
             if(page === 'user' && profileId){

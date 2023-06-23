@@ -33,7 +33,6 @@ const CommentItem = ({
   profile: { avatar, userid, username}}: Comment ) => {
 
     const [showUserToolTip, setShowUserToolTip] = React.useState(false)
-    const router = useRouter()
  
     const likeComment = useLikeComment(postid, commentid, type)
     const unlikeComment = useUnlikeComment(postid, commentid, type )

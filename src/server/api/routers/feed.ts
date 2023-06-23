@@ -289,26 +289,29 @@ export const feedRouter = createTRPCRouter({
                 
             }),
 
-            getActivityFeed: privateProcedure
+        getActivityFeed: privateProcedure
             .input(z.object({ cursor:z.object({
-                geoCursor:z.object({created_at: z.date(), postid: z.string(), skip: z.boolean().optional() }).optional(),
-                postCursor:z.object({created_at: z.date(), postid: z.string(), skip: z.boolean().optional() }).optional(),
+                geoCursor:z.object({updated_at: z.date(), postid: z.string(), skip: z.boolean().optional() }).optional(),
+                postCursor:z.object({updated_at: z.date(), postid: z.string(), skip: z.boolean().optional() }).optional(),
                 }).optional()}))                
                 .query(async ({ input, ctx }) => {
                 const { cursor: cursorInput } = input
-
+                    const onlyUser = true
         let geoPosts: any[] = []
         let feed: any[] = []
             if(!cursorInput?.postCursor?.skip){     
                  feed = await ctx.prisma.post.findMany({
-                    where:{
+                    where: !onlyUser ? {
                         
                         OR:[
                             { comments: { some: { userid: ctx.currentUser.user.userId } } },
                                {userid: ctx.currentUser.user.userId}]
-                            },
+                            }
+                            :
+                            {userid: '0'}, 
+                            
                         take: 11,
-                        cursor: cursorInput ? {created_at_postid: cursorInput.postCursor } : undefined,
+                        cursor: cursorInput ? {updated_at_postid: cursorInput.postCursor } : undefined,
                     include: {
                         user: {
                             select: {
@@ -328,7 +331,7 @@ export const feedRouter = createTRPCRouter({
                         },
                         comments: {
                             orderBy:{
-                                created_at: "asc",
+                                updated_at: "asc",
                             },
                             include: {
                                 user: {
@@ -351,7 +354,7 @@ export const feedRouter = createTRPCRouter({
                         },
                     },
                     orderBy: {
-                        created_at: "desc",
+                        updated_at: "desc",
                     },         
                     })
             }
@@ -365,7 +368,7 @@ export const feedRouter = createTRPCRouter({
                                {userid: ctx.currentUser.user.userId}]
                             },
                         take: 11,
-                        cursor: cursorInput?.geoCursor ? {created_at_postid: cursorInput?.geoCursor } : undefined,
+                        cursor: cursorInput?.geoCursor ? {updated_at_postid: cursorInput?.geoCursor } : undefined,
                     include: {
                         user: {
                             select: {
@@ -385,7 +388,7 @@ export const feedRouter = createTRPCRouter({
                         },
                         comments: {
                             orderBy:{
-                                created_at: "asc",
+                                updated_at: "asc",
                             },
                             include: {
                                 user: {
@@ -408,12 +411,12 @@ export const feedRouter = createTRPCRouter({
                         },
                     },
                     orderBy: {
-                        created_at: "desc",
+                        updated_at: "desc",
                     },         
                     })
                 }
     const posts: any = [...feed, ...geoPosts]
-            .sort((a, b) => new Date(b.created_at).valueOf() - new Date(a.created_at).valueOf() ).slice(0, 10)
+            .sort((a, b) => new Date(b.updated_at).valueOf() - new Date(a.updated_at).valueOf() ).slice(0, 10)
    
             const lastGeoPost = posts.findLast((item: any) => item.type === "geo")
     const lastPost = posts.findLast((item: any) => !item.type)
@@ -424,8 +427,8 @@ export const feedRouter = createTRPCRouter({
     const lastPostIndex = feed.findIndex((item: any, i: number) =>  item.postid === lastPost.postid)
     const postItem = feed[lastPostIndex + 1]
 
-    const geoCursor = geoItem ? {created_at: geoItem.created_at, postid: geoItem.postid} : {created_at: new Date(), postid:'skip', skip: true}
-    const postCursor =  postItem ? {created_at: postItem.created_at, postid: postItem.postid} : {created_at: new Date(), postid:'skip', skip: true}
+    const geoCursor = geoItem ? {updated_at: geoItem.updated_at, postid: geoItem.postid} : {updated_at: new Date(), postid:'skip', skip: true}
+    const postCursor =  postItem ? {updated_at: postItem.updated_at, postid: postItem.postid} : {updated_at: new Date(), postid:'skip', skip: true}
     const cursor = !geoCursor.skip || !postCursor.skip ? {geoCursor, postCursor} : undefined
             console.log({geoCursor})
                     return {

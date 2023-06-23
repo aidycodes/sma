@@ -80,8 +80,7 @@ const useUnlikePost = (type: string = 'normal') => {
         
     },
     onError: (err, variables, context) => {
-        trpc.userQuery.getUserPosts.invalidate()
-        trpc.feed.getFollowerFeed.invalidate()
+        toast.error('error unliking post')
     },
     onSettled: (data, error, variables, context) => {
             if(page === 'user' && profileId){

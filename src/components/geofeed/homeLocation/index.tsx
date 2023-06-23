@@ -1,5 +1,6 @@
 import React from 'react'
 import useInfiniteScroll from 'react-infinite-scroll-hook'
+import LoadingSpinner from '~/components/loadingspinner'
 import PostSkeleton from '~/components/post/skeleton'
 import useHomeLocationFeed from '~/hooks/api/feeds/useHomeLocation'
 import { api } from '~/utils/api'
@@ -16,7 +17,7 @@ const HomeFeed = ({lat, lng}: HomeFeedProps) => {
   
     const {  data:geoData, isLoading } = api.userQuery.getUsersGeoData.useQuery()
 
-    const { posts, hasNextPage, fetchNextPage, isLoading:feedIsLoading } = useHomeLocationFeed()
+    const { posts, hasNextPage, fetchNextPage, isLoading:feedIsLoading, isFetching } = useHomeLocationFeed()
 
     const postFeed = posts?.map((post: any) => ( <PostItem key={post.postid} {...post} setFilterFeed={setFilterFeed} /> 
     )).filter((post: any) => !filterFeed.includes(post.props.postid))
@@ -40,12 +41,17 @@ const HomeFeed = ({lat, lng}: HomeFeedProps) => {
   return (
         <div>{feedIsLoading && posts.length === 0 && 
             <div>
+                <div className="text-center text-xl text-gray-500 my-2 flex items-center justify-center gap-2 h-10 md:h-4 relative">
+                    </div>
                 <PostSkeleton/>
                 <PostSkeleton/>
                 <PostSkeleton/>
             </div>
             }
            <div>
+            <div className="text-center text-xl text-gray-500 my-2 flex items-center justify-center gap-2 h-10 md:h-4 relative">
+                {isFetching && <><div className="mt-2 md:mt-4"><LoadingSpinner size="small"/></div><div className="md:mt-2"> Checking for New Posts...</div></> }
+            </div>
                 {postFeed}
                 {isLoading || hasNextPage ?
                 <div ref={sentryRef}>

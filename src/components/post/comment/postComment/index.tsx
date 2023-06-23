@@ -3,13 +3,15 @@ import React, { BaseSyntheticEvent } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import usePostComment from '~/hooks/api/usePostComment'
 import useCurrentUserProfile from '~/hooks/api/useCurrentUserProfile'
+import { SetCommentCount } from '../..'
 
 type Inputs = {
     comment: string
 }
 
-const PostComment = ({ postid, profileId, type } :
-     { postid: string, profileId: string, type?: string}) => {
+const PostComment = ({ postid, profileId, type, setCommentCount } :
+     { postid: string, profileId: string, type?: string,
+         setCommentCount: () => void }) => {
 
     const { register, handleSubmit, setValue } = useForm({
         defaultValues: {
@@ -24,7 +26,8 @@ const PostComment = ({ postid, profileId, type } :
        if(!e) return
         e.preventDefault()
         newComment.mutate({title:'', postid:postid, content:data.comment})
-        setValue('comment', '')        
+        setValue('comment', '')
+        setCommentCount()        
     }
 
   return (

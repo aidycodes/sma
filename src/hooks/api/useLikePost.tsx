@@ -71,9 +71,6 @@ const useLikePost = (type: string = 'normal') => {
         }
     },
         onError: (err, variables, context) => {
-            trpc.userQuery.getUserPosts.invalidate()
-            trpc.feed.getFollowerFeed.invalidate()
-            trpc.feed.getGeoFeed_current.invalidate()
             toast.error('Error liking post')
         },
         onSuccess: (data, variables, context) => {

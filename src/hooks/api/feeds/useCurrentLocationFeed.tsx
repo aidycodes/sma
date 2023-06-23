@@ -7,7 +7,7 @@ const useCurrentLocationFeed = () => {
     const [ currentLocation ] = useAtom(currentLocationAtom)
     const [ radius ] = useAtom(radiusAtom)
 
-    const { data, isError, isLoading, hasNextPage, fetchNextPage } = api.feed.getGeoFeed_current
+    const { data, isError, isLoading, hasNextPage, fetchNextPage, isFetching } = api.feed.getGeoFeed_current
             .useInfiniteQuery({lat: currentLocation.lat, lng: currentLocation.lng, radius: radius},
                     {getNextPageParam: (lastPage) => lastPage ? lastPage.nextCursor : undefined
 })
@@ -17,7 +17,8 @@ const useCurrentLocationFeed = () => {
                 isError,
                 isLoading,
                 hasNextPage,
-                fetchNextPage
+                fetchNextPage,
+                isFetching
             }
 
     }
@@ -26,7 +27,8 @@ const useCurrentLocationFeed = () => {
         isError,
         isLoading,
         hasNextPage,
-        fetchNextPage
+        fetchNextPage,
+        isFetching
     }
 
 }

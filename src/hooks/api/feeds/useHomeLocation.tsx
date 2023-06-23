@@ -7,7 +7,7 @@ const useHomeLocationFeed = () => {
     const { data:{geoData} } = api.userQuery.getUsersGeoData.useQuery()
     const [ radius ] = useAtom(radiusAtom)
     
-    const { data, isError, isLoading, hasNextPage, fetchNextPage } = api.feed.getGeoFeed_home
+    const { data, isError, isLoading, hasNextPage, fetchNextPage, isFetching } = api.feed.getGeoFeed_home
             .useInfiniteQuery({lat: geoData?.lat, lng: geoData?.lng, radius: radius},
                     {getNextPageParam: (lastPage) => lastPage ? lastPage.nextCursor : undefined
 })
@@ -17,7 +17,8 @@ const useHomeLocationFeed = () => {
                 isError,
                 isLoading,
                 hasNextPage,
-                fetchNextPage
+                fetchNextPage,
+                isFetching
             }
 
     }
@@ -26,7 +27,8 @@ const useHomeLocationFeed = () => {
         isError,
         isLoading,
         hasNextPage,
-        fetchNextPage
+        fetchNextPage,
+        isFetching
     }
 
 }

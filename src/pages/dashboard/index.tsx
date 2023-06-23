@@ -37,7 +37,8 @@ const Dashboard = () => {
   }
      
         <FeedSelector setFeed={setFeed} feed={feed}/>
-        <CreatePost/>        
+        <CreatePost/>  
+    
         <FeedDisplay feed={feed} lat={lat} lng={lng}/>
        
     </div>
@@ -51,6 +52,7 @@ import SuperJSON from 'superjson';
 import { GetServerSideProps } from 'next';
 import { createServerSideHelpers } from '@trpc/react-query/server';
 import { appRouter } from '~/server/api/root'
+import AdditionalOptions from '~/components/dashboard/AdditionalOptions'
 
 
 

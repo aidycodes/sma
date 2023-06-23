@@ -115,6 +115,7 @@ model Post {
     Post_Notification Post_Notification[]
 
     @@unique([created_at, postid])
+    @@unique([updated_at, postid])
     @@index(fields: [userid, postid])
     @@map("post")
 }
@@ -156,6 +157,7 @@ model Geo_Post {
     user                  AuthUser                              @relation(fields: [userid], references: [id])
 
     @@unique([created_at, postid])
+    @@unique([updated_at, postid])
     @@index([geo_location], name: "location_idx", type: Gist)
     @@index(fields: [userid], type: Hash)
     @@map("geo_post")

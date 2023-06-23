@@ -4,6 +4,7 @@ import { api } from '~/utils/api'
 import useCurrentUserProfile from './useCurrentUserProfile'
 import { useAtom } from "jotai";
 import { currentLocationAtom, FeedDirectorAtom, radiusAtom } from "~/jotai/store";
+import { TypeOf } from 'zod';
 
 export type QueryParams = {
     id: string 
@@ -25,19 +26,24 @@ const useLikeComment= (postid: string, commentid: string, type: string = 'normal
 
       return api[postType].like.useMutation({
     onMutate: async () => {
+
       if(page === 'user' && profileId){
-      trpc.userQuery.getUserPosts.cancel()
+         trpc.userQuery.getUserPosts.cancel()
       trpc.userQuery.getUserPosts.setInfiniteData({id:profileId, postAmt:3}, (oldData: any) => {
-        return optimisticLikeComment(commentid, oldData, postid, userid, username)
+        if(oldData){
+        return optimisticLikeComment(commentid, oldData, postid, userid, username, 'add')
+        }
       })
+
     }
     if(page === 'dashboard' ){     
         trpc.feed.getFollowerFeed.cancel()
              trpc.feed.getFollowerFeed.setInfiniteData({postAmt:5},
               (data: any) => {
                if(data){
-        return optimisticLikeComment(commentid, data, postid, userid, username) 
-               }    
+        return optimisticLikeComment(commentid, data, postid, userid, username, 'add') 
+               }
+                    
         }) 
 
         trpc.feed.getGeoFeed_current.cancel()
@@ -47,7 +53,7 @@ const useLikeComment= (postid: string, commentid: string, type: string = 'normal
                 radius:radius},
               (data: any) => {
                 if(data){
-        return optimisticLikeComment(commentid, data, postid, userid, username)
+        return optimisticLikeComment(commentid, data, postid, userid, username, 'add')
                 }
                 })
                   
@@ -58,7 +64,7 @@ const useLikeComment= (postid: string, commentid: string, type: string = 'normal
                 radius:radius},
              (data: any) => {
               if(data){
-        return optimisticLikeComment(commentid, data, postid, userid, username)
+        return optimisticLikeComment(commentid, data, postid, userid, username, 'add')
               }
                 })
             
@@ -67,19 +73,17 @@ const useLikeComment= (postid: string, commentid: string, type: string = 'normal
                 {},
               (data: any) => {
                 if(data){
-        return optimisticLikeComment(commentid, data, postid, userid, username)
+        return optimisticLikeComment(commentid, data, postid, userid, username, 'add')
               }
                 })
               }
+         
     },
    
-    onError: (error) => {
+    onError: (error, variable, context  ) => {
       toast.error("Error liking comment")
-      console.log({error})
-      trpc.userQuery.getUserPosts.invalidate()
-       trpc.feed.getFollowerFeed.invalidate()
     },
-    onSuccess: () => {
+    onSettled: () => {
             if(page === 'user' && profileId){
                 trpc.userQuery.getUserPosts.invalidate()
         }
@@ -103,13 +107,15 @@ const useLikeComment= (postid: string, commentid: string, type: string = 'normal
 
 export default useLikeComment
 
-function optimisticLikeComment(commentid: string, data: any, postid: string, userid: string, username: string) {
+function optimisticLikeComment(commentid: string, data: any, postid: string, userid: string, username: string, type: string) {
      const updatedData = data?.pages.map((page: any) => {
           const posts = page?.posts.map((post: any) => {
             if(post.postid === postid) {
               return {...post, comments:post.comments.map((comment: any) => {
                 if(comment.commentid === commentid) {
+                  if(type === 'add'){
                   return {...comment, likes_cnt:comment.likes_cnt+1, likes:[...comment.likes, {user:{id:userid, username}}]}
+                  }
                 }
                 return comment
               })}
@@ -119,4 +125,5 @@ function optimisticLikeComment(commentid: string, data: any, postid: string, use
           return {...page, posts}
         })
         return {...data, pages:updatedData}
-      }
+      } 
+    

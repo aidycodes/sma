@@ -13,7 +13,7 @@ export const commentRouter = createTRPCRouter({
 
                 const comment = await ctx.prisma.post.update({
                     where: { postid: input.postid },
-                    data:{comment_cnt: {increment: 1},
+                    data:{comment_cnt: {increment: 1},                   
                     comments: {
                         create: {
                             title: input.title,

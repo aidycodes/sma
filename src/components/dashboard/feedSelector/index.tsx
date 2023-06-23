@@ -14,22 +14,19 @@ const FeedSelector =
 console.log({CL})
         const handleRadius = (radius: string) => {
              setRadius(+radius)
-             context.feed.getGeoFeed_current.reset()
-            //context.feed.getGeoFeed_current.invalidate()
-           
-            
+             context.feed.getGeoFeed_current.reset()   
         }
-        
+        console.log(feed)
   return (
-    <div className="fg py-4 lg:py-8 my-2 mx-1 rounded-xl pl-1md:p-2 lg:px-4 lg:m-4   ">
-        <div className="flex ml-2 gap-4 items-center">
+    <div className="fg py-4 lg:py-8 my-2 lg:mx-1 rounded-xl pl-1md:p-2 lg:px-4 lg:m-4   ">
+        <div className="flex ml-2 justify-center gap-4 items-center flex-wrap md:flex-nowrap">
             <FeedButton setFeed={setFeed} feed={feed} type="following"/>
             <FeedButton setFeed={setFeed} feed={feed} type="current"/>
             <FeedButton setFeed={setFeed} feed={feed} type="home"/>
             <FeedButton setFeed={setFeed} feed={feed} type="activity"/>
      
-        <div className="ml-auto">
-           <div className={`flex flex-col items-center mb-8 mr-4  md:mr-8 md:mb-8 ${feed === 'following' || feed === 'activity' && 'opacity-30'}`}>
+        <div className="md:ml-auto">
+           <div className={`flex flex-col items-center mt-auto   md:mr-8 md:mb-8 ${feed === 'following' || feed === 'activity' && 'opacity-30'}`}>
              <label htmlFor="distance">Distance</label>
             <select onChange={(e) => handleRadius(e.target.value)} name='distance' className={`rounded-xl p-2 text-black bg-gray-400`} disabled={feed === 'following' || feed === 'activity'}>             
             <option className="text-black font-semibold rounded-md" value={5}>5 Miles</option>
@@ -38,11 +35,12 @@ console.log({CL})
             <option className="text-black font-semibold rounded-md" value={50}>50 Miles</option>
             </select>
         </div>
+        
         </div>
         </div> 
-        <div className="flex justify-center">
-      
-          </div>
+        <div>
+
+        </div>
     </div>
   )
 }

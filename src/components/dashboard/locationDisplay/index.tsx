@@ -40,7 +40,7 @@ const LocationDisplay =
     <div className="flex  items-center  rounded-xl lg:w-[90%] text-sm ">
         <Image src="/icons/location-point.svg" width={20} height={20} alt="pin" />
         <span className={`${bai.className}`}>Current Location:</span>
-        {isLoading ? <div className=" ml-auto"><LoadingSpinner size="small"/></div>
+       
         
         : <div className="text-center lg:flex text-sm ">
             <span className={`${bai.className} hidden lg:block`}>{streetName} </span>
@@ -49,7 +49,7 @@ const LocationDisplay =
             <span className={`${bai.className}`}>{country} </span>
             <span className={`${bai.className}`}>{zipcode} </span>
                   
-        </div>}
+        </div>
 
     </div>
   )

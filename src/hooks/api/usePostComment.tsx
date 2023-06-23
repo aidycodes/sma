@@ -72,9 +72,6 @@ const usePostComment = (postid: string, type: string = 'normal') => {
             },
             onError: () => {
                 toast.error('error creating comment')
-                trpc.userQuery.getUserPosts.invalidate()
-                trpc.feed.getFollowerFeed.invalidate()
-                trpc.feed.getGeoFeed_current.invalidate()
             },
             onSuccess: () => {
             if(page === 'user' && profileId){

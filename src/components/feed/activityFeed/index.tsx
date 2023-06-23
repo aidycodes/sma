@@ -4,6 +4,7 @@ import PostSkeleton from '~/components/post/skeleton'
 import PostItem from '~/components/post'
 import useActivityFeed from '~/hooks/api/feeds/useActivityFeed'
 import LoadingSpinner from '~/components/loadingspinner'
+import AdditionalOptions from '~/components/dashboard/AdditionalOptions'
 
 
 const ActivityFeed = () => {
@@ -38,7 +39,7 @@ const ActivityFeed = () => {
             <div className="text-center text-xl text-gray-500 my-2 flex items-center justify-center gap-2 h-10 md:h-4 relative">
                 {isFetching && <><div className="mt-2 md:mt-4"><LoadingSpinner size="small"/></div><div className="md:mt-2"> Checking for New Posts...</div></> }
             </div>
-
+            
                 {postFeed}
 
                 {isLoading || hasNextPage ?

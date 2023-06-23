@@ -1,6 +1,6 @@
 import { useAtom } from "jotai"
 import { toast } from "react-hot-toast"
-import { currentLocationAtom, FeedDirectorAtom, whereToPostAtom } from "~/jotai/store"
+import { currentLocationAtom, FeedDirectorAtom, radiusAtom, whereToPostAtom } from "~/jotai/store"
 import { api } from "~/utils/api"
 import useCurrentUserProfile from "./useCurrentUserProfile"
 
@@ -37,18 +37,19 @@ export const useSubmitPostGeo = () => {
     const trpc = api.useContext()
     const [ whereToPost ] = useAtom(whereToPostAtom)
     const [ currentLocation ] = useAtom(currentLocationAtom)
+    const [ radius ] = useAtom(radiusAtom)
 
     const profile = useCurrentUserProfile()
     const feed = whereToPost === 'Current Location' ? 'getGeoFeed_current' : 'route'
     return api.geoPost.new.useMutation({
          onMutate: async(newPost) => {
         await trpc.feed.getGeoFeed_current.cancel()
-        const previousData = trpc.feed.getGeoFeed_current.getInfiniteData({lat:currentLocation?.lat, lng:currentLocation?.lng})
+        const previousData = trpc.feed.getGeoFeed_current.getInfiniteData({lat:currentLocation?.lat, lng:currentLocation?.lng, radius:radius})
         console.log({previousData})
             if(whereToPost === 'Current Location'){
                 
           
-                trpc.feed.getGeoFeed_current.setInfiniteData({lat:currentLocation?.lat, lng:currentLocation?.lng}, (oldData: any) => {
+                trpc.feed.getGeoFeed_current.setInfiniteData({lat:currentLocation?.lat, lng:currentLocation?.lng, radius:radius}, (oldData: any) => {
                     if(oldData){
                         return opitmisticPost(newPost, oldData, profile)
                     }
@@ -60,7 +61,7 @@ export const useSubmitPostGeo = () => {
         },
         onError: (err, variables, context) => {
             console.log(variables, context)
-            trpc.feed.getGeoFeed_current.setInfiniteData({lat:currentLocation?.lat, lng:currentLocation?.lng}, context?.previousData)
+            trpc.feed.getGeoFeed_current.setInfiniteData({lat:currentLocation?.lat, lng:currentLocation?.lng, radius:radius}, context?.previousData)
             toast.error('Error submitting post')
     },
         onSuccess: () => {

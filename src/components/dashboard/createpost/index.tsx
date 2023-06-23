@@ -1,5 +1,6 @@
 import { useAtom } from 'jotai'
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 import { createPortal } from 'react-dom'
 import useCurrentUserProfile from '~/hooks/api/useCurrentUserProfile'
@@ -34,9 +35,11 @@ const CreatePost = () => {
   return (
     <div className='flex flex-col h-[200px]  justify-center items-center gap-4 fg mx-1 rounded-xl pl-1 md:m-4 md:p-2 lg:px-8 lg:pt-2 '>
     <div className="flex items-center justify-center w-full gap-2 m-2">
+    <Link href={`/user/${profile?.userid}`} passHref shallow={true}>
       <div className="relative h-14 w-14 lg:h-16 lg:w-16 box-shadow-md rounded-[100px] ">
         <Image className="rounded-[100px] " src={profile?.avatar ? profile?.avatar : '/icons/user.svg'} fill alt="user" />
       </div>
+    </Link>
       <div className="h-12 rounded-[100px] cursor-pointer fakeTextBox flex-grow px-4 resize-none focus:h-36 transition-all duration-500 flex items-center"
         onClick={() => handlePopup(false)}>
         <span>{currentFeed[1] && placeHolderHelper(currentFeed[1])}</span>

@@ -5,6 +5,7 @@ import ActivityFeed from '~/components/feed/activityFeed'
 import GeoFeed from '~/components/geofeed/currentLocation'
 import HomeFeed from '~/components/geofeed/homeLocation'
 import { api } from '~/utils/api'
+import FeedLoading from './feedLoading'
 
 type FeedDisplayProps = {
     feed: string

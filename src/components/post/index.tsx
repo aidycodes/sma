@@ -35,6 +35,8 @@ interface Props extends ExtendedPost {
     
     }
 
+    export type SetCommentCount = React.Dispatch<React.SetStateAction<number>>
+
 const PostItem = ( {postid, created_at, title, 
     content, meta, user, comments,
     likes_cnt, comment_cnt, likes, setFilterFeed, type }: Props ) => {
@@ -42,6 +44,10 @@ const PostItem = ( {postid, created_at, title,
         const ref = React.useRef<HTMLDivElement>(null)
         const like = useLikePost(type)
         const unlike = useUnlikePost(type)
+    
+    const handleCommentCount = () => {
+        setCommentCount(comments.length+1)
+    }
 
     if(!user) return null
   return (
@@ -92,7 +98,7 @@ const PostItem = ( {postid, created_at, title,
             </div>
         {/* comment input component */}
             <div ref={ref}>
-                 <PostComment postid={postid} profileId={user.profile.userid} type={type} />
+                 <PostComment postid={postid} profileId={user.profile.userid} type={type} setCommentCount={handleCommentCount} />
             </div>
         </div>
 

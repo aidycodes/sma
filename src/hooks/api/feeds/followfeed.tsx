@@ -1,7 +1,7 @@
 import { api } from '~/utils/api'
 
 const useFollowFeed = () => {
- const { data, isError, isLoading, hasNextPage, fetchNextPage } = api.feed.getFollowerFeed.useInfiniteQuery({postAmt:5},
+ const { data, isError, isLoading, hasNextPage, fetchNextPage, isFetching } = api.feed.getFollowerFeed.useInfiniteQuery({postAmt:5},
   {getNextPageParam: (lastPage) => lastPage ? lastPage.nextCursor : undefined
 })
 
@@ -10,7 +10,8 @@ const useFollowFeed = () => {
                 isError,
                 isLoading,
                 hasNextPage,
-                fetchNextPage
+                fetchNextPage,
+                isFetching
             }
 
     }
@@ -19,7 +20,8 @@ const useFollowFeed = () => {
         isError,
         isLoading,
         hasNextPage,
-        fetchNextPage
+        fetchNextPage,
+        isFetching
     }
 }
 
