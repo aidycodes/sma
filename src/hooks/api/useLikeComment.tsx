@@ -17,7 +17,7 @@ const useLikeComment= (postid: string, commentid: string, type: string = 'normal
     
     const router = useRouter()
 
-    const [page, profileId] = router.asPath.substr(1).split('/')
+    const [page, queryParam] = router.asPath.substr(1).split('/')
     const [ [, procedure] ] = useAtom(FeedDirectorAtom)
     const [currentLocation] = useAtom(currentLocationAtom)
     const [ radius ] = useAtom(radiusAtom)
@@ -27,15 +27,42 @@ const useLikeComment= (postid: string, commentid: string, type: string = 'normal
       return api[postType].like.useMutation({
     onMutate: async () => {
 
-      if(page === 'user' && profileId){
+      if(page === 'user' && queryParam){
          trpc.userQuery.getUserPosts.cancel()
-      trpc.userQuery.getUserPosts.setInfiniteData({id:profileId, postAmt:3}, (oldData: any) => {
+      trpc.userQuery.getUserPosts.setInfiniteData({id:queryParam, postAmt:3}, (oldData: any) => {
         if(oldData){
         return optimisticLikeComment(commentid, oldData, postid, userid, username, 'add')
         }
       })
-
     }
+    if(page === 'geopost'){
+        trpc.geoPost.getPost.cancel()
+        trpc.geoPost.getPost.setData({postid:queryParam}, (data: any) => {
+            if(data){
+                return { post:{...data.post, comments:
+                  data.post.comments.map(comment => {
+                    return commentid === comment.commentid ? 
+                    {...comment, commentid:'opitmistic', likes_cnt:comment.likes_cnt+1, 
+                    likes:[...comment.likes, {user:{id:userid, username}} ]}
+                    : comment
+                      }), } }
+            }
+          })
+        }
+      if(page === 'post'){
+        trpc.post.getPost.cancel()
+        trpc.post.getPost.setData({postid:queryParam}, (data: any) => {
+            if(data){
+                return { post:{...data.post, comments:
+                  data.post.comments.map(comment => {
+                    return commentid === comment.commentid ? 
+                    {...comment, commentid:'opitmistic', likes_cnt:comment.likes_cnt+1, 
+                    likes:[...comment.likes, {user:{id:userid, username}} ]}
+                    : comment
+                      }), } }
+            }
+          })
+        }
     if(page === 'dashboard' ){     
         trpc.feed.getFollowerFeed.cancel()
              trpc.feed.getFollowerFeed.setInfiniteData({postAmt:5},
@@ -84,7 +111,7 @@ const useLikeComment= (postid: string, commentid: string, type: string = 'normal
       toast.error("Error liking comment")
     },
     onSettled: () => {
-            if(page === 'user' && profileId){
+            if(page === 'user' && queryParam){
                 trpc.userQuery.getUserPosts.invalidate()
         }
             if(page === 'dashboard' && procedure === 'getFollowerFeed'){
@@ -100,6 +127,12 @@ const useLikeComment= (postid: string, commentid: string, type: string = 'normal
                 trpc.feed.getActivityFeed.invalidate()
 
         }
+            if(page === 'geopost'){
+                trpc.geoPost.getPost.invalidate()
+            }
+            if(page === 'post'){
+                trpc.post.getPost.invalidate()
+              }
             }
       
   })
@@ -114,9 +147,9 @@ function optimisticLikeComment(commentid: string, data: any, postid: string, use
               return {...post, comments:post.comments.map((comment: any) => {
                 if(comment.commentid === commentid) {
                   if(type === 'add'){
-                  return {...comment, likes_cnt:comment.likes_cnt+1, likes:[...comment.likes, {user:{id:userid, username}}]}
+                  return {...comment, commentid:'opitmistic', likes_cnt:comment.likes_cnt+1, likes:[...comment.likes, {user:{id:userid, username}}]}
                   }
-                }
+                }   
                 return comment
               })}
             }

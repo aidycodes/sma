@@ -1,35 +1,26 @@
-import { useAtom } from 'jotai'
-import Link from 'next/link'
+
 import React from 'react'
-import Feed from '~/components/feed'
-import GeoFeed from '~/components/geofeed/currentLocation'
-import Loading from '~/components/loading'
 import { useGeolocation } from '~/hooks/useGeolocation'
-import { FeedDirectorAtom } from '~/jotai/store'
 import { api } from '~/utils/api'
 import CreatePost from '~/components/dashboard/createpost'
 import LocationDisplay from '~/components/dashboard/locationDisplay'
 import FeedSelector from '~/components/dashboard/feedSelector'
-import useActivityFeed from '~/hooks/api/feeds/useActivityFeed'
 import FeedDisplay from '~/components/dashboard/feedSelector/feedDisplay'
 
 
 const Dashboard = () => {
 
+    useSSRTheme()
 
       const [feed, setFeed] = React.useState('following')
       const [disableLocationDisplay, setDisableLocationDisplay] = React.useState(false)
-
       const {lat , lng, isLoading } = useGeolocation()
       const { data, isLoading:locationLoading } = api.geoCode.reverseGeoCode.useQuery({lat: lat, lng: lng})
-
-      const { hasNextPage } = useActivityFeed()
-
-     // const { data:feedData, isLoading:feedLoading } = api.feed.getActivityFeed.useQuery()
       if(isLoading) return null
 
   return (
-        <div className="  w-full h-full lg:w-3/4 2xl:w-1/2 my-32 mx-auto ">
+        <div className="  w-full h-full lg:w-3/4 2xl:w-1/2 my-28 mx-auto ">
+            <AdditionalOptions/>
           {feed === 'current' && !disableLocationDisplay ? 
           <LocationDisplay {...data?.geoUser} isGeo={lat ? true : false} isLoading={locationLoading}
             disable={setDisableLocationDisplay}/> 
@@ -53,6 +44,7 @@ import { GetServerSideProps } from 'next';
 import { createServerSideHelpers } from '@trpc/react-query/server';
 import { appRouter } from '~/server/api/root'
 import AdditionalOptions from '~/components/dashboard/AdditionalOptions'
+import { useSSRTheme } from '~/hooks/useSSRTheme'
 
 
 

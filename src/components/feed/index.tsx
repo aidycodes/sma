@@ -10,7 +10,7 @@ const Feed = () => {
     const [filterFeed, setFilterFeed] = React.useState<string[]>([])
 
     const { posts, isError, isLoading, hasNextPage, fetchNextPage, isFetching } = useFollowFeed()
-    
+
     const postFeed = posts.map((post: any) => ( <PostItem key={post.postid} {...post} setFilterFeed={setFilterFeed} /> 
     )).filter((post: any) => !filterFeed.includes(post.props.postid))
   

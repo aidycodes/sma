@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import useFollowUser from '~/hooks/api/useFollowUser'
@@ -24,9 +25,9 @@ const CommentUserToolTip = ({username, userid: id, avatar }: Props) => {
     return(
    <div className="w-80 h-40 fg absolute bottom-10 left-[-305px] p-2 shadow-2xl z-50 border-slate-600 rounded-md border-[1px] ">
     <Link href={`/user/${id}`}>
-        <div className="fg flex items-center gap-4">
-        <div className="h-20 w-20 relative mt-1">
-            <Avatar url={avatar} width={40} height={40}/>
+        <div className="fg flex items-center gap-2 shadow-xl">
+        <div className="h-16 w-16 relative mt-1 rounded-[50px]">
+            <Image fill src={avatar ? avatar : '/icons/user.svg'} className="rounded-[50px]" alt="user pic"/>
         </div>
             <div className="flex flex-col">
                 <h2 className="font-semibold text-xl">

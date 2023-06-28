@@ -31,16 +31,18 @@ interface Props extends ExtendedPost {
     user: ExtendedUser
     comments: Comment[]
     likes: Like[]
-    setFilterFeed: React.Dispatch<React.SetStateAction<string[]>>
+    showAllComments?: boolean
+    setFilterFeed?: React.Dispatch<React.SetStateAction<string[]>>
+    commentRef?: string
     
     }
 
     export type SetCommentCount = React.Dispatch<React.SetStateAction<number>>
 
 const PostItem = ( {postid, created_at, title, 
-    content, meta, user, comments,
+    content, meta, user, comments, showAllComments, commentRef,
     likes_cnt, comment_cnt, likes, setFilterFeed, type }: Props ) => {
-        const [commentCount, setCommentCount] = React.useState(5)
+        const [commentCount, setCommentCount] = React.useState(!showAllComments ? 5 : comments.length+1)
         const ref = React.useRef<HTMLDivElement>(null)
         const like = useLikePost(type)
         const unlike = useUnlikePost(type)
@@ -60,7 +62,7 @@ const PostItem = ( {postid, created_at, title,
                 { title && <div className={`self-auto mt-[8px] ml-2 text-gray-400 text-lg  ${jose.className}`}>{title}</div>   }     
                 <div className="ml-auto flex items-start gap-2 "> 
                 <Menu icon='/setting.svg' size={30} component={<PostSettings/>} width={48}></Menu>
-                  <Icon size={30} isSelected={false} name='/cross.svg' onClick={() => setFilterFeed((prevData) => [...prevData, postid])}  />
+                 {setFilterFeed && <Icon size={30} isSelected={false} name='/cross.svg' onClick={() => setFilterFeed((prevData) => [...prevData, postid])}  /> }
                 </div>
             </div>
             <div className="p-8">
@@ -81,15 +83,15 @@ const PostItem = ( {postid, created_at, title,
                    return (
                    <div  key={commentid}>
                    <CommentItem content={content} 
-                    profile={user.profile} created_at={created_at}
+                    profile={user?.profile} created_at={created_at}
                     postid={postid} likes={likes} likes_cnt={likes_cnt} 
-                    commentid={commentid} type={type}
+                    commentid={commentid} type={type} commentRef={commentRef}
                     />
                     </div>
                    )
                   }
                 if(i === commentCount && comments.length > commentCount){
-                        return <div className="text-center text-blue-500 hover:text-blue-400 cursor-pointer"
+                        return <div key={commentid} className="text-center text-blue-500 hover:text-blue-400 cursor-pointer"
                             onClick={() => setCommentCount(comments.length)}
                             >View more comments</div>
                   }

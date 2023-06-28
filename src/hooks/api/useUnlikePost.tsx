@@ -11,21 +11,44 @@ const useUnlikePost = (type: string = 'normal') => {
     const profile = useCurrentUserProfile()
     const [ radius ] = useAtom(radiusAtom)
     const params = useRouter()
-    const [page, profileId] = params.asPath.substr(1).split('/')
+    const [page, queryParam] = params.asPath.substr(1).split('/')
     const [ [, procedure] ] = useAtom(FeedDirectorAtom)
     const [currentLocation] = useAtom(currentLocationAtom)
     const postType = type === 'geo' ? 'geoPost' : 'post' 
 
     return  api[postType].unlike.useMutation({
         onMutate: (unlikedPost) => {
-            if(page === 'user' && profileId){
+            if(page === 'user' && queryParam){
             trpc.userQuery.getUserPosts.cancel()
-             trpc.userQuery.getUserPosts.setInfiniteData({id:profileId, postAmt:3},
+             trpc.userQuery.getUserPosts.setInfiniteData({id:queryParam, postAmt:3},
              (old: any) => {
                 if(old){            
             return unLikePost(old, unlikedPost, profile?.userid)               
         }})
-    }   
+    } 
+    
+    if(page === 'geopost'){
+        trpc.geoPost.getPost.cancel()
+        trpc.geoPost.getPost.setData({postid:queryParam}, (data: any) => {
+            if(data){
+                return { post:{...data.post, postid:'optimistic',
+                 likes_cnt: data.post.likes_cnt - 1,
+                  likes:[...data.post.likes.filter((like: any) => like.user.profile.userid !== profile?.userid)]}}
+            }
+        })
+    }
+    if(page === 'post'){
+        trpc.post.getPost.cancel()
+        trpc.post.getPost.setData({postid:queryParam}, (data: any) => {
+            if(data){
+                return { post:{...data.post, postid:'optimistic',
+                 likes_cnt: data.post.likes_cnt - 1,
+                  likes:[...data.post.likes.filter((like: any) => like.user.profile.userid !== profile?.userid)]}}
+            }
+        })
+    }
+
+    
     if(page === 'dashboard' ){     
         trpc.feed.getFollowerFeed.cancel()
              trpc.feed.getFollowerFeed.setInfiniteData({postAmt:5},
@@ -83,7 +106,7 @@ const useUnlikePost = (type: string = 'normal') => {
         toast.error('error unliking post')
     },
     onSettled: (data, error, variables, context) => {
-            if(page === 'user' && profileId){
+            if(page === 'user' && queryParam){
                 trpc.userQuery.getUserPosts.invalidate()
         }
             if(page === 'dashboard' && procedure === 'getFollowerFeed'){
@@ -98,6 +121,11 @@ const useUnlikePost = (type: string = 'normal') => {
             if(page === 'dashboard' && procedure === 'getActivityFeed'){
                 trpc.feed.getActivityFeed.invalidate()
 
+        } if(page === 'geopost'){
+            trpc.geoPost.getPost.invalidate()
+        }
+        if(page === 'post'){
+            trpc.post.getPost.invalidate()
         }
     }
 })
@@ -120,7 +148,7 @@ function unLikePost(data: any, unlikedPost: { postid: string }, userid: string) 
     const pages = data.pages.map((page: any) => {
                     const post = page.posts.map((post: any) => {
                         if(post.postid === unlikedPost.postid){
-                            return {...post, likes_cnt: post.likes_cnt - 1, likes: likes}
+                            return {...post, postid:'optimistic', likes_cnt: post.likes_cnt - 1, likes: likes}
                           }
                             return post
                     })

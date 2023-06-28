@@ -26,6 +26,36 @@ const usePostComment = (postid: string, type: string = 'normal') => {
  
                     }) 
                 }
+    if(page === 'geopost'){
+        trpc.geoPost.getPost.cancel()
+        trpc.geoPost.getPost.setData({postid:postid}, (data: any) => {
+            if(data){
+                return { post:{...data.post, comments:[...data.post.comments, {...postData, commentid:'opitmistic',
+                             likes_cnt:0, likes:[], 
+                             created_at:new Date(),
+                             updated_at: new Date(),
+                             user:{profile:{avatar:profile?.avatar || "", username:profile?.username, userid:profile?.userid}},
+                             userid:profile?.userid
+                            }]}
+            }
+        }
+        })
+    }
+    if(page === 'post'){
+        trpc.post.getPost.cancel()
+        trpc.post.getPost.setData({postid:postid}, (data: any) => {
+            if(data){
+                return { post:{...data.post, comments:[...data.post.comments, {...postData, commentid:'opitmistic',
+                             likes_cnt:0, likes:[], 
+                             created_at:new Date(),
+                             updated_at: new Date(),
+                             user:{profile:{avatar:profile?.avatar || "", username:profile?.username, userid:profile?.userid}},
+                             userid:profile?.userid
+                            }]}
+            }
+        }
+        })
+    }
     if(page === 'dashboard' ){     
         trpc.feed.getFollowerFeed.cancel()
              trpc.feed.getFollowerFeed.setInfiniteData({postAmt:5},
@@ -89,8 +119,14 @@ const usePostComment = (postid: string, type: string = 'normal') => {
             if(page === 'dashboard' && procedure === 'getActivityFeed'){
                 trpc.feed.getActivityFeed.invalidate()
 
-        }
+        }   if(page === 'geopost'){
+             trpc.geoPost.getPost.invalidate()
+        }   
+            if(page === 'post'){
+                trpc.post.getPost.invalidate()
+
             }
+        }
 })
  
 }

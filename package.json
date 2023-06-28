@@ -10,6 +10,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.1.1",
     "@lucia-auth/adapter-prisma": "^2.0.0",
     "@lucia-auth/adapter-session-redis": "^1.0.0",
     "@paralleldrive/cuid2": "^2.2.0",

@@ -39,9 +39,9 @@ const ActivityFeed = () => {
             <div className="text-center text-xl text-gray-500 my-2 flex items-center justify-center gap-2 h-10 md:h-4 relative">
                 {isFetching && <><div className="mt-2 md:mt-4"><LoadingSpinner size="small"/></div><div className="md:mt-2"> Checking for New Posts...</div></> }
             </div>
-            
-                {postFeed}
-
+            <div className="transition-all">      
+                 {postFeed}           
+            </div>
                 {isLoading || hasNextPage ?
                 <div ref={sentryRef}>
                     <PostSkeleton/>

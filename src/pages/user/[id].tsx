@@ -7,30 +7,25 @@ import { useRouter } from 'next/router'
 import { appRouter } from '~/server/api/root';
 import { useSSRTheme } from '~/hooks/useSSRTheme'
 import { getQueryKey } from '@trpc/react-query'
-import { useTheme } from 'next-themes'
 import Profile from '~/components/profile'
 import useIsFollowerFollowing  from '../../hooks/api/useIsFollowerFollowing'
 
 const UserPage = () => {
 
-    const { theme } = useTheme()
     const [isMounted, setIsMounted] = React.useState(false)
     const router = useRouter()
     const  id  = router.query.id as string 
-
-   const { data, isLoading, isError } = api.userQuery.getProfile.useQuery({id:id})
-   const profileQueryKey = getQueryKey(api.userQuery.getProfile, {id:id}, 'query')
-
-   const { data: userData, isLoading: userLoading, isError: userError } = api.userQuery.getUserProfile.useQuery()
-   const userQueryKey = getQueryKey(api.userQuery.getUserProfile, undefined, 'query')
- 
+    const { data, isLoading, isError } = api.userQuery.getProfile.useQuery({id:id})
+    const profileQueryKey = getQueryKey(api.userQuery.getProfile, {id:id}, 'query')
+    const userQueryKey = getQueryKey(api.userQuery.getUserProfile, undefined, 'query')
     const { data: followInfo } = useIsFollowerFollowing(id)
-
-   const user = userData?.user
+    const { data: userData, isLoading: userLoading, isError: userError } = api.userQuery.getUserProfile.useQuery()
+    const user = userData?.user
+    useSSRTheme()
    const profile = data
    const [, setValue] = useAtom(FeedDirectorAtom)
 
-    useSSRTheme(user?.profile?.theme)
+
     React.useLayoutEffect(() => {
     setIsMounted(true)
      setValue(['feed', 'getProfileFeed'])   
@@ -71,12 +66,7 @@ import { useAtom } from 'jotai'
 import { FeedDirectorAtom } from '~/jotai/store'
 
 
-
-
-
-
 export const getServerSideProps: GetServerSideProps = async ({ req, res, params, resolvedUrl}) => {
-
 
     const authRequest = auth.handleRequest(req, res)
     const session = await authRequest.validateUser();

@@ -27,6 +27,41 @@ const useUnlikeComment = (postid: string, commentid: string, type: string = 'nor
             return optimisticUnlikeComment(commentid, data, postid, userid)
                 })          
         }
+        if(page === 'geopost'){
+            trpc.geoPost.getPost.cancel()
+            trpc.geoPost.getPost.setData({postid:profileId}, (data: any) => {
+                if(data){
+                    return { post:{...data.post, comments:
+                      data.post.comments.map(comment => {
+                        return commentid === comment.commentid ?
+                        {...comment, commentid:'opitmistic', likes_cnt:comment.likes_cnt-1,
+                        likes:comment.likes.filter(like => like.user.id !== userid) }
+                        : comment
+                      })
+                    }
+                  }
+                }
+            })
+        }
+        if(page === 'post'){
+            trpc.post.getPost.cancel()
+            trpc.post.getPost.setData({postid:profileId}, (data: any) => {
+                if(data){
+                    return { post:{...data.post, comments:
+                      data.post.comments.map(comment => {
+                        return commentid === comment.commentid ?
+                        {...comment, commentid:'opitmistic', likes_cnt:comment.likes_cnt-1,
+                        likes:comment.likes.filter(like => like.user.id !== userid) }
+                        : comment
+                      })
+                    }
+                  }
+                }
+            })
+        }
+
+
+
             if(page === 'dashboard' ){     
         trpc.feed.getFollowerFeed.cancel()
              trpc.feed.getFollowerFeed.setInfiniteData({postAmt:5},
@@ -91,6 +126,13 @@ const useUnlikeComment = (postid: string, commentid: string, type: string = 'nor
                 trpc.feed.getActivityFeed.invalidate()
 
         }
+            if(page === 'geopost'){
+                trpc.geoPost.getPost.invalidate()
+            }
+            if(page === 'post'){
+                trpc.post.getPost.invalidate()
+            }   
+
     }
     })
 }
@@ -103,7 +145,8 @@ function optimisticUnlikeComment(commentid: string, data: any, postid: string, u
             if(post.postid === postid) {
               return {...post, comments:post.comments.map((comment: any) => {
                 if(comment.commentid === commentid) {
-                  return {...comment, likes_cnt:comment.likes_cnt-1, likes:[...comment.likes.filter((like: any) => like.user.id !== userid)]}
+                  return {...comment, commentid:'opitmistic',
+                     likes_cnt:comment.likes_cnt-1, likes:[...comment.likes.filter((like: any) => like.user.id !== userid)]}
                 }
                 return comment
               })}

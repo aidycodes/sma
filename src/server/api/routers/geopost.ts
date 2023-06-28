@@ -158,21 +158,22 @@ export const geoPostRouter = createTRPCRouter({
                 const post = await ctx.prisma.geo_Post.findUnique({
                  where: { postid: input.postid },
                     include: { user: {
-                                select: { username: true, profile: true },
+                                select: { id: true, profile: true },
                     },
                          likes: {
                                 include: { user: {
-                                    select: { username: true, profile: true },
+                                    select: { id: true, profile: true },
                                 } },
                                 },
                           comments: {
                                 include: { user: {
-                                    select: { username: true, profile: true },
+                                    select: { id: true, profile: true },
                                 }, likes: {
                                     include: { user: {
-                                        select: { username: true, profile: true },
+                                        select: { id: true, profile: true },
                                     } },
                                 } },
+                                orderBy: { created_at: 'asc' }
                           } },
                 })
                 return {

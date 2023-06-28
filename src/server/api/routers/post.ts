@@ -121,7 +121,7 @@ export const postRouter = createTRPCRouter({
                 console.log('unexpected error', err)
             }}
         }),
-        getPost: privateProcedure
+    getPost: privateProcedure
         .input(z.object({ postid: z.string() }))
         .query(async ({ input, ctx }) => {
               try{
@@ -129,12 +129,26 @@ export const postRouter = createTRPCRouter({
                  where: { postid: input.postid },
                     include: { user: true,
                          likes: {
-                                include: { user: true },
+                                include: { user: { 
+                                    select:{
+                                    id:true, profile:true
+                                }} },
                                 },
                           comments: {
-                                include: { user: true, likes: {
-                                    include: { user: true },
+                                include: { user: {
+                                    select:{
+                                        id:true,
+                                        profile: true
+                                    }
+                                    }, likes: {
+                                    include: { user: {
+                                        select:{
+                                            id:true,
+                                            profile: true
+                                        }
+                                    } },
                                 } },
+                                orderBy: { created_at: 'asc' },
                           } },
                 })
                 return {

@@ -296,7 +296,7 @@ export const feedRouter = createTRPCRouter({
                 }).optional()}))                
                 .query(async ({ input, ctx }) => {
                 const { cursor: cursorInput } = input
-                    const onlyUser = true
+                    const onlyUser = false
         let geoPosts: any[] = []
         let feed: any[] = []
             if(!cursorInput?.postCursor?.skip){     

@@ -18,6 +18,7 @@ type Comment = {
     likes: any
     commentid: string
     type?: string
+    commentRef?: string
 }
 
 type Profile = {
@@ -29,15 +30,24 @@ type Profile = {
 
 const CommentItem = ({ 
   content, created_at, commentid, 
-  postid, likes, type, 
-  profile: { avatar, userid, username}}: Comment ) => {
+  postid, likes, type, commentRef,
+  profile}: Comment ) => {
 
+    const { avatar, userid, username } = profile
     const [showUserToolTip, setShowUserToolTip] = React.useState(false)
+    const ref = React.useRef<HTMLDivElement>(null)
  
     const likeComment = useLikeComment(postid, commentid, type)
     const unlikeComment = useUnlikeComment(postid, commentid, type )
+
+    React.useEffect(() => {
+        if(commentRef === commentid) {
+            ref.current?.scrollIntoView({ behavior: 'smooth' })
+        }
+    }, [])
+
   return (
-    <div className="  rounded-md  mr-4 ">    
+    <div ref={ref} className="  rounded-md  mr-4 ">    
       <div className="flex gap-2">
        <div className="flex flex-col items-center gap-2 w pl-8 mt-2">
             <div className="w-12 h-12 rounded-[50px] relative mr-auto  ">

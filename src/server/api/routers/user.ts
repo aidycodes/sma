@@ -220,6 +220,29 @@ export const userRouter = createTRPCRouter({
         }}
     }),
 
+    checkEmail: publicProcedure.
+    input(z.object({ email: z.string() }))
+    .query(async({ input, ctx }) => {
+      try{
+        const { email } = input
+          const user = await ctx.prisma.authUser.findUnique({where: {email}})
+          if(user) {
+            return { 
+              emailIsUsed:true
+            }
+            
+          } else {
+            return {
+            emailIsUsed: false
+            }
+          }
+        } catch(err){
+          if(err instanceof Error){
+          throw new TRPCError({message: err.message, code: "INTERNAL_SERVER_ERROR"})
+          } else {
+              console.log('unexpected error', err)
+          }}
+    }),
 
   isAuthed: privateProcedure.query(async({ ctx }) => {
     if(ctx.currentUser){

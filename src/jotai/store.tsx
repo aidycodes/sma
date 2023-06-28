@@ -1,7 +1,7 @@
 import { atom } from 'jotai'
 
 
-export const FeedDirectorAtom = atom(['geo', 'getGeoFeed_current']
+export const FeedDirectorAtom = atom(['geo', 'getFollowerFeed']
 , (get, set, arg) => {
     if(arg === 'following'){
     set(FeedDirectorAtom, ['feed', 'getFollowerFeed'])

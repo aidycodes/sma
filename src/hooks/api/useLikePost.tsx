@@ -15,24 +15,50 @@ const useLikePost = (type: string = 'normal') => {
     const trpc = api.useContext()
     const profile = useCurrentUserProfile()
     const params = useRouter()
-    const [page, profileId] = params.asPath.substr(1).split('/')
+    const [page, queryParam] = params.asPath.substr(1).split('/')
     const [ [, procedure] ] = useAtom(FeedDirectorAtom)
     const [currentLocation] = useAtom(currentLocationAtom)
     const [ radius ] = useAtom(radiusAtom)
 
     const postType = type === 'geo' ? 'geoPost' : 'post' 
-
+console.log({procedure})
     return api[postType].like.useMutation({
       onMutate: (likedPost) => {
-        if(page === 'user' && profileId){
+        if(page === 'user' && queryParam){
             trpc.userQuery.getUserPosts.cancel()
-            trpc.userQuery.getUserPosts.setInfiniteData({id:profileId, postAmt:3},
+            trpc.userQuery.getUserPosts.setInfiniteData({id:queryParam, postAmt:3},
              (old: any) => {
                 if(old){  
                     const updatedPages = updateLike(old, likedPost, profile)
                     return {...old, pages: updatedPages}
                 }            
         }) }
+        if(page === 'geopost'){
+            trpc.geoPost.getPost.cancel()
+            console.log({queryParam})
+           trpc.geoPost.getPost.setData({postid:queryParam}, (data: any) => {
+               if(data){
+                console.log({data})
+                   return { post:{...data.post, postid:'optimistic', likes_cnt: data.post.likes_cnt + 1, likes:[...data.post.likes, {user:
+                                        {profile:{userid:profile?.userid, userName:profile?.username, avatar:profile?.avatar}}}
+                                    ]}}
+               }
+        
+            })
+        }
+        if(page === 'post'){
+            trpc.post.getPost.cancel()
+            console.log({queryParam})
+           trpc.post.getPost.setData({postid:queryParam}, (data: any) => {
+               if(data){
+                console.log({data})
+                   return { post:{...data.post, postid:'optimistic', likes_cnt: data.post.likes_cnt + 1, likes:[...data.post.likes, {user:
+                                        {profile:{userid:profile?.userid, userName:profile?.username, avatar:profile?.avatar}}}
+                                    ]}}
+               }
+        
+            })
+        }
 
         if(page === 'dashboard'){
               trpc.feed.getActivityFeed.cancel()
@@ -73,8 +99,8 @@ const useLikePost = (type: string = 'normal') => {
         onError: (err, variables, context) => {
             toast.error('Error liking post')
         },
-        onSuccess: (data, variables, context) => {
-            if(page === 'user' && profileId){
+        onSettled: (data, variables, context) => {
+            if(page === 'user' && queryParam){
                 trpc.userQuery.getUserPosts.invalidate()
         }
             if(page === 'dashboard' && procedure === 'getFollowerFeed'){
@@ -90,6 +116,12 @@ const useLikePost = (type: string = 'normal') => {
                 trpc.feed.getActivityFeed.invalidate()
 
         }
+            if(page === 'geopost'){
+                trpc.geoPost.getPost.invalidate()
+            }
+            if(page === 'post'){
+                trpc.post.getPost.invalidate()
+            }
     }
     })
 }
@@ -101,9 +133,9 @@ function updateLike(oldData: any, likedPost: any, profile: any) {
                       const updatedPages = oldData.pages.map((page: any) => {
                         const updatedPosts = page.posts.map((post: any) => {
                             if(post.postid === likedPost.postid){
-                                return {...post, likes_cnt: post.likes_cnt + 1,
+                                return {...post, postid:'optimistic', likes_cnt: post.likes_cnt + 1,
                                     likes: [...post.likes, {user:
-                                        {profile:{userid:profile.userid, userName:profile.currentUser, avatar:profile.avatar} }
+                                        {profile:{userid:profile.userid, userName:profile.username, avatar:profile.avatar} }
                                         }]}
                             }
                             return post

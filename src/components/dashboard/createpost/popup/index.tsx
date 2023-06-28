@@ -84,8 +84,9 @@ const CreatePostPopup = ({ setPopup, options }:
                  placeholder='Shout anything!' {...register('content')}/>
                 </div>
             <div>
-                  <div className="flex transition-all items-center cursor-pointer ">
-        <Image src={`${!showOptions ? '/icons/spin.svg' : '/icons/cross.svg' }`} width={24} height={24} alt="image"  onClick={() => setshowOptions(!showOptions)} />
+                  <div className={`flex transition-all items-center cursor-pointer ${showOptions ? 'rotate-360' : 'rotate-1' } `}>
+        <Image src={'/icons/spin.svg'} width={24} height={24} alt="image"  onClick={() => setshowOptions(!showOptions)} 
+        className={` transition-all duration-500 ${!showOptions ? 'rotate-[0deg]' : 'rotate-[1360deg]' }`}/>
         <h2 className={`mr-auto px-1 mt-1  ${jose.className} `}  onClick={() => setshowOptions(!showOptions)} 
         >{!showOptions ? 'Options' : 'Hide'}</h2>
         <Palette selectedColor={watchAllFields.color} setValue={setValue}/>
