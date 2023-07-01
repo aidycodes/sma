@@ -1,11 +1,9 @@
 import Image from 'next/image'
 import React from 'react'
-import BorderLine from '../border'
 import { Cabin } from 'next/font/google'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-
 import LogInput from '../input/LogInput'
 import { api } from '~/utils/api'
 import Loading from '~/components/loading'
@@ -72,6 +70,7 @@ const SignIn = ({ setIsFlipped }: {setIsFlipped: React.Dispatch<React.SetStateAc
         if(isSuccess){
             toast.success('Login successful')
             router.push('/dashboard')
+
         }
     }, [isSuccess])
     
@@ -89,8 +88,8 @@ const SignIn = ({ setIsFlipped }: {setIsFlipped: React.Dispatch<React.SetStateAc
         <form  className="flex flex-col items-center justify-center w-full gap-2 mt-10">
         <div className="flex w-full gap-8 justify-start ml-32">
             <div className="mr-auto">
-            <span className="h-[10px] w-[10px] bg-slate-200 rounded-[50%] inline-block opacity-50 mr-4"></span>
-            <span className="h-[10px] w-[10px] bg-slate-200 rounded-[50%] inline-block opacity-75 mr-4"></span>
+            <span className="h-[8px] w-[8px] bg-slate-200 rounded-[50%] inline-block opacity-50 mr-4"></span>
+            <span className="h-[9px] w-[9px] bg-slate-200 rounded-[50%] inline-block opacity-75 mr-4"></span>
             <span className="h-[10px] w-[10px] bg-slate-200 rounded-[50%] inline-block mr-4"></span>
             </div>
         </div>
@@ -103,10 +102,10 @@ const SignIn = ({ setIsFlipped }: {setIsFlipped: React.Dispatch<React.SetStateAc
               id="password" label="Password" type="text"  
              
               />
-                      <div className="flex gap-8 justify-start mt-4">
+        <div className="flex gap-8 justify-start mt-4">
             <span className={`h-[15px] w-[15px]  ${isError ? 'bg-red-500' : isSuccess ? 'bg-green-400' : isLoading && lights % 2 === 0 ? 'bg-blue-500' : 'bg-slate-300' } rounded-[50%] inline-block `}></span>
-            <span className={`h-[15px] w-[15px] ${isError ? 'bg-red-500' : isSuccess ? 'bg-green-400' : isLoading && lights % 2 !== 0 ? 'bg-blue-500' : 'bg-slate-300' } bg-slate-300 rounded-[50%] inline-block`}></span>
-            <span className={`h-[15px] w-[15px] ${isError ? 'bg-red-500' : isSuccess ? 'bg-green-400' : isLoading && lights % 2 === 0 ? 'bg-blue-500' : 'bg-slate-300' } bg-slate-300 rounded-[50%] inline-block`}></span>
+            <span className={`h-[15px] w-[15px] ${isError ? 'bg-red-500' : isSuccess ? 'bg-green-400' : isLoading && lights % 2 !== 0 ? 'bg-blue-500' : 'bg-slate-300' }  rounded-[50%] inline-block`}></span>
+            <span className={`h-[15px] w-[15px] ${isError ? 'bg-red-500' : isSuccess ? 'bg-green-400' : isLoading && lights % 2 === 0 ? 'bg-blue-500' : 'bg-slate-300' }  rounded-[50%] inline-block`}></span>
         </div>            
 
 

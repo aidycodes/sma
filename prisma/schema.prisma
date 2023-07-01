@@ -14,6 +14,8 @@ model AuthUser {
     id            String        @id @unique @default(cuid())
     username      String?
     email         String?       @unique
+    isVerified    Boolean       @default(false)
+    secureCode    String?       @default("57893")
     profile       UserProfile?
     geouser       GeoUser?
     created_at    DateTime?     @default(now())

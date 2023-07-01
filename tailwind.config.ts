@@ -8,6 +8,14 @@ export default {
       'xs': '370px',
       ...defaultTheme.screens,
     },
+    extend: {
+      keyFrames: {
+        fadein: {
+          '0%': {opacity: '0'},
+          '100%': {opacity: '0'},
+        }
+      }
+      },
   plugins: [],
   }
 } satisfies Config;

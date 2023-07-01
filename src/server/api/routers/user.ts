@@ -5,29 +5,39 @@ import { createTRPCRouter, publicProcedure, privateProcedure } from "~/server/ap
 import { TRPCError } from "@trpc/server";
 import jwt from "jsonwebtoken";
 import { createId } from '@paralleldrive/cuid2';
+import { Resend } from "resend";
+import { EmailTemplate } from "~/components/emailTemplates/emailVerfication";
+
+const resend = new Resend(process.env.SmaEmail);
+
+resend.domains.verify("d91cd9bd-1176-453e-8fc1-35364d380206");
 
 export const userRouter = createTRPCRouter({
   create: publicProcedure
-    .input(z.object({ email: z.string(), password: z.string() }))
+    .input(z.object({ email: z.string(), password: z.string(), username: z.string() }))
     .mutation( async({ input, ctx  }) => {
       try{  
-        const { email, password } = input;       
+        const { email, password, username } = input; 
+        const secureCode = (Math.floor(Math.random()*90000) + 10000).toString();      
       const user = await auth.createUser({
 	primaryKey: {
 		providerId: "email", // provider id = authentication method
 			providerUserId: email, // the user's username is unique to the user
 			password: password
 	},
-    attributes: { email }
+    attributes: { email, username, secureCode }
 	
 });
-    const session = await auth.createSession(user.userId);
-        const sessionCookie = auth.createSessionCookie(session).serialize();
-         const token = jwt.sign({ user: user.userId }, 'secret')
-        ctx.res.setHeader("Set-Cookie", [sessionCookie, 
-            'wstoken='+token+'; path=/; expires=Thu, 01 Jan 2037 00:00:00 GMT;' ]);
+
+    // const session = await auth.createSession(user.userId);
+    //     const sessionCookie = auth.createSessionCookie(session).serialize();
+    //      const token = jwt.sign({ user: user.userId }, 'secret')
+    //     ctx.res.setHeader("Set-Cookie", [sessionCookie, 
+    //         'wstoken='+token+'; path=/; expires=Thu, 01 Jan 2037 00:00:00 GMT;' ]);
       return {
-        user
+        message: "User created successfully",
+        userid: user.userId,
+        code:200
       };
     }catch(err){
         if(err instanceof Error){
@@ -37,11 +47,82 @@ export const userRouter = createTRPCRouter({
         }
     }
     }),
+
+  resendVerification: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation( async({ input, ctx  }) => {
+      try{
+        const { id } = input;
+        const user = await ctx.prisma.authUser.findFirst({
+            where: {id: id, isVerified: false},
+            select: {email: true, secureCode: true}
+        })
+        if(!user && !user?.email && !user?.secureCode){
+            throw new Error("Invalid Request")
+        }
+        const { email, secureCode } = user;
+      const data = await resend.emails.send({
+        from: "Acme <onboarding@resend.dev>",
+        to: ["aidycodes@gmail.com"],
+        subject: "Verify your email address",
+        html: "<strong>It works!</strong>",
+        react: EmailTemplate({ email, id, secureCode }),
+    });
+    if(data.error){
+        throw new Error(data.error)
+    }
+        console.log({data})
+        //send mail logic
+
+        return {
+            message: "Verification code sent successfully"
+        }
+    }catch(err){
+        if(err instanceof Error){
+        throw new TRPCError({message: err.message, code: "INTERNAL_SERVER_ERROR"})
+        } else {
+            console.log('unexpected error', err)
+        }
+    }
+    }),
+
+  verify: publicProcedure
+    .input(z.object({ id: z.string(), secureCode: z.string() }))
+    .mutation(async({ input, ctx }) => {
+      try{
+        const { id, secureCode } = input;
+        const user = await ctx.prisma.authUser.updateMany({
+            where: {id: id, secureCode: secureCode },
+            data: {isVerified: true}
+        })
+        console.log({user})
+        if(user.count === 0){
+            throw new Error("Invalid Request")
+        }
+        return {
+            message: "User verified successfully"
+        }
+    }catch(err){
+        if(err instanceof Error){
+        throw new TRPCError({message: err.message, code: "INTERNAL_SERVER_ERROR"})
+        } else {
+            console.log('unexpected error', err)
+        }
+    }
+    }),
+
   login: publicProcedure
     .input(z.object({ email: z.string(), password: z.string() }))
     .mutation(async({ input, ctx }) => {
       try{  
-        const { email, password } = input;    
+        const { email, password } = input; 
+        const user = await ctx.prisma.authUser.findFirstOrThrow({
+          where: {
+            email: email,
+            isVerified: true
+          }
+        })
+           
         const key = await auth.useKey("email", email, password);
 		const session = await auth.createSession(key.userId);
 		ctx.authRequest.setSession(session); // set cookie
@@ -220,7 +301,7 @@ export const userRouter = createTRPCRouter({
         }}
     }),
 
-    checkEmail: publicProcedure.
+  checkEmail: publicProcedure.
     input(z.object({ email: z.string() }))
     .query(async({ input, ctx }) => {
       try{

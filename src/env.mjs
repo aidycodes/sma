@@ -13,6 +13,7 @@ const server = z.object({
   UPLOADTHING_SECRET: z.string(),
   UPLOADTHING_APP_ID:z.string(),
   OPENCAGE_API_KEY:z.string(),
+  SmaEmail:z.string(),
 });
 
 /**
@@ -42,6 +43,7 @@ const processEnv = {
   UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET,
   UPLOADTHING_APP_ID: process.env.UPLOADTHING_APP_ID,
   OPENCAGE_API_KEY: process.env.OPENCAGE_API_KEY,
+  SmaEmail: process.env.SmaEmail,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 

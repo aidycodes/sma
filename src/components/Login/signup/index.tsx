@@ -56,7 +56,7 @@ const SignUp = ({ setIsFlipped }:
    const router = useRouter()
    
    const { data, isFetching } = api.user.checkEmail.useQuery({email:watchEmail}, {enabled:false}) 
-   const { mutate, isSuccess, isError, isLoading, } = api.user.create.useMutation()
+   const { mutate, isSuccess, isError, isLoading, data:user } = api.user.create.useMutation()
     
    React.useEffect(() => {
     if(data){
@@ -67,7 +67,7 @@ const SignUp = ({ setIsFlipped }:
    React.useEffect(() => {
     if(isSuccess){
         toast.success('Account created successfully')
-        //router.push('/dashboard')
+        router.push(`/login?verify=${user?.userid}`, `/login/verify/${user?.userid}`)
     }
    }, [isSuccess])
 
