@@ -13,7 +13,9 @@ export const userQueryRouter = createTRPCRouter({
                 }
                 const { userId } = ctx.currentUser.user
                     const user = await ctx.prisma.authUser.findUnique({where: {id: userId},
-                        select:{followers_cnt:true, created_at:true, profile:true}
+                        select:{followers_cnt:true, created_at:true, profile:true, follows: { select: {
+                            profile: true }
+                        }} //follows was added 
                     });
                     return {
                         user
@@ -26,6 +28,8 @@ export const userQueryRouter = createTRPCRouter({
                     }
                 }
             }),
+
+
     getProfile: publicProcedure
             .input(z.object({id: z.string()}))
             .query( async({ input, ctx }) => {
@@ -111,6 +115,29 @@ export const userQueryRouter = createTRPCRouter({
                     }
                 }
             }),
+        searchUsersFollowers: privateProcedure
+            .input(z.object({searchTerm: z.string()}))
+            .query( async({ input, ctx }) => {
+                try{
+                    const { searchTerm } = input;
+                    const users = await ctx.prisma.authUser.findUnique({
+                        where: {id: ctx.currentUser.session.userId},
+                        select: {follows: {
+                            where: {username: {contains: searchTerm}},
+                            select: {profile: true}}}
+                    })
+                    return {
+                        users
+                    }
+                }catch(err){
+                    if(err instanceof Error){
+                        throw new TRPCError({message: err.message, code: "INTERNAL_SERVER_ERROR"})
+                    } else {
+                        console.log('unexpected error', err)
+                    }
+                }
+            }), 
+                  
     getMoreComments: publicProcedure
             .input(z.object({id: z.string(), commentAmt: z.number(), commentSkip: z.number()})) 
             .query( async({ input, ctx }) => {

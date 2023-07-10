@@ -5,7 +5,7 @@ import { z } from "zod";
  * built with invalid env vars.
  */
 const server = z.object({
-  DATABASE_URL: z.string().url(),
+  DATABASE_URL: z.string(),
   NODE_ENV: z.enum(["development", "test", "production"]),
   REDIS_SESSION: z.string().url(),
   REDIS_USER_SESSION: z.string().url(),

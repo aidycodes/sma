@@ -1,19 +1,15 @@
-import { NotifyUser } from '@prisma/client'
-import { UseMutateFunction } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 
-function useDebounceMutation<T>(fn: any, id: string, delay?: number,) {
-  
+export function useDebounce<T>(value: T, delay?: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value)
+
   useEffect(() => {
-    const timer = setTimeout(() => fn({notify_user_id:id}), delay || 50000)
+    const timer = setTimeout(() => setDebouncedValue(value), delay || 500)
 
     return () => {
       clearTimeout(timer)
     }
-  }, [fn, delay])
+  }, [value, delay])
 
-  return fn
- 
+  return debouncedValue
 }
-
-export default useDebounceMutation

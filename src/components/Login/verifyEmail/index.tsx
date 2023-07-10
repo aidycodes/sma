@@ -60,7 +60,7 @@ const VerifyEmail = () => {
             <p className="text-xl">Please check your email for a verification link.</p>
             <div className="flex gap-2 items-center m-4">
             <p className="mb-1">Enter Code: </p>
-            <input className="outline-none rounded-xl w-[100px] text-center
+          <input className="outline-none rounded-xl w-[100px] text-center
             placeholder:text-center placeholder:font-bold" placeholder='code'
             onChange={(e) => setCode(e.target.value)} value={code}
             />
@@ -69,7 +69,7 @@ const VerifyEmail = () => {
             {!isLoading && !isSuccess ?
             <div className="relative pb-2">
                         <button className="bg-blue-700 hover:brightness-125 text-white rounded-xl px-4 h-10 mt-4 w-[100px]"
-                        onClick={() =>  mutate({id:router.query.verify[0] as string, secureCode:code}) } disabled={isLoading}
+                        onClick={() =>  mutate({id:router?.query?.verify[0] as string, secureCode:code}) } disabled={isLoading}
                         >{!isLoading ? 'Submit' : <Loading/>}</button>
             </div>
                         : 
@@ -90,7 +90,7 @@ const VerifyEmail = () => {
             <div className="mt-12 flex flex-col justify-center items-center">
         
                 <p className="text-md flex flex-col ">If you did not receive the email,  <span className="text-blue-600 font-semibold cursor-pointer hover:font-bold"
-                    onClick={() => resendMutate({id:router.query.verify[0] as string})}
+                    onClick={() => resendMutate({id:router?.query?.verify[0] as string})}
             >click to resend</span></p>
             <div className="h-10">
             {resendIsLoading && <p className="text-sm text-gray-500">Sending...</p>}

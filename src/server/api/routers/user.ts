@@ -6,7 +6,6 @@ import { TRPCError } from "@trpc/server";
 import jwt from "jsonwebtoken";
 import { createId } from '@paralleldrive/cuid2';
 import { Resend } from "resend";
-import { EmailTemplate } from "~/components/emailTemplates/emailVerfication";
 
 const resend = new Resend(process.env.SmaEmail);
 
@@ -57,23 +56,19 @@ export const userRouter = createTRPCRouter({
             where: {id: id, isVerified: false},
             select: {email: true, secureCode: true}
         })
-        if(!user && !user?.email && !user?.secureCode){
-            throw new Error("Invalid Request")
-        }
+        if(user?.email && user?.secureCode){        
         const { email, secureCode } = user;
-      const data = await resend.emails.send({
+        const data = await resend.emails.send({
         from: "Acme <onboarding@resend.dev>",
         to: ["aidycodes@gmail.com"],
         subject: "Verify your email address",
         html: "<strong>It works!</strong>",
-        react: EmailTemplate({ email, id, secureCode }),
+       
     });
-    if(data.error){
-        throw new Error(data.error)
-    }
-        console.log({data})
-        //send mail logic
+  
 
+  
+  }
         return {
             message: "Verification code sent successfully"
         }
@@ -91,11 +86,12 @@ export const userRouter = createTRPCRouter({
     .mutation(async({ input, ctx }) => {
       try{
         const { id, secureCode } = input;
+        console.log('hello')
         const user = await ctx.prisma.authUser.updateMany({
             where: {id: id, secureCode: secureCode },
             data: {isVerified: true}
         })
-        console.log({user})
+        console.log({id, secureCode, user})
         if(user.count === 0){
             throw new Error("Invalid Request")
         }

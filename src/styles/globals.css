@@ -91,6 +91,9 @@ body {
 .border-primary-bottom {
   border-bottom: 1px solid var(--border-color);
 }
+.border-primary-top {
+  border-top: 1px solid var(--border-color);
+}
 
 .outline-primary {
   outline: 5px solid var(--background);
@@ -717,4 +720,15 @@ input, textarea {
   animation-name: fadeIn;
   animation-duration: 500ms;
   animation-fill-mode: forwards;
+}
+
+/* For Webkit-based browsers (Chrome, Safari and Opera) */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+/* For IE, Edge and Firefox */
+.scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
 }
