@@ -53,7 +53,7 @@ const Notify = () => {
     {(isLoading || hasNextPage) ?
     <Loading/>
     : 
-    <div className="flex justify-center">End of notifcations</div>
+    <div className="flex justify-center text-secondary">End of notifcations</div>
 }
 </div>
     </div>

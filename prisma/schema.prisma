@@ -36,7 +36,7 @@ model AuthUser {
     notifications NotifyUser[]
     chats         Chat[]
     Geo_Like      Geo_Like[]
-    Message       Message[]
+    Message       ChatMessage[]
 
     auth_session AuthSession[]
     auth_key     AuthKey[]
@@ -214,12 +214,12 @@ model Geo_Like {
 }
 
 model Chat {
-    chatid      String       @id @default(cuid())
+    chatid      String        @id @default(cuid())
     chatmembers AuthUser[]
     userchatid  String?
-    created_at  DateTime     @default(now())
-    updated_at  DateTime     @updatedAt
-    messages    Message[]
+    created_at  DateTime      @default(now())
+    updated_at  DateTime      @updatedAt
+    messages    ChatMessage[]
     chatauthed  ChatAuthed[]
 
     @@unique([updated_at, chatid])
@@ -234,7 +234,7 @@ model ChatAuthed {
     chat   Chat   @relation(fields: [chatid], references: [chatid])
 }
 
-model Message {
+model ChatMessage {
     messageid  String   @id @default(cuid())
     chatid     String
     userid     String
@@ -247,7 +247,7 @@ model Message {
 
     @@unique([created_at, messageid])
     @@index(fields: [messageid, chatid, userid])
-    @@map("message")
+    @@map("chat_message")
 }
 
 model Post_Notification {

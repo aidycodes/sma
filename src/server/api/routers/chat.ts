@@ -8,11 +8,12 @@ export const chatRouter = createTRPCRouter({
             .input(z.object({users: z.array(z.string()) }))
             .mutation( async({ input, ctx }) => {
                 try{
-                    const { users } = input;
+                      const { users } = input;
+                    if(users.length < 2){          
                     const chatExist = await ctx.prisma.chat.findFirst({
                         where: {
                             chatmembers: {
-                                none: {
+                                every: {
                                     id: {
                                         in: [...users, ctx.currentUser.session.userId]
                                     }
@@ -25,7 +26,7 @@ export const chatRouter = createTRPCRouter({
                                 chat: chatExist
                             }
                         }
-                    
+                    }
                     const chat = await ctx.prisma.chat.create({
                         data: {
                             chatmembers: {
@@ -45,19 +46,29 @@ export const chatRouter = createTRPCRouter({
                 }
             }),
     Postmessage: privateProcedure
-            .input(z.object({chatId: z.string(), userid:z.string(), message: z.string()}))
+            .input(z.object({chatId: z.string(), message: z.string()}))
             .mutation( async({ input, ctx }) => {
                 try{
-                    const { chatId, userid, message } = input;
-                    const chat = await ctx.prisma.chat.findUnique({where: {chatid: chatId}})
+                    const { chatId, message } = input;
+                    const chat = await ctx.prisma.chat.findFirst({
+                        where: { AND:[ {chatid: chatId}, 
+                            {chatmembers: {some: {id: ctx.currentUser.session.userId}}}]}})
                     if(chat){
-                        const newMessage = await ctx.prisma.message.create({
+                       const newMessage = await ctx.prisma.chat.update({
+                            where: {chatid: chatId},
                             data: {
-                                chatid: chatId,
-                                user: {connect: {id: userid}},
-                                content:message
-                            }
-                        })
+                                updated_at: new Date(),
+                                messages: {
+                                    create: {
+                                        chatid:chatId,
+                                        content:message,
+                                        user: {
+                                            connect: {id: ctx.currentUser.session.userId}
+                                        }
+                                    }
+                                }
+                            },
+                       })
                         return {
                             message: newMessage
                         }
@@ -80,18 +91,19 @@ export const chatRouter = createTRPCRouter({
                     const chatList = await ctx.prisma.authUser.findFirst({
                         where: { id: ctx.currentUser.session.userId },
                         select: {chats: {
-                            take: 10,
+                            take: 11,
                             cursor: cursor ? { updated_at_chatid: cursor } : undefined,
                             orderBy: {updated_at: 'desc'},
                             include: {
                                 chatmembers: {
-                                       // where: {id: {not: ctx.currentUser.session.userId}},
+                                        where: {id: {not: ctx.currentUser.session.userId}},
                                         select: {
                                             profile:true
                                         }                
                                 },
                                 messages: {
                                     take: 1,
+                                    where: {user: {id: {not: ctx.currentUser.session.userId}}},
                                     orderBy: {created_at: 'desc'}
                                 }
    
@@ -99,7 +111,7 @@ export const chatRouter = createTRPCRouter({
                         }
                         }}
                     })
-                    console.log(chatList)
+               
                     if(!chatList){
                         return {
                             chatList,
@@ -171,18 +183,36 @@ export const chatRouter = createTRPCRouter({
             .query( async({ input, ctx }) => {
                 try{
                     const { chatId, cursor } = input;
-                    const chat = await ctx.prisma.chat.findUnique({
-                        where: {chatid: chatId},
+                    const chat = await ctx.prisma.chat.findFirst({
+                        where: { AND:[
+                            {chatid: chatId} ,
+                            {chatmembers: {some: {id: ctx.currentUser.session.userId}}}
+                        ]
+                            },
                         select:{
+                            updated_at:true,
+                            chatmembers:{ 
+                                where: {id: {not: ctx.currentUser.session.userId}},
+                                select: {
+                                    profile:true
+                                }
+                            },
                             messages: {
+                                include:{
+                                    user: {select: {profile: true}
+                                }},
                                 take: 11,
                                 cursor: cursor ? { created_at_messageid: cursor } : undefined,
+                                orderBy: {created_at: 'desc'},
                         }
       
-                }})                
+                }})  
+                console.log({ chat })              
                   if(!chat){
                     return {
-                        messages: []
+                        messages: [],
+                        error: "Chat not found"
+
                     }
                   }
                    let nextCursor: typeof cursor | undefined;
@@ -192,10 +222,11 @@ export const chatRouter = createTRPCRouter({
                         nextCursor = {created_at: nextItem.created_at, messageid: nextItem.messageid}
                     }
                 }
-
+                const revChat = chat?.messages.reverse()
 
                 return {
-                    messages: chat?.messages,
+                    chat,
+                    messages: revChat,
                     nextCursor
                 }
             }
@@ -206,7 +237,96 @@ export const chatRouter = createTRPCRouter({
                         console.log('unexpected error', err)
                     }
                 }
-            })
+            }),
+            searchChats: privateProcedure
+            .input(z.object({searchTerm: z.string()}))
+            .query( async({ input, ctx }) => {
+                try{
+                    const { searchTerm } = input;
+                    const chats = await ctx.prisma.chat.findMany({
+                        where: { AND:[
+                            {chatmembers: {some: {id: ctx.currentUser.session.userId}}},
+                            {chatmembers: {some:{username: searchTerm}}}
+                        ]
+                            },
+                        include:{
+                            chatmembers: {
+                                where: {id: {not: ctx.currentUser.session.userId}},
+                                select: {
+                                    profile:true
+                                }
+                            },
+                            messages: {
+                                take: 1,
+                                orderBy: {created_at: 'desc'}
+                            }
+                        }
+                    })
+                    if(!chats){
+                        return {
+                            chats: []
+                        }
+                    }
+                    return {
+                        chats
+                    }
+                }catch(err){
+                    if(err instanceof Error){
+                        throw new TRPCError({message: err.message, code: "INTERNAL_SERVER_ERROR"})
+                    }
+                }
+            }),
+
+    deleteChat: privateProcedure
+            .input(z.object({chatId: z.string()}))
+            .mutation( async({ input, ctx }) => {
+                try{
+                    const { chatId } = input;
+                    const chat = await ctx.prisma.chat.findUnique({
+                        where: {chatid: chatId},
+                        include: {
+                            chatmembers: true,
+                            messages: true
+                        }
+                    })
+                    if(chat){
+                        const chatMember = chat.chatmembers.find((member) => member.id === ctx.currentUser.session.userId);
+                        if(chatMember){
+                            await ctx.prisma.chat.delete({
+                                where: {chatid: chatId}
+                            })
+                            return {
+                                chat
+                            }
+                        } else {
+                            throw new TRPCError({message: "User not found in chat", code: "INTERNAL_SERVER_ERROR"})
+                        }
+                    } else {
+                        throw new TRPCError({message: "Chat not found", code: "INTERNAL_SERVER_ERROR"})
+                    }
+                }catch(err){
+                    if(err instanceof Error){
+                        throw new TRPCError({message: err.message, code: "INTERNAL_SERVER_ERROR"})
+                    } else {
+                        console.log('unexpected error', err)
+                    }
+                }
+            }),
+            deleteAllMessages: privateProcedure
+            .mutation( async({ input, ctx }) => {
+                try{
+                    const del = await ctx.prisma.message.deleteMany({})
+                        return {
+                            del
+                        }
+                }catch(err){
+                    if(err instanceof Error){
+                        throw new TRPCError({message: err.message, code: "INTERNAL_SERVER_ERROR"})
+                    } else {
+                        console.log('unexpected error', err)
+                    }
+                }
+            }),
 
 
 })

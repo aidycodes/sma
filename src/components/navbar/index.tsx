@@ -3,6 +3,7 @@ import React from 'react'
 import { api } from '~/utils/api'
 import Menu from '../menu'
 import Notifcation from '../notifcation'
+import ChatNotifications from './chatNotification'
 import Notify from './notify'
 import SettingsMenu from './settings'
 
@@ -21,7 +22,7 @@ const Navbar = () => {
         </h1> 
         <div className="flex gap-4">
            <label htmlFor='Messages'/>
-            <Menu size={35} icon={"comment.svg"} component={<div>Coming soon</div>}/>      
+            <Menu size={35} icon={"comment.svg"} component={<ChatNotifications/>}/>      
              <label htmlFor='Notifications'/>
             <Menu size={35} icon={"bell.svg"} component={<Notify/>}/>
             <label htmlFor='settings'/>

@@ -6,6 +6,7 @@ import { UserProfile } from '@prisma/client';
 import SelectedDisplay from './selectFollowing/selectedDisplay';
 import { api } from '~/utils/api';
 import Loading from '~/components/loading';
+import { useRouter } from 'next/router';
 
 const jose = Josefin_Sans({ subsets: ['latin'], weight:'300' });
 
@@ -17,8 +18,9 @@ const NewChat = () => {
     const [searchTerm, setsearchTerm] = useState("")
     const [selectedUser, setselectedUser] = useState<UserProfile[]>([])
     const trpc = api.useContext()
+    const router = useRouter()
 
-    const { mutate, isLoading } = api.chat.createChat.useMutation({
+    const { mutate, isLoading, data  } = api.chat.createChat.useMutation({
       onMutate: () => {
         trpc.chat.getChatList.setInfiniteData({}, (old) => {
           return {
@@ -45,6 +47,13 @@ const NewChat = () => {
         trpc.chat.getChatList.invalidate()
       }
     })
+
+    React.useEffect(() => {
+      if(data) {
+        router.push(`/chat?id=${data.chat.chatid}`, `/chat/${data.chat.chatid}`)
+        console.log(data)
+      }
+    },[data])
 
   return (
      <div className="flex flex-col mx-8 gap-4 items-center relative ">

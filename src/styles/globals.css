@@ -12,6 +12,7 @@
   --text-secondary: #77dd77;
   --border-color: #e0e0e0;
   --text-box: #ffffff;
+  --altchat: #ffffff;
   --light-speical-header: #374151;
   
   /*#ffb3ba*/
@@ -27,6 +28,7 @@
   --text-secondary: #818181;
   --border-color: #212124;
   --text-box: #3f3f46;
+  --altchat: #3f3f46;
 
 }
 /*#0ff0fc */
@@ -37,6 +39,7 @@
   --text-secondary: #7fff00;
   --border-color: #ffffff;
    --text-box: #ffb3ba;
+   --altchat: #F2D2BD;
 }
 [data-theme="dark-blue"] {
   --background: #050a30;
@@ -46,6 +49,7 @@
   --border-color: #0000ff;
    --text-box: #050a30;
    --dark-blue-only-border: #0000ff;
+   --altchat: #0066ff;
 }
 
 body {
@@ -67,6 +71,11 @@ body {
 .fakeTextBox {
   background-color: var(--text-box);
 }
+
+.altchat {
+  background-color: var(--altchat);
+}
+
 .dbo-border{
 
   border: 2px solid var(--dark-blue-only-border);
