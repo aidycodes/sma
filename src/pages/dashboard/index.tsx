@@ -6,6 +6,7 @@ import CreatePost from '~/components/dashboard/createpost'
 import LocationDisplay from '~/components/dashboard/locationDisplay'
 import FeedSelector from '~/components/dashboard/feedSelector'
 import FeedDisplay from '~/components/dashboard/feedSelector/feedDisplay'
+import Navbar from '~/components/navbar'
 
 
 const Dashboard = () => {
@@ -19,6 +20,8 @@ const Dashboard = () => {
       if(isLoading) return null
 
   return (
+    <div>
+        <Navbar/>
         <div className="  w-full h-full lg:w-3/4 2xl:w-1/2 my-28 mx-auto ">
             <AdditionalOptions/>
           {feed === 'current' && !disableLocationDisplay ? 
@@ -32,6 +35,7 @@ const Dashboard = () => {
     
         <FeedDisplay feed={feed} lat={lat} lng={lng}/>
        
+    </div>
     </div>
   )
 }

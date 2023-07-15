@@ -8,6 +8,7 @@ import { useTheme } from 'next-themes';
 import { useSSRTheme } from '~/hooks/useSSRTheme';
 import PageError from '~/components/error';
 import { getQueryKey } from '@trpc/react-query';
+import Navbar from '~/components/navbar'
 
 
 const FeedbackPage = () => {
@@ -29,6 +30,7 @@ const FeedbackPage = () => {
     if(!user) {
         return (
             <Layout>
+                <Navbar/>
                 <PageError isLoading={[isLoading]} queryKeys={[profileQueryKey]} isError={[isError]}/>
             </Layout>
         )}

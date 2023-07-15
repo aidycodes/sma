@@ -9,6 +9,7 @@ import { useSSRTheme } from '~/hooks/useSSRTheme'
 import { getQueryKey } from '@trpc/react-query'
 import Profile from '~/components/profile'
 import useIsFollowerFollowing  from '../../hooks/api/useIsFollowerFollowing'
+import Navbar from '~/components/navbar'
 
 const UserPage = () => {
 
@@ -41,15 +42,21 @@ const UserPage = () => {
   
 
   return (
+    <div>
+        <Navbar/>
+        <div className="mt-28">
     <ProfileLayout>
+         
         <div className="  w-full h-full 2xl:w-11/12 ">
             <div className="flex flex-col items-center justify-center">
                <Banner image={profile?.cover}/>
                </div>
            <Profile {...profile} {...followInfo} userid={id}/>   
         </div>
-  
+    
     </ProfileLayout>
+    </div>
+    </div>
   )
 }
 

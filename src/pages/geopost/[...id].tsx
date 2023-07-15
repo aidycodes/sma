@@ -2,6 +2,7 @@ import { useRouter } from 'next/router'
 import React from 'react'
 import SingleGeoPost from '~/components/SinglePost/SingleGeoPost'
 import { useSSRTheme } from '~/hooks/useSSRTheme'
+import Navbar from '~/components/navbar'
 
 const GeoPostPage = () => {
 
@@ -10,8 +11,11 @@ const GeoPostPage = () => {
   if(!query || !query?.id) return <div className="mt-20">no post</div>
 
 return (
+    <div>
+        <Navbar/>
     <div className="  w-full h-full lg:w-3/4 2xl:w-1/2 my-28 mx-auto ">
       <SingleGeoPost postid={query?.id[0]} commentid={query?.id[1]} />
+    </div>
     </div>
   )
 }

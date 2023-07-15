@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { socket } from '~/socket/clientSocket';
 import { api } from '~/utils/api';
+import { ScrollRef } from '../chat/chatbox/display';
 
 const typeEmoji: {[index: string]: string} = {
     'like': '👍',
@@ -21,14 +22,14 @@ type Notification = {
     type: string,
     content: string,
     relativeId: string,
-}
+} 
 
 type Props = {
     queryKey: QueryKey
+    infinteRef: ScrollRef
 }
 
-
-export default function Notifcation({ queryKey }: Props) {
+export default function Notifcation({ queryKey, infinteRef }: Props) {
 
     const queryClient = useQueryClient()
     const trpc = api.useContext()
@@ -44,12 +45,18 @@ export default function Notifcation({ queryKey }: Props) {
     });
     const [notifcationFix, setNotifcationFix] = useState(false);
     const [chatFix, setChatFix] = useState(false);
+    const [scrollFix, setScrollFix] = useState(false);
 
-    useEffect(() => {        
+    useEffect(() => {
         socket.connect()
-      
+        return () => {
+            socket.disconnect()
+        }
+    },[])
+
+    useEffect(() => {
+        socket.connect()        
         socket.once('notification', (data) => {
-     
             const notification: Notification = JSON.parse(data.payload)
             queryClient.invalidateQueries({ queryKey: queryKey })
             setNotifcationFix(!notifcationFix)
@@ -61,20 +68,21 @@ export default function Notifcation({ queryKey }: Props) {
         }
     }, [notifcationFix])
 
-        useEffect(() => {        
-        socket.connect()
+        useEffect(() => {   
+            socket.connect()    
         socket.once('chat', (data) => {
             trpc.chat.getChatList.invalidate()
-            trpc.chat.getMessages.cancel({chatId:router.query.id as string})
-            if(router.asPath === `/chat/${data.payload.chatid}`) {
-                trpc.chat.getMessages.setInfiniteData({chatId:router.query.id as string}, (oldData) => {
-                    if(oldData?.pages[0]?.messages){
+          console.log(data.payload.messageid, 'msgid')
+                trpc.chat.getMessages.setInfiniteData({chatId:data.payload.chatid}, (oldData) => {
+                    console.log({oldData})
+                    if(oldData){
+                       
     const dummyMessage = {
-          messageid: 'optimistic',
-          content: 'variables.message',
-          userid: 'profile?.userid as string',
+          messageid: data.payload.messageid,
+          content: data.payload.content,
+          userid: data?.user?.profile?.userid as string,
           user: {...data.user.profile},
-          chatid: 'variables.chatId',
+          chatid: data.payload.chatId,
           viewed: false,
           created_at: new Date(),
           updated_at: new Date(),
@@ -88,12 +96,11 @@ export default function Notifcation({ queryKey }: Props) {
           return {...oldData, pages: newPages  }
         }
                 })
-            }
-
-             toast(
+            
+    toast(
         <span>
             <Link href={`/chat/${data.payload.chatid}`} >
-                <div className="flex items-center gap-4">                    
+                <div className="flex p-1 items-center gap-4">                    
                     <Image src={data?.user?.profile?.avatar ? data?.user?.profile?.avatar : "/icons/user.svg" } 
                     width={30} height={30} alt='logo' className="rounded-[50px]" />
                     <div>
@@ -104,8 +111,7 @@ export default function Notifcation({ queryKey }: Props) {
             </Link>
         </span>, 
              )
-                trpc.chat.getMessages.invalidate({chatId:router.query.id as string})
-         setChatFix(!chatFix)
+         setChatFix(!chatFix)          
     });
              
         return () => {

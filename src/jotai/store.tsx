@@ -1,4 +1,5 @@
 import { atom } from 'jotai'
+import { use, useRef } from 'react'
 
 
 export const FeedDirectorAtom = atom(['geo', 'getFollowerFeed']
@@ -26,4 +27,6 @@ export const radiusAtom = atom(5,
 export const currentLocationAtom = atom({lat:0, lng:0})
 
 export const whereToPostAtom = atom('Followers')
+
+
 

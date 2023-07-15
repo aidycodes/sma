@@ -8,6 +8,7 @@ import { useSSRTheme } from '~/hooks/useSSRTheme';
 import { api } from '~/utils/api';
 import PageError from '~/components/error';
 import { getQueryKey } from '@trpc/react-query';
+import Navbar from '~/components/navbar'
 
 const tabButtons = require('./tab-buttons.json')
 
@@ -24,7 +25,7 @@ const EditProfile = () => {
     const user = data?.user?.profile
     const geoData = geoquery?.geoData
 
-    useSSRTheme(user?.theme ? user.theme : 'light')
+    useSSRTheme()
    if(!user || !geoData) {
     return (
     <Layout>
@@ -34,6 +35,7 @@ const EditProfile = () => {
 
   return (
     <Layout>
+        <Navbar/>
             <Tabs tabs={tabButtons} >
                 {[<Details {...user}  />,<Images {...user}/>,<Location geoquery={geoData} loading={geoQueryLoading} />]}
             </Tabs>

@@ -5,7 +5,7 @@ const Avatar = ({ image }: { image: string}) => {
     
       return (
     <div className="h-[50px] w-[50px] relative">
-         <Image src={image ? image : 'icons/user.svg'} fill alt="avatar"  className="rounded-[50px]"  />
+         <Image src={image ? image : '/icons/user.svg'} fill alt="avatar2"  className="rounded-[50px]"  />
      </div>
       )
 }

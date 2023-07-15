@@ -9,6 +9,8 @@ import { api } from '~/utils/api';
 import { createServerSideHelpers } from '@trpc/react-query/server';
 import { createTRPCContext } from '~/server/api/trpc';
 import { appRouter } from '~/server/api/root';
+import Navbar from '~/components/navbar'
+
 const tabButtons = require('./tab-buttons.json')
 
 
@@ -34,6 +36,7 @@ const EditProfile = () => {
 
   return (
     <Layout>
+        <Navbar/>
             <Tabs tabs={tabButtons} >
                 {[<Details {...user}  />,<Images {...user}/>,<Location geoquery={geoData} loading={geoQueryLoading} />]}
             </Tabs>

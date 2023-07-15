@@ -8,7 +8,7 @@ export type SetShowEmoji = React.Dispatch<React.SetStateAction<boolean>>
 export type SetChatInput = React.Dispatch<React.SetStateAction<string>>
 export type ScrollRef = React.MutableRefObject<HTMLDivElement | null>
 
-const Chat = () => {
+const Chat = ({ infinteRef }: {infinteRef: ScrollRef}) => {
 
     const [input, setInput] = useState('')
     const [showEmoji, setShowEmoji] = useState(false)
@@ -25,7 +25,7 @@ const Chat = () => {
         
         <div className=" w-full 2xl:w-[70%] flex flex-col items-center xl:shadow-xl dbo-border z-10     fg">
  
-        <ChatDisplay scrollRef={scrollRef}/>
+        <ChatDisplay scrollRef={scrollRef} infinteRef={infinteRef}/>
         <div className="bg shadow-xl min-w-[100%] p-4 self-start border-teal-500 border-t-2 relative ">
         <ChatInput scrollRef={scrollRef} input={input} setInput={setInput} setShowEmoji={setShowEmoji} />
         </div>
