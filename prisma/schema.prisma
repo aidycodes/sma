@@ -266,7 +266,8 @@ model NotifyUser {
     nofiy_user_id String             @id @default(cuid())
     userid        String
     type          String?
-    relativeId    String?
+    relativeid    String             @default("333")
+    commentid     String             @default("384")
     content       String
     viewed        Boolean            @default(false)
     created_at    DateTime           @default(now())

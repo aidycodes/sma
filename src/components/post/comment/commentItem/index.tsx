@@ -7,6 +7,7 @@ import { useRouter } from 'next/router'
 import useUnlikeComment from '~/hooks/api/useUnlikeComment'
 import CommentUserToolTip from '~/components/userToolTip/commentUserTip'
 import Link from 'next/link'
+import useCurrentUserProfile from '~/hooks/api/useCurrentUserProfile'
 dayjs.extend(relativeTime)
 
 type Comment = {
@@ -34,6 +35,7 @@ const CommentItem = ({
   profile}: Comment ) => {
 
     const { avatar, userid, username } = profile
+    const currentUser = useCurrentUserProfile()
     const [showUserToolTip, setShowUserToolTip] = React.useState(false)
     const ref = React.useRef<HTMLDivElement>(null)
  
@@ -79,7 +81,7 @@ const CommentItem = ({
         <div className="flex justify-between relative">
           <div className="pl-6 cursor-pointer ">
           { commentid.startsWith('opitmistic') ? <span className="opacity-20">Like</span> : 
-          likes.some((like: any) => like.user.id === userid) ? <span  className="hover:font-bold" 
+          likes.some((like: any) => like.user.id === currentUser?.userid) ? <span  className="hover:font-bold" 
                                                                   onClick={() => unlikeComment.mutate({commentid})}
                                                                   >Unlike</span> 
                                                               : <span  className="hover:font-bold"

@@ -1,25 +1,29 @@
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
+import { createId } from "@paralleldrive/cuid2";
 
 
 export const geoCommentRouter = createTRPCRouter({
     new: privateProcedure
-        .input(z.object({ title:z.string(), content: z.string(), postid: z.string(),
+        .input(z.object({ title:z.string(), content: z.string(), postid: z.string(), currentUser: z.string(),
             meta: z.optional(z.object({}))  }))
         .mutation(async ({ input, ctx }) => {
               try{ 
-
+                const newId = createId()
                 const comment = await ctx.prisma.geo_Post.update({
                     where: { postid: input.postid },
                     data:{comment_cnt: {increment: 1},
+                    user: {update: {notifications: {create: {content:`${input.currentUser} commented on your post!`, relativeid:input.postid, type:'post', commentid:newId}}}},
                     comments: {
                         create: {
+                            commentid: newId,
                             title: input.title,
                             content: input.content,
                             userid: ctx.currentUser.user.userId,
                             meta: JSON.stringify(input.meta) || 'JsonNull',
                         }
+
                 }
         }})
                  return {
@@ -85,7 +89,7 @@ export const geoCommentRouter = createTRPCRouter({
                     ctx.prisma.authUser.update({
                         where: { id: userid },
                         data: { notifications: {
-                            create: { content:`${currentUser} liked your comment!`, relativeId:postid, type:'comment'} },    //username will be passed
+                            create: { content:`${currentUser} liked your comment!`, relativeid:postid, type:'comment', commentid:commentid} },    //username will be passed
                             geo_comments:{update: {where: {commentid: commentid}, data: {likes_cnt: {increment: 1}}}}
                 }
             }),

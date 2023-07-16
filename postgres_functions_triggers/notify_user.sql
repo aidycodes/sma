@@ -1,12 +1,16 @@
 CREATE OR REPLACE FUNCTION f_notify_user() RETURNS TRIGGER AS $$ BEGIN PERFORM pg_notify(
         'notification',
         json_build_object(
+            'id',
+            NEW.nofiy_user_id,
             'userid',
             NEW.userid,
             'type',
             NEW.type,
             'content',
-            NEW.content
+            NEW.content,
+            'commentid',
+            NEW.commentid
         )::text
     );
 RETURN NULL;

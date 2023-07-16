@@ -1,16 +1,15 @@
-import React, { useState } from 'react'
+import React from 'react'
 import About from './about'
 import ProfileAvatar from './profileAvatar'
 import ProfileButton from './profileButton'
 import { Open_Sans } from 'next/font/google';
 import millify from "millify";
 import { api } from '~/utils/api'
-import Post from '../post'
-import PostItem from '../post'
 import useFollowUser from '~/hooks/api/useFollowUser'
 import useUnfollowUser from '~/hooks/api/useUnfollowUser'
 import ProfileFeed from './postfeed';
-import PostSkeleton from '../post/skeleton';
+import { useRouter } from 'next/router';
+
 
 type Props = {
     userid: string
@@ -39,10 +38,17 @@ const Profile = ({ userid, cover, avatar, username,  followsUser,
     userFollows, followers_cnt,  ...about }: Props) => {
 
         const { followUser } = useFollowUser(userid)
-        const { unFollowUser} = useUnfollowUser(userid)
+        const { unFollowUser } = useUnfollowUser(userid)
+        const router = useRouter()
 
   const { data } =   api.userQuery.getUserPosts.useInfiniteQuery({id:'WRdW83qzlVMK2qe', postAmt:3 }, {
     getNextPageParam: (lastPage) => lastPage ? lastPage.nextCursor : undefined
+  })
+
+  const { mutate, isLoading } = api.chat.createChat.useMutation({
+    onSuccess: (data) => {
+      router.push(`/chat/${data?.chat?.chatid}`)
+    }
   })
 
         
@@ -68,11 +74,13 @@ const Profile = ({ userid, cover, avatar, username,  followsUser,
         </div>
         </div>
         <div className="flex  justify-end w-full mt-4 gap-8 sm:gap-32 lg:gap-2 xl:gap-6 xl:justify-center xl:items-center lg:mr-8 xl:mr-24 ">
-            <ProfileButton label={ followsUser ? "Following" : "Follow"} 
-                onClick={ !followsUser ? () => { followUser.mutate({id:userid, currentUser:username ? username : ''})} :
+            <ProfileButton label={ userFollows ? "Following" : "Follow"} 
+                onClick={ !userFollows ? () => { followUser.mutate({id:userid, currentUser:username ? username : ''})} :
                  () => {unFollowUser.mutate({id:userid}) }}
             />
-            <ProfileButton label="Message"/>
+            <ProfileButton isLoading={isLoading} label="Message" onClick={() => {
+                mutate({users:[userid]})
+            }}/>
         </div>
     </div>
         </div>

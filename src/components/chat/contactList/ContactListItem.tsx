@@ -13,13 +13,11 @@ type ContactListItemProps = {
 const ContactListItem = ({ chatMembers, chatid, lastMessage }: ContactListItemProps) => {
 
     const router = useRouter()
-    const { mutate } = api.chat.deleteChat.useMutation()
+
     const handleClick = () => {
         router.push(`/chat?id=${chatid}`, `/chat/${chatid}`)
     }
-    const handleDelete = () => {
-        mutate({ chatId: 'cljx0jmus0000v5cwnr4wlw7q' })
-    }
+
     const { profile } = chatMembers[0]
 
     if(chatMembers.length === 1) {

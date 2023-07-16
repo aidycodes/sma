@@ -14,7 +14,7 @@ const useFollowUser = (userid: string) => {
                 const data = oldData as FollowInfo
                 return {
                     ...data,
-                    followsUser: true
+                    userFollows: true
                 }
 
             })
@@ -25,7 +25,7 @@ const useFollowUser = (userid: string) => {
             const data = oldData as FollowInfo
             return {
                 ...data,
-                followsUser: false
+                userFollows: false
             }
 
         })

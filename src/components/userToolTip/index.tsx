@@ -1,9 +1,12 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import React from 'react'
+import { useRouter } from 'next/router'
+import React, { use } from 'react'
+import useCurrentUserProfile from '~/hooks/api/useCurrentUserProfile'
 import useFollowUser from '~/hooks/api/useFollowUser'
 import useIsFollowerFollowing from '~/hooks/api/useIsFollowerFollowing'
 import useUnfollowUser from '~/hooks/api/useUnfollowUser'
+import { api } from '~/utils/api'
 import Avatar from '../avatar'
 import ProfileButton from '../profile/profileButton'
 
@@ -18,9 +21,21 @@ type Props = {
 const UserToolTip = ({username, userid: id, avatar }: Props) => {
 
     if(!id) return null
-   const { followUser } = useFollowUser(id) 
+   const { followUser  } = useFollowUser(id) 
    const { unFollowUser } = useUnfollowUser(id)    
     const { data }  = useIsFollowerFollowing(id)
+    const currentUser = useCurrentUserProfile()
+    const { mutate, isLoading } = api.chat.createChat.useMutation({
+        onSuccess: (data) => {
+            router.push(`/chat/${data?.chat?.chatid}`)
+        }
+    })
+    const router = useRouter()
+
+    const handleMessageButton = () => {
+        const chatid = mutate({users: [id]})
+    }
+  
    if(!data) return null
     
     return(
@@ -34,16 +49,16 @@ const UserToolTip = ({username, userid: id, avatar }: Props) => {
                 <h2 className="font-semibold text-xl">
                 {username}
                 </h2>
-                {data.followsUser && <h4 className="text-xs  ">You are following</h4>}
+                {data.userFollows && <h4 className="text-xs  ">You are following</h4>}
                 </div>
                 
         </div>
         <div className="flex justify-center gap-4 pt-4 ">
-        <ProfileButton label={"message"} icon={'/icons/comment-alt-message.svg'}/>
-         <ProfileButton label={data.followsUser ? "following" : "follow"} 
-            icon={data.followsUser ? "/icons/tick.svg" : "/icons/tick.svg"} 
-            isTrue={data.followsUser}
-         onClick={!data.followsUser ? () => { followUser.mutate({id:id, currentUser:'yourmom'})} :
+        <ProfileButton label={"message"} icon={'/icons/comment-alt-message.svg'} onClick={handleMessageButton} isLoading={isLoading} />
+         <ProfileButton label={data.userFollows ? "following" : "follow"} 
+            icon={data.userFollows ? "/icons/tick.svg" : "/icons/tick.svg"} 
+            isTrue={data.userFollows}
+         onClick={!data.userFollows ? () => { followUser.mutate({id:id, currentUser:currentUser?.username})} :
                                          () => unFollowUser.mutate({id:id})
         } 
          />

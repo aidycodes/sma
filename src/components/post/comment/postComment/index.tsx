@@ -20,12 +20,12 @@ const PostComment = ({ postid, profileId, type, setCommentCount } :
     })
    const newComment = usePostComment(postid, type)
               
-    
+   const currentUser = useCurrentUserProfile() 
     const user = useCurrentUserProfile()
     const onSubmit: SubmitHandler<Inputs> = (data, e: BaseSyntheticEvent<object, any, any> | undefined) => {
        if(!e) return
         e.preventDefault()
-        newComment.mutate({title:'', postid:postid, content:data.comment})
+        newComment.mutate({title:'', postid:postid, content:data.comment, currentUser:currentUser?.username})
         setValue('comment', '')
         setCommentCount()        
     }

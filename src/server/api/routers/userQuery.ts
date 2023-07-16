@@ -219,6 +219,23 @@ export const userQueryRouter = createTRPCRouter({
                         console.log('unexpected error', err)
                     }
                 }
-            })
+            }),
+            deleteNotifications: privateProcedure
+            .mutation( async({ ctx }) => {
+                try{
+                    const deleted = await ctx.prisma.notifyUser.deleteMany({
+                       
+                    })
+                    return {
+                        deleted
+                    }
+                }catch(err){
+                    if(err instanceof Error){
+                        throw new TRPCError({message: err.message, code: "INTERNAL_SERVER_ERROR"})
+                    } else {
+                        console.log('unexpected error', err)
+                    }
+                }
+            }),
     
 })

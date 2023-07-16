@@ -1,6 +1,6 @@
 CREATE OR REPLACE FUNCTION f_create_user_profile() RETURNS TRIGGER AS $$ BEGIN
-INSERT INTO user_profile (profileid, userid)
-VALUES (NEW.id, NEW.id);
+INSERT INTO user_profile (profileid, userid, username, theme)
+VALUES (NEW.id, NEW.id, NEW.username, 'dark');
 RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;

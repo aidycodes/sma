@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { socket } from '~/socket/clientSocket';
 import { api } from '~/utils/api';
-import { ScrollRef } from '../chat/chatbox/display';
 
 const typeEmoji: {[index: string]: string} = {
     'like': '👍',
@@ -26,10 +25,9 @@ type Notification = {
 
 type Props = {
     queryKey: QueryKey
-    infinteRef: ScrollRef
 }
 
-export default function Notifcation({ queryKey, infinteRef }: Props) {
+export default function Notifcation({ queryKey }: Props) {
 
     const queryClient = useQueryClient()
     const trpc = api.useContext()
@@ -45,7 +43,6 @@ export default function Notifcation({ queryKey, infinteRef }: Props) {
     });
     const [notifcationFix, setNotifcationFix] = useState(false);
     const [chatFix, setChatFix] = useState(false);
-    const [scrollFix, setScrollFix] = useState(false);
 
     useEffect(() => {
         socket.connect()

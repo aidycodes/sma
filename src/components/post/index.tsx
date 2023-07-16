@@ -14,6 +14,7 @@ import Content from './content'
 import useLikePost from '~/hooks/api/useLikePost'
 import useUnlikePost from '~/hooks/api/useUnlikePost'
 import { Josefin_Sans  } from 'next/font/google';
+import useCurrentUserProfile from '~/hooks/api/useCurrentUserProfile'
 const jose = Josefin_Sans({ subsets: ['latin'], weight:'400' });
 
 dayjs.extend(relativeTime)
@@ -50,6 +51,8 @@ const PostItem = ( {postid, created_at, title,
     const handleCommentCount = () => {
         setCommentCount(comments.length+1)
     }
+    const currentUser = useCurrentUserProfile()
+    console.log({user})
 
     if(!user) return null
   return (
@@ -70,10 +73,10 @@ const PostItem = ( {postid, created_at, title,
             </div>
         {/* counter component */}
              <PostCounter likes_cnt={likes_cnt} comment_cnt={comment_cnt}
-                userLikes={likes.some((like: any) => like?.user?.profile?.userid === user?.profile?.userid)} />
+                userLikes={likes.some((like: any) => like?.user?.profile?.userid === currentUser?.userid)} />
            {/* like message component */}
-            <LikeComment userLikes={likes.some((like: any) => like?.user?.profile?.userid === user?.profile?.userid)} 
-                         postid={postid} like={like} unlike={unlike} commentRef={ref} />
+            <LikeComment userLikes={likes.some((like: any) => like?.user?.profile?.userid === currentUser?.userid)} 
+                         postid={postid} like={like} unlike={unlike} commentRef={ref} posterId={user?.id} />
                 
         {/* comment list component */}            
             <div className="flex flex-col gap-2 ">

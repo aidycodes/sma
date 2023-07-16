@@ -315,7 +315,7 @@ export const chatRouter = createTRPCRouter({
             deleteAllMessages: privateProcedure
             .mutation( async({ input, ctx }) => {
                 try{
-                    const del = await ctx.prisma.message.deleteMany({})
+                    const del = await ctx.prisma.chatMessage.deleteMany({})
                         return {
                             del
                         }

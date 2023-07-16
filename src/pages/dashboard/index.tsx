@@ -7,6 +7,8 @@ import LocationDisplay from '~/components/dashboard/locationDisplay'
 import FeedSelector from '~/components/dashboard/feedSelector'
 import FeedDisplay from '~/components/dashboard/feedSelector/feedDisplay'
 import Navbar from '~/components/navbar'
+import AdditionalOptions from '~/components/dashboard/AdditionalOptions'
+import { useSSRTheme } from '~/hooks/useSSRTheme'
 
 
 const Dashboard = () => {
@@ -47,8 +49,7 @@ import SuperJSON from 'superjson';
 import { GetServerSideProps } from 'next';
 import { createServerSideHelpers } from '@trpc/react-query/server';
 import { appRouter } from '~/server/api/root'
-import AdditionalOptions from '~/components/dashboard/AdditionalOptions'
-import { useSSRTheme } from '~/hooks/useSSRTheme'
+
 
 
 

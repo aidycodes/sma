@@ -8,15 +8,14 @@ import ChatNotifications from './chatNotification'
 import Notify from './notify'
 import SettingsMenu from './settings'
 
-const Navbar = ({ infinteRef }:
-   {infinteRef?: ScrollRef}) => {
+const Navbar = () => {
 
   const notificationQueryKey = getQueryKey(api.userQuery.getNotifcations, {take:10}, 'query')
 
   return (
     <div className="fixed w-full top-0 p-6 flex justify-around mb-8 fg z-50">
    
-      <Notifcation queryKey={notificationQueryKey} infinteRef={infinteRef}/>
+      <Notifcation queryKey={notificationQueryKey}/>
         <h1 className="text-primary text-xl ">
         Social
         </h1> 

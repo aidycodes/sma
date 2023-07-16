@@ -10,7 +10,7 @@ const ChatNotifications = () => {
     const flatChats = chatList?.pages.flatMap(page => page?.chatList?.chats)
     const mappedChatList = flatChats?.map((chat) => <ChatNotifcationItem key={chat?.chatid} chatid={chat?.chatid} chatMembers={chat?.chatmembers} lastMessage={chat?.messages[0]} />)
 
-    const { mutate } = api.chat.deleteAllMessages.useMutation()
+    const { mutate } = api.userQuery.deleteNotifications.useMutation()
   return (
     <div>
       <div className="pt-2 max-h-60 overflow-hidden overflow-y-auto shadow-xl">

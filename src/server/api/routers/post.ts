@@ -75,6 +75,7 @@ export const postRouter = createTRPCRouter({
         .mutation(async ({ input, ctx }) => {
             try{
                 const { postid, userid, currentUser } = input
+                console.log({userid, currentUser})
                 const [post_updatedAndNotifcation, like] = await Promise.all([ 
                     ctx.prisma.authUser.update({
                         where: { id: userid },

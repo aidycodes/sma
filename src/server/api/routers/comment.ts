@@ -2,20 +2,23 @@ import { z } from "zod";
 
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
+import { createId } from "@paralleldrive/cuid2";
 
 
 export const commentRouter = createTRPCRouter({
     new: privateProcedure
-        .input(z.object({ title:z.string(), content: z.string(), postid: z.string(),
+        .input(z.object({ title:z.string(), content: z.string(), postid: z.string(), currentUser: z.string(),
             meta: z.optional(z.object({}))  }))
         .mutation(async ({ input, ctx }) => {
               try{ 
-
+                const newId = createId()
                 const comment = await ctx.prisma.post.update({
                     where: { postid: input.postid },
-                    data:{comment_cnt: {increment: 1},                   
+                    data:{comment_cnt: {increment: 1},
+                    user: {update: {notifications: {create: {content:`${input.currentUser} commented on your post! dkdkdk`, relativeid:input.postid, type:'comment', commentid:newId}}}},                   
                     comments: {
                         create: {
+                            commentid: newId,
                             title: input.title,
                             content: input.content,
                             userid: ctx.currentUser.user.userId,
@@ -82,11 +85,12 @@ export const commentRouter = createTRPCRouter({
         .mutation(async ({ input, ctx }) => {
                    try{
             const { commentid, userid, currentUser, postid } = input
+            
                 const [comment_updatedAndNotifcation, like] = await Promise.all([ 
                     ctx.prisma.authUser.update({
                         where: { id: userid },
                         data: { notifications: {
-                            create: { content:`${currentUser} liked your comment!`, relativeId:postid, type:'comment'} },    //username will be passed
+                            create: { content:`${currentUser} liked your comment!`, relativeId:postid, type:'comment', commentId:commentid} },    //username will be passed
                             comments:{update: {where: {commentid: commentid}, data: {likes_cnt: {increment: 1}}}}
                 }
             }),
