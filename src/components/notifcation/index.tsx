@@ -1,46 +1,78 @@
-import { QueryKey, useQueryClient } from '@tanstack/react-query';
+import { useAtom } from 'jotai';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
+import { FeedDirectorAtom } from '~/jotai/store';
 import { socket } from '~/socket/clientSocket';
 import { api } from '~/utils/api';
 
-const typeEmoji: {[index: string]: string} = {
-    'like': '👍',
+export const typeEmoji: {[index: string]: string} = {
+    'likepost': '👍',
+    'likegeopost': '👍',
+    'likecomment': '👍',
+    'likegeocomment': '👍',
     'comment': '💬',
+    'geocomment': '💬',
     'follow': '👤',
-    'mention': '📌',
-    'reply': '📌',
-    'repost': '📌',
-    'user_post': '📌',
+    'post': '📌',
 }
 
 type Notification = {
     type: string,
     content: string,
-    relativeId: string,
+    relativeid: string,
+    commentid: string,
+    path: string
 } 
 
-type Props = {
-    queryKey: QueryKey
-}
 
-export default function Notifcation({ queryKey }: Props) {
+export default function Notifcation() {
 
-    const queryClient = useQueryClient()
     const trpc = api.useContext()
     const router = useRouter()
+    const [ [, feed] ] = useAtom(FeedDirectorAtom)
 
-    const notify = (notification: Notification) => toast(
+    const notify = (notification: Notification, path: string) => {
+        if(notification.type === 'post' || notification.type === 'likepost' ||
+        notification.type === 'geopost' || notification.type === 'likegeopost' ){ 
+        return(
+        toast(
         <span>
-            <Link href={`/${notification.type}/${notification.relativeId}`} >
+            <Link href={`/${path}/${notification.relativeid}`} >
                 {notification.content}
             </Link>
         </span>, {
         icon: typeEmoji[notification.type],
-    });
+    })
+        )
+    }
+    if(notification.type === 'comment' || notification.type === 'likecomment'){
+        return(
+        toast(
+        <span>
+            <Link href={`/post/${notification.relativeid}/${notification.commentid}`} >
+                {notification.content}
+            </Link>
+        </span>, {
+        icon: typeEmoji[notification.type],
+    })
+        )
+    }
+    if(notification.type === 'geocomment' || notification.type === 'likegeocomment'){
+        return(
+        toast(
+        <span>
+            <Link href={`/geopost/${notification.relativeid}/${notification.commentid}`} >
+                {notification.content}
+            </Link>
+        </span>, {
+        icon: typeEmoji[notification.type],
+    })
+        )
+    }
+}
     const [notifcationFix, setNotifcationFix] = useState(false);
     const [chatFix, setChatFix] = useState(false);
 
@@ -54,10 +86,38 @@ export default function Notifcation({ queryKey }: Props) {
     useEffect(() => {
         socket.connect()        
         socket.once('notification', (data) => {
+
             const notification: Notification = JSON.parse(data.payload)
-            queryClient.invalidateQueries({ queryKey: queryKey })
+          
+            trpc.userQuery.getNotifcations.invalidate()
             setNotifcationFix(!notifcationFix)
-           notify(notification)
+           notify(notification, data.path)
+       console.log(router)
+           if(router.route === 'profile'){
+               trpc.userQuery.getProfile.invalidate({userid: router?.query?.userid as string})
+           }
+           if(router.route === '/post/[...id]'){
+               trpc.post.getPost.invalidate({postid: router?.query?.id[0] as string})
+           }
+            if(router.route === '/geopost/[...id]'){
+                trpc.geoPost.getPost.invalidate({postid: router?.query?.id[0] as string})
+            }
+            if(router.route === 'dashboard'){
+                if(feed === 'following'){
+                    trpc.feed.getFollowerFeed.invalidate()
+                }
+                if(feed === 'getGeoFeed_current'){
+                    trpc.feed.getGeoFeed_current.invalidate()
+                }
+                if(feed === 'getGeoFeed_home'){
+                    trpc.feed.getGeoFeed_home.invalidate()
+                }
+                if(feed === 'getActivityFeed'){
+                    trpc.feed.getActivityFeed.invalidate()
+                }
+
+            }
+                
         })
         return () => {
             socket?.off('notification')
@@ -69,9 +129,9 @@ export default function Notifcation({ queryKey }: Props) {
             socket.connect()    
         socket.once('chat', (data) => {
             trpc.chat.getChatList.invalidate()
-          console.log(data.payload.messageid, 'msgid')
+        
                 trpc.chat.getMessages.setInfiniteData({chatId:data.payload.chatid}, (oldData) => {
-                    console.log({oldData})
+                 
                     if(oldData){
                        
     const dummyMessage = {

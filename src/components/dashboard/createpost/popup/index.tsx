@@ -44,7 +44,7 @@ const CreatePostPopup = ({ setPopup, options }:
                 image:data.image}
         if(whereToPost === 'Followers'){
 
-        console.log({meta})
+
         followerSubmit.mutate({content:data.content,
                         title:data.title,
                         meta

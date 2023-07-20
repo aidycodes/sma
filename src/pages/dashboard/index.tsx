@@ -7,7 +7,6 @@ import LocationDisplay from '~/components/dashboard/locationDisplay'
 import FeedSelector from '~/components/dashboard/feedSelector'
 import FeedDisplay from '~/components/dashboard/feedSelector/feedDisplay'
 import Navbar from '~/components/navbar'
-import AdditionalOptions from '~/components/dashboard/AdditionalOptions'
 import { useSSRTheme } from '~/hooks/useSSRTheme'
 
 
@@ -19,13 +18,15 @@ const Dashboard = () => {
       const [disableLocationDisplay, setDisableLocationDisplay] = React.useState(false)
       const {lat , lng, isLoading } = useGeolocation()
       const { data, isLoading:locationLoading } = api.geoCode.reverseGeoCode.useQuery({lat: lat, lng: lng})
+      const router = useRouter()
+   
       if(isLoading) return null
 
   return (
     <div>
         <Navbar/>
         <div className="  w-full h-full lg:w-3/4 2xl:w-1/2 my-28 mx-auto ">
-            <AdditionalOptions/>
+          
           {feed === 'current' && !disableLocationDisplay ? 
           <LocationDisplay {...data?.geoUser} isGeo={lat ? true : false} isLoading={locationLoading}
             disable={setDisableLocationDisplay}/> 
@@ -49,9 +50,7 @@ import SuperJSON from 'superjson';
 import { GetServerSideProps } from 'next';
 import { createServerSideHelpers } from '@trpc/react-query/server';
 import { appRouter } from '~/server/api/root'
-
-
-
+import { useRouter } from 'next/router'
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res, resolvedUrl}) => {
 

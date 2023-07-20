@@ -104,9 +104,9 @@ export const geoPostRouter = createTRPCRouter({
             ctx.prisma.notifyUser.create({
                 data: {
                     userid: userid,
-                    type: 'like',
+                    type: 'likegeopost',
                     content: `${currentUser} liked your post!`,
-                    relativeId: postid,
+                    relativeid: postid,
                 }
             })
         ])

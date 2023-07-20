@@ -9,6 +9,7 @@ import useFollowUser from '~/hooks/api/useFollowUser'
 import useUnfollowUser from '~/hooks/api/useUnfollowUser'
 import ProfileFeed from './postfeed';
 import { useRouter } from 'next/router';
+import useCurrentUserProfile from '~/hooks/api/useCurrentUserProfile';
 
 
 type Props = {
@@ -50,6 +51,7 @@ const Profile = ({ userid, cover, avatar, username,  followsUser,
       router.push(`/chat/${data?.chat?.chatid}`)
     }
   })
+  const currentUser = useCurrentUserProfile()
 
         
   return (
@@ -74,13 +76,15 @@ const Profile = ({ userid, cover, avatar, username,  followsUser,
         </div>
         </div>
         <div className="flex  justify-end w-full mt-4 gap-8 sm:gap-32 lg:gap-2 xl:gap-6 xl:justify-center xl:items-center lg:mr-8 xl:mr-24 ">
-            <ProfileButton label={ userFollows ? "Following" : "Follow"} 
+         { currentUser?.userid !== router?.query?.id && <> <ProfileButton label={ userFollows ? "Following" : "Follow"} 
                 onClick={ !userFollows ? () => { followUser.mutate({id:userid, currentUser:username ? username : ''})} :
                  () => {unFollowUser.mutate({id:userid}) }}
             />
             <ProfileButton isLoading={isLoading} label="Message" onClick={() => {
                 mutate({users:[userid]})
             }}/>
+        </>
+        }
         </div>
     </div>
         </div>

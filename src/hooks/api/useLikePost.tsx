@@ -21,7 +21,7 @@ const useLikePost = (type: string = 'normal') => {
     const [ radius ] = useAtom(radiusAtom)
 
     const postType = type === 'geo' ? 'geoPost' : 'post' 
-console.log({procedure})
+
     return api[postType].like.useMutation({
       onMutate: (likedPost) => {
         if(page === 'user' && queryParam){
@@ -35,10 +35,10 @@ console.log({procedure})
         }) }
         if(page === 'geopost'){
             trpc.geoPost.getPost.cancel()
-            console.log({queryParam})
+          
            trpc.geoPost.getPost.setData({postid:queryParam}, (data: any) => {
                if(data){
-                console.log({data})
+              
                    return { post:{...data.post, postid:'optimistic', likes_cnt: data.post.likes_cnt + 1, likes:[...data.post.likes, {user:
                                         {profile:{userid:profile?.userid, userName:profile?.username, avatar:profile?.avatar}}}
                                     ]}}
@@ -48,10 +48,10 @@ console.log({procedure})
         }
         if(page === 'post'){
             trpc.post.getPost.cancel()
-            console.log({queryParam})
+          
            trpc.post.getPost.setData({postid:queryParam}, (data: any) => {
                if(data){
-                console.log({data})
+              
                    return { post:{...data.post, postid:'optimistic', likes_cnt: data.post.likes_cnt + 1, likes:[...data.post.likes, {user:
                                         {profile:{userid:profile?.userid, userName:profile?.username, avatar:profile?.avatar}}}
                                     ]}}

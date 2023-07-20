@@ -22,7 +22,7 @@ export const useSubmitPostFollowers = () => {
                 return { previousData }
         },
         onError: (err, variables, context) => {
-            console.log(variables, context)
+    
             trpc.feed.getFollowerFeed.setData({postAmt:5}, context?.previousData)
             toast.error('Error submitting post')
     },
@@ -45,7 +45,7 @@ export const useSubmitPostGeo = () => {
          onMutate: async(newPost) => {
         await trpc.feed.getGeoFeed_current.cancel()
         const previousData = trpc.feed.getGeoFeed_current.getInfiniteData({lat:currentLocation?.lat, lng:currentLocation?.lng, radius:radius})
-        console.log({previousData})
+      
             if(whereToPost === 'Current Location'){
                 
           
@@ -60,7 +60,7 @@ export const useSubmitPostGeo = () => {
              return { previousData }
         },
         onError: (err, variables, context) => {
-            console.log(variables, context)
+         
             trpc.feed.getGeoFeed_current.setInfiniteData({lat:currentLocation?.lat, lng:currentLocation?.lng, radius:radius}, context?.previousData)
             toast.error('Error submitting post')
     },
@@ -79,6 +79,6 @@ function opitmisticPost(newPost: any, oldData: any, profile: any) {
                                 ,...page.posts]} : page 
                         }
                             )
-                            console.log({oldData}, {...oldData, pages: updatedPage})
+                          
                             return {...oldData, pages: updatedPage}
     }

@@ -80,7 +80,7 @@ export const postRouter = createTRPCRouter({
                     ctx.prisma.authUser.update({
                         where: { id: userid },
                         data: { notifications: {
-                            create: { content:`${currentUser} liked your post!`, relativeId:postid, type:'like'} },    //username will be passed
+                            create: { content:`${currentUser} liked your post!`, relativeid:postid, type:'likepost'} },    //username will be passed
                             posts:{update: {where: {postid: postid}, data: {likes_cnt: {increment: 1}}}}
                 }
             }),
@@ -128,7 +128,10 @@ export const postRouter = createTRPCRouter({
               try{
                 const post = await ctx.prisma.post.findUnique({
                  where: { postid: input.postid },
-                    include: { user: true,
+                    include: { user:{ include:{
+                        profile: true
+                    }
+                    },
                          likes: {
                                 include: { user: { 
                                     select:{

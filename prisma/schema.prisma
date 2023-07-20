@@ -88,12 +88,13 @@ model UserProfile {
     profileid String   @id @default(cuid())
     userid    String   @unique
     username  String   @default("user")
-    theme     String?  @default("light")
+    theme     String?  @default("dark")
     bio       String?
     work      String?
     education String?
     avatar    String?
     cover     String?
+    location  String   @default("")
     user      AuthUser @relation(fields: [userid], references: [id])
 
     @@index(fields: [userid], type: Hash)
@@ -123,7 +124,7 @@ model Post {
 }
 
 model Comment {
-    commentid  String   @id @default(cuid())
+    commentid  String   @id
     userid     String
     postid     String
     created_at DateTime @default(now())
@@ -166,7 +167,7 @@ model Geo_Post {
 }
 
 model Geo_Comment {
-    commentid  String     @id @default(cuid())
+    commentid  String     @id
     userid     String
     postid     String
     created_at DateTime   @default(now())

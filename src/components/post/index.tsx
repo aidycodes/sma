@@ -52,7 +52,7 @@ const PostItem = ( {postid, created_at, title,
         setCommentCount(comments.length+1)
     }
     const currentUser = useCurrentUserProfile()
-    console.log({user})
+
 
     if(!user) return null
   return (
@@ -76,7 +76,7 @@ const PostItem = ( {postid, created_at, title,
                 userLikes={likes.some((like: any) => like?.user?.profile?.userid === currentUser?.userid)} />
            {/* like message component */}
             <LikeComment userLikes={likes.some((like: any) => like?.user?.profile?.userid === currentUser?.userid)} 
-                         postid={postid} like={like} unlike={unlike} commentRef={ref} posterId={user?.id} />
+                         postid={postid} like={like} unlike={unlike} commentRef={ref} posterId={user?.id ? user?.id : user?.profile?.userid} />
                 
         {/* comment list component */}            
             <div className="flex flex-col gap-2 ">

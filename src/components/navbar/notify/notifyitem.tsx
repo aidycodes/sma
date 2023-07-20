@@ -14,6 +14,7 @@ type Props = {
     id: string
     queryKey?: QueryKey
     expanded?: boolean
+    commentid?: string
 
 }
 
@@ -27,9 +28,11 @@ type Page = {
 }
 
 const icontable: {[index: string]: string}  = {
-    user_post: '📝',
-    user_comment: '💬',
-    like: '👍',
+    post: '📝',
+    comment: '💬',
+    geocomment: '💬',
+    likepost: '👍',
+    likegeopost: '👍',
     follow: '👤',
     user_mention: '📢',
     user_repost: '🔁',
@@ -38,43 +41,42 @@ const icontable: {[index: string]: string}  = {
 
 
 
-const Item = ({content, type, link, viewed, id, queryKey}: Props) => {
+const Item = ({content, type, link, viewed, id, queryKey, commentid}: Props) => {
+
 
     const { theme } = useTheme()
      const queryClient = useQueryClient()
+     const trpc = api.useContext()
 
     const hasViewed = api.notify.hasViewed.useMutation({
         async onMutate(data) {
             if(queryKey){
-              
-            const previousTodo = queryClient.getQueryData([...queryKey]) as Note  
-            const updatedTodos = previousTodo?.pages.map((page, i) => {
-            const notes = page.notifcations.map((note) => (
-                note.nofiy_user_id === data.notify_user_id ? {...note, viewed: true} : note
-                ))        
-                return {notifcations:notes, nextCursor: previousTodo.pages[i].nextCursor}
-            })
-   
-         
-                queryClient.setQueryData([...queryKey], {pages:updatedTodos, pageParams:previousTodo.pageParams})
-                return {pages:updatedTodos, pageParams:previousTodo.pageParams}
+           const infiniteData = trpc.userQuery.getNotifcations.getInfiniteData({take:10})
+                       
+             const updatedNotes = infiniteData?.pages.map((page, i) => (
+                {nextCursor: page?.nextCursor, notifcations:page?.notifcations.map((note) => (
+                    note.nofiy_user_id === data.notify_user_id ? {...note, viewed: true} : note
+                ))
+                }
+             ))   
+                    console.log( {...infiniteData, pages:updatedNotes})
+                    console.log(infiniteData)
+                   trpc.userQuery.getNotifcations.setInfiniteData({take:10}, {...infiniteData, pages:updatedNotes})
+
         }
     },
         onError(err, newTodo, context) {
-            if(queryKey && context){
-            queryClient.setQueryData([...queryKey], {pages:context.pages, pageParams:context.pageParams})
-            }
+
         },
         onSuccess(data) {
-            if(queryKey && data){
-            queryClient.invalidateQueries({queryKey:[...queryKey, data.notify]})
-            }
+            trpc.userQuery.getNotifcations.invalidate({take:10})
         }
     })
-        
-  return (
-    <Link href={`/${type}/${link}`}>
-    <div  className={!viewed ? `shadow-sm highlight mx-0 px-6 py-2 flex cursor-pointer` : 
+
+    if(type === 'post' || type === 'likepost'){
+        return(
+    <Link href={!commentid ? `/post/${link}` : `/post/${link}/${commentid}` }>
+        <div  className={!viewed ? `shadow-sm highlight mx-0 px-6 py-2 flex cursor-pointer` : 
     `${theme}-menu shadow-sm py-2 mx-0 px-6 flex  cursor-pointer`}
         onMouseOver={() => id && !viewed && hasViewed.mutate({notify_user_id: id})}
     >
@@ -91,6 +93,72 @@ const Item = ({content, type, link, viewed, id, queryKey}: Props) => {
        
     </div>
     </Link>
+        )
+    }
+    if(type === 'geopost' || type === 'likegeopost'){
+        return(
+    <Link href={!commentid ? `/geopost/${link}` : `/geopost/${link}/${commentid}` }>
+        <div  className={!viewed ? `shadow-sm highlight mx-0 px-6 py-2 flex cursor-pointer` : 
+    `${theme}-menu shadow-sm py-2 mx-0 px-6 flex  cursor-pointer`}
+        onMouseOver={() => id && !viewed && hasViewed.mutate({notify_user_id: id})}
+    >
+        
+        {type &&
+        <div className="flex items-center p-1">
+        {icontable[type]}
+        </div>
+        }
+ 
+        <div className="flex justify-around">
+        {content.charAt(0).toUpperCase() + content.slice(1)}
+        </div>
+       
+    </div>
+    </Link>
+        )
+    }
+ if(type === 'comment'){
+            return(
+    <Link href={!commentid ? `/post/${link}` : `/post/${link}/${commentid}` }>
+        <div  className={!viewed ? `shadow-sm highlight mx-0 px-6 py-2 flex cursor-pointer` : 
+    `${theme}-menu shadow-sm py-2 mx-0 px-6 flex  cursor-pointer`}
+        onMouseOver={() => id && !viewed && hasViewed.mutate({notify_user_id: id})}
+    >
+        
+        {type &&
+        <div className="flex items-center p-1">
+        {icontable[type]}
+        </div>
+        }
+ 
+        <div className="flex justify-around">
+        {content.charAt(0).toUpperCase() + content.slice(1)} fgfgf
+        </div>
+       
+    </div>
+    </Link>
+        )
+
+ }
+        
+  return (
+    <div  className={!viewed ? `shadow-sm highlight mx-0 px-6 py-2 flex cursor-pointer` : 
+    `${theme}-menu shadow-sm py-2 mx-0 px-6 flex  cursor-pointer`}
+        onMouseOver={() => id && !viewed && hasViewed.mutate({notify_user_id: id})}
+    >
+        
+        {type &&
+        <div className="flex items-center p-1">
+        {icontable[type]}
+        </div>
+        }
+ 
+        <div className="flex justify-around">
+        An error occured on {type}
+        </div>
+       
+    </div>
+    
   )
 }
 

@@ -15,7 +15,7 @@ export const commentRouter = createTRPCRouter({
                 const comment = await ctx.prisma.post.update({
                     where: { postid: input.postid },
                     data:{comment_cnt: {increment: 1},
-                    user: {update: {notifications: {create: {content:`${input.currentUser} commented on your post! dkdkdk`, relativeid:input.postid, type:'comment', commentid:newId}}}},                   
+                    user: {update: {notifications: {create: {content:`${input.currentUser} commented on your post!`, relativeid:input.postid, type:'comment', commentid:newId}}}},                   
                     comments: {
                         create: {
                             commentid: newId,
@@ -90,7 +90,7 @@ export const commentRouter = createTRPCRouter({
                     ctx.prisma.authUser.update({
                         where: { id: userid },
                         data: { notifications: {
-                            create: { content:`${currentUser} liked your comment!`, relativeId:postid, type:'comment', commentId:commentid} },    //username will be passed
+                            create: { content:`${currentUser} liked your comment!`, relativeid:postid, type:'likepost', commentid:commentid} },    //username will be passed
                             comments:{update: {where: {commentid: commentid}, data: {likes_cnt: {increment: 1}}}}
                 }
             }),

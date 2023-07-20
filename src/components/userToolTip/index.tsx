@@ -21,10 +21,12 @@ type Props = {
 const UserToolTip = ({username, userid: id, avatar }: Props) => {
 
     if(!id) return null
+     const currentUser = useCurrentUserProfile()
+     if(id === currentUser?.userid) return null
    const { followUser  } = useFollowUser(id) 
    const { unFollowUser } = useUnfollowUser(id)    
     const { data }  = useIsFollowerFollowing(id)
-    const currentUser = useCurrentUserProfile()
+   
     const { mutate, isLoading } = api.chat.createChat.useMutation({
         onSuccess: (data) => {
             router.push(`/chat/${data?.chat?.chatid}`)
@@ -35,7 +37,7 @@ const UserToolTip = ({username, userid: id, avatar }: Props) => {
     const handleMessageButton = () => {
         const chatid = mutate({users: [id]})
     }
-  
+    
    if(!data) return null
     
     return(
@@ -54,6 +56,7 @@ const UserToolTip = ({username, userid: id, avatar }: Props) => {
                 
         </div>
         <div className="flex justify-center gap-4 pt-4 ">
+         {currentUser?.userid !== id && <>
         <ProfileButton label={"message"} icon={'/icons/comment-alt-message.svg'} onClick={handleMessageButton} isLoading={isLoading} />
          <ProfileButton label={data.userFollows ? "following" : "follow"} 
             icon={data.userFollows ? "/icons/tick.svg" : "/icons/tick.svg"} 
@@ -62,6 +65,7 @@ const UserToolTip = ({username, userid: id, avatar }: Props) => {
                                          () => unFollowUser.mutate({id:id})
         } 
          />
+        </>}
         </div>
     </Link>
     </div>

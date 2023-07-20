@@ -27,7 +27,7 @@ export const ourFileRouter = {
     })
     .onUploadComplete(async ({ metadata, file }) => {
       // This code RUNS ON YOUR SERVER after upload
-      console.log("Upload complete for userId:", metadata.userId);
+  
       const editProfile = await  prisma.userProfile.update({
             where: {
                 userid: metadata.userId
@@ -55,7 +55,7 @@ export const ourFileRouter = {
     })
     .onUploadComplete(async ({ metadata, file }) => {
       // This code RUNS ON YOUR SERVER after upload
-      console.log("Upload complete for userId:", metadata.userId);
+     
     }),
     bannerUploader: f
     // Set permissions and file types for this FileRoute

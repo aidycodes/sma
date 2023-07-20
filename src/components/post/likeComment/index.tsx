@@ -10,7 +10,7 @@ const LikeComment = ({ postid, userLikes, like, unlike, commentRef, posterId }:
     const profile = useCurrentUserProfile()
 
     const moveToComment = () => {
-      console.log(commentRef)
+
         commentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }
 

@@ -27,7 +27,7 @@ const ChatInput = ({ input, setInput, setShowEmoji }:
           updated_at: new Date(),
         }
         trpc.chat.getMessages.setInfiniteData( { chatId: query?.id as string }, (data) => {
-          console.log({data})
+          
           if(data?.pages[0]?.messages){
             const newPages = data.pages.map((page, i) => {
               if(i === 0 ){
@@ -35,7 +35,7 @@ const ChatInput = ({ input, setInput, setShowEmoji }:
               }
               return {...page}
             })
-            console.log({newPages})
+         
        
           return {...data, pages: newPages  }
           

@@ -17,7 +17,7 @@ export const useGeolocation = () => {
         if (navigator.geolocation) {
            setIsLoading(true)
             const watch = navigator.geolocation.watchPosition(position => {
-            console.log({position})
+     
                 setLocation({lat: position.coords.latitude, lng: position.coords.longitude})
                 setLocationAtom({lat: position.coords.latitude, lng: position.coords.longitude})
             }, (error) => {              

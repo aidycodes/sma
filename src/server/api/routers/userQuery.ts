@@ -13,7 +13,7 @@ export const userQueryRouter = createTRPCRouter({
                 }
                 const { userId } = ctx.currentUser.user
                     const user = await ctx.prisma.authUser.findUnique({where: {id: userId},
-                        select:{followers_cnt:true, created_at:true, profile:true, follows: { select: {
+                        select:{followers_cnt:true, created_at:true, profile:true, followers: { include: {
                             profile: true }
                         }} //follows was added 
                     });
@@ -36,11 +36,13 @@ export const userQueryRouter = createTRPCRouter({
                 try{
                     const { id } = input;
                     const user = await ctx.prisma.authUser.findUniqueOrThrow({where: {id: id},
-                      select:{followers_cnt:true, created_at:true, profile:true}
-                    });
+                      select:{followers_cnt:true, created_at:true, profile:true, followers: { select: { profile:true }}
+                    }});
+                    console.log({user})
                     return {
                         followers_cnt:user.followers_cnt,
                         created_at:user.created_at,
+                        followers: user.followers,
                         ...user.profile
                     }
                 }catch(err){
@@ -237,5 +239,31 @@ export const userQueryRouter = createTRPCRouter({
                     }
                 }
             }),
+            searchUsers: privateProcedure
+            .input(z.object({searchTerm: z.string()}))
+            .query( async({ input, ctx }) => {
+                console.log(input.searchTerm)
+                try{
+                    if(input.searchTerm.length <= 1){
+                        return {
+                            users:[]
+                        }
+                    }
+                    const { searchTerm } = input;
+                    const users = await ctx.prisma.authUser.findMany({
+                        where: {username: {contains: searchTerm}},
+                        select: {profile: true}
+                    })
+                    return {
+                        users
+                    }
+                }catch(err){
+                    if(err instanceof Error){
+                        throw new TRPCError({message: err.message, code: "INTERNAL_SERVER_ERROR"})
+                    } else {
+                        console.log('unexpected error', err)
+                    }
+                }
+            })
     
 })

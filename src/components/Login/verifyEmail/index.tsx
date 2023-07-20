@@ -21,7 +21,6 @@ const VerifyEmail = () => {
 
 
     const handleClose = () => {
-        console.log('close')
         router.push('/login')
     }
 

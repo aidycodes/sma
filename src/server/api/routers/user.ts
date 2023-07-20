@@ -264,6 +264,12 @@ export const userRouter = createTRPCRouter({
       lat = ${lat}, lng = ${lng}, primary_location = ST_SetSRID(ST_Point(${lng}, ${lat}),4326)   
       WHERE "userid" = ${userid}`
           )
+
+      const profileUpdate = await ctx.prisma.userProfile.update({
+        where: {userid},
+        data: {
+          location: `${city}, ${state}, ${country}`
+        }})
             return {
               geoUser
             }

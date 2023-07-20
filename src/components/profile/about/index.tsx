@@ -1,16 +1,21 @@
+import dayjs from 'dayjs'
 import React from 'react'
 import AboutItem from './aboutItem'
+var localizedFormat = require('dayjs/plugin/localizedFormat')
 
+dayjs.extend(localizedFormat)
 
 type Props = {
     bio?: string | null
     work?: string | null
     education?: string | null
-    joined?: string | null
+    created_at?: string | null
     location?: string | null
 }
 
-const About = ({ bio, work, education, joined, location }: Props) => {
+const About = ({ bio, work, education, location, created_at }: Props) => {
+    
+
   return (
     <div className="fg w-[90%] rounded-lg shadow-lg m-4 dbo-border lg:my-4 lg:ml-2 lg:mr-0  xl:pb-2 lg:w-full 2xl:max-w-[680px]  ">
         <div className="pt-2 flex flex-col ">
@@ -20,8 +25,8 @@ const About = ({ bio, work, education, joined, location }: Props) => {
             {bio && (
                 <AboutItem  text={bio} icon="bio.svg"/>
             )}
-            {!location && (
-                <AboutItem  text={"United Kingdom South Gloucestershire England"} icon="location.svg"/>
+            {location && (
+                <AboutItem  text={location} icon="location.svg"/>
             )}
             {work && (
                 <AboutItem  text={work} icon="work.svg"/>
@@ -29,8 +34,8 @@ const About = ({ bio, work, education, joined, location }: Props) => {
             {education && (
                 <AboutItem  text={education} icon="education.svg"/>
             )}
-            {!joined && (
-                <AboutItem  text={"Joined march 2023"} icon="joined.svg"/>
+            {created_at && (
+                <AboutItem  text={`Joined ${dayjs(created_at).format('LL')}`} icon="joined.svg"/>
             )}
             
 

@@ -21,11 +21,11 @@ type MoodProps = {
 const Mood = (
     { showOptions, watch, setValue }: MoodProps) => {
 
-    //const [showOptions, setShowOptions] = React.useState(false)
+
         const currentMood = watch('mood')
         const currentBackground = watch('background')
         const currentImage = watch('image')
-        console.log(currentBackground)
+    
 
     const setMood = (mood: string) => {
         if(currentMood !== mood){

@@ -3,7 +3,7 @@ DECLARE poster TEXT;
 notify_string TEXT;
 id_payload TEXT;
 BEGIN
-SELECT INTO poster email
+SELECT INTO poster username
 FROM auth_user
 WHERE id = NEW.userid;
 notify_string := format('%s just made a new post!', poster);

@@ -327,6 +327,28 @@ export const chatRouter = createTRPCRouter({
                     }
                 }
             }),
+        hasViewedMessage: privateProcedure
+            .input(z.object({messageId: z.string()}))
+            .mutation( async({ input, ctx }) => {
+                try{
+                    const { messageId } = input;
+                   const message = await ctx.prisma.chatMessage.update({
+                          where: {messageid: messageId},
+                          data: {viewed: true}
+                     })
+                        return {    
+                            message
+                        }
+
+                    
+                }catch(err){
+                    if(err instanceof Error){
+                        throw new TRPCError({message: err.message, code: "INTERNAL_SERVER_ERROR"})
+                    } else {
+                        console.log('unexpected error', err)
+                    }
+                }
+            }),
 
 
 })

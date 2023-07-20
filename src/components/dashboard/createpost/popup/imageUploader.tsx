@@ -27,7 +27,7 @@ export function ImageUploader({ setValue }: { setValue: any }) {
         setHasUploaded(true);
         setValue('image', res[0].fileUrl)
         setReadyToUpload(false)
-        console.log({res})
+  
     },
     onUploadError: () => {
       toast.error("upload failed");

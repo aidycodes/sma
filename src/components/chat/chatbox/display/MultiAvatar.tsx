@@ -11,10 +11,10 @@ const Avatar = ({ image }: { image: string}) => {
 }
 
 const MultiAvatar = ({images}: {images: string[]}) => {
-    console.log({images})
+    
     if(!images) return null
     const images2 = [...images, ...images, ...images, ...images, ...images ]
-    console.log({images2})
+   
     const avatars = images.map((image,i) => {
         if(i < 4) return (
         <div className={`absolute ${i === 0 ? 'left-0' : i === 1 ? 'left-5' : i === 2 ? 'left-10' : i === 3 ?  'left-16' : 'left-20' } `}>
@@ -27,7 +27,7 @@ const MultiAvatar = ({images}: {images: string[]}) => {
         </div>
         )
 })
-console.log(images2.length)
+
         const width = images.length < 4 ? 50 : images.length === 4 ? 60 : images.length === 5 &&  100
     
   return (

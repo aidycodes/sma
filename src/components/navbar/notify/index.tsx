@@ -43,8 +43,8 @@ const Notify = () => {
            <h2 className="text-lg  p-2 border-b-1 border-primary-bottom shadow-sm">Notifcations</h2>
     {newarray?.map((item: any, i) => {  
            return(   
-           <div ref={i === newarray.length-2 ? sentryRef : undefined} >
-              <Item  key={item.nofiy_user_id} content={item.content} type={item.type} link={item.relativeId} 
+           <div ref={i === newarray.length-2 ? sentryRef : undefined} key={item.nofiy_user_id} >
+              <Item  key={item.nofiy_user_id} content={item.content} type={item.type} link={item.relativeid} commentid={item.commentid}
                 viewed={item.viewed} id={item.nofiy_user_id} queryKey={queryKey}    
               />
             </div>)}

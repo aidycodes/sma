@@ -5,7 +5,7 @@ const useActivityFeed = () => {
   {getNextPageParam: (lastPage) => lastPage ? lastPage.cursor : undefined
 }
 )
-console.log({data})
+
     if(data){
         return { posts:data.pages.flatMap(page => page?.posts),
                 isError,

@@ -51,7 +51,7 @@ const NewChat = () => {
     React.useEffect(() => {
       if(data) {
         router.push(`/chat?id=${data.chat.chatid}`, `/chat/${data.chat.chatid}`)
-        console.log(data)
+
       }
     },[data])
 

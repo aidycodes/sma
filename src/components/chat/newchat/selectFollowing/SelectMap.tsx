@@ -12,7 +12,7 @@ const SelectMap = ({ selectedUser, searchTerm, setselectedUser, setSearchTerm }:
     const debouncedSearchTerm = useDebounce(searchTerm, 500)
     const { data, isLoading, isError } = api.userQuery.searchUsersFollowers.useQuery({searchTerm:debouncedSearchTerm})
 
-    console.log({data})
+  
 
     if(isLoading) return (<div className="p-4 flex items-center gap-4 text-xl font-thin"><LoadingSpinner size="small"/> <span>Loading...</span></div>)
 

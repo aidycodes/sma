@@ -18,7 +18,7 @@ const ThemeTester = ({ userTheme = 'dark-blue'}: { userTheme: string}) => {
         setTheme(userTheme)
     }, [])
 
-    console.log({theme})
+
 
   return (
     <Layout >

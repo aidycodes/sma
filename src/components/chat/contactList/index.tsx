@@ -21,7 +21,7 @@ const ContactList = ({ setCreateMessage, createMessage }: { setCreateMessage: Se
 
       const { data:searchList, isLoading:searchLoading} = api.chat.searchChats.useQuery({ searchTerm:debouncedSearchTerm })
 
-      console.log({searchList},'dd')
+     
 
       const flatChats = chatList?.pages?.flatMap(page => page?.chatList?.chats)
 

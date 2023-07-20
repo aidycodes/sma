@@ -16,7 +16,7 @@ type FeedDisplayProps = {
 const FeedDisplay = ({feed, lat, lng}: FeedDisplayProps) => {
 
     const { data:userHome, isLoading } = api.userQuery.getUsersGeoData.useQuery()
-    console.log({userHome})
+
 
     if(feed === 'following') return <Feed/>
     if(feed === 'activity') return <ActivityFeed/>

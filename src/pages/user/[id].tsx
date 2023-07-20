@@ -16,16 +16,16 @@ const UserPage = () => {
     const [isMounted, setIsMounted] = React.useState(false)
     const router = useRouter()
     const  id  = router.query.id as string 
-    const { data, isLoading, isError } = api.userQuery.getProfile.useQuery({id:id})
+    const { data: profile, isLoading, isError } = api.userQuery.getProfile.useQuery({id:id})
     const profileQueryKey = getQueryKey(api.userQuery.getProfile, {id:id}, 'query')
     const userQueryKey = getQueryKey(api.userQuery.getUserProfile, undefined, 'query')
     const { data: followInfo } = useIsFollowerFollowing(id)
     const { data: userData, isLoading: userLoading, isError: userError } = api.userQuery.getUserProfile.useQuery()
     const user = userData?.user
     useSSRTheme()
-   const profile = data
+   //const profile = data
    const [, setValue] = useAtom(FeedDirectorAtom)
-
+    console.log(profile)
 
     React.useLayoutEffect(() => {
     setIsMounted(true)
@@ -39,7 +39,6 @@ const UserPage = () => {
                 <PageError isLoading={[isLoading]} queryKeys={[profileQueryKey, userQueryKey]} isError={[isError, userError]}/>
             </Layout>
         )}
-  
 
   return (
     <div>

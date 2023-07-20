@@ -10,7 +10,9 @@ CREATE OR REPLACE FUNCTION f_notify_user() RETURNS TRIGGER AS $$ BEGIN PERFORM p
             'content',
             NEW.content,
             'commentid',
-            NEW.commentid
+            NEW.commentid,
+            'relativeid',
+            NEW.relativeid
         )::text
     );
 RETURN NULL;

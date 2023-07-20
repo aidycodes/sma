@@ -14,7 +14,7 @@ export const geoCommentRouter = createTRPCRouter({
                 const comment = await ctx.prisma.geo_Post.update({
                     where: { postid: input.postid },
                     data:{comment_cnt: {increment: 1},
-                    user: {update: {notifications: {create: {content:`${input.currentUser} commented on your post!`, relativeid:input.postid, type:'post', commentid:newId}}}},
+                    user: {update: {notifications: {create: {content:`${input.currentUser} commented on your post!`, relativeid:input.postid, type:'geocomment', commentid:newId}}}},
                     comments: {
                         create: {
                             commentid: newId,
@@ -89,7 +89,7 @@ export const geoCommentRouter = createTRPCRouter({
                     ctx.prisma.authUser.update({
                         where: { id: userid },
                         data: { notifications: {
-                            create: { content:`${currentUser} liked your comment!`, relativeid:postid, type:'comment', commentid:commentid} },    //username will be passed
+                            create: { content:`${currentUser} liked your comment!`, relativeid:postid, type:'likegeopost', commentid:commentid} },    //username will be passed
                             geo_comments:{update: {where: {commentid: commentid}, data: {likes_cnt: {increment: 1}}}}
                 }
             }),

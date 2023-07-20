@@ -19,7 +19,6 @@ const RadiusSelector
             }   
         }
 
-console.log({feed})
   return (
             <div className="md:ml-auto">
            <div className={`flex flex-col items-center mt-auto   md:mr-4 md:mb-8 md:mt-2 lg:mr-2 ${feed === 'follower' || feed === 'activity' ? 'opacity-30 blur-[2px]' : 'opacity-100'}`}>

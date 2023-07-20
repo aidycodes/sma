@@ -23,7 +23,7 @@ const ChatDisplay = () => {
   const chatmembers = chatmembersArray?.map((member, i) => (
   <span>{member?.profile?.username}{i < data?.chat?.chatmembers?.length-1 && ', ' }</span>
   ))
-console.log({data})
+
 
   return (
     <div className="h-[calc(100%-150px)] w-full  ">
