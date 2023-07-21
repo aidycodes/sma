@@ -6,6 +6,7 @@ import redis from "@lucia-auth/adapter-session-redis";
 import { prisma } from "~/server/db";
 import { createClient } from "redis";
 import { env } from "~/env.mjs";
+import "lucia-auth/polyfill/node";
 
 export const sessionClient = createClient({url:env.REDIS_SESSION});
 export const userSessionClient = createClient({url:env.REDIS_USER_SESSION});
