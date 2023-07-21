@@ -58,7 +58,7 @@ const SearchBox = ({ users, isFetching, isLoading, isRefetching, search, isFetch
     
 
   return (
-        <div ref={refe} className="absolute top-8 h-40 w-full
+        <div ref={refe} className="absolute top-8 h-40 w-full mt-1
           bg-white rounded-md bg shadow-xl overflow-y-scroll scrollbar-hide ">
             {usersList}
         </div>
