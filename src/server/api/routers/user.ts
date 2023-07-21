@@ -7,9 +7,9 @@ import jwt from "jsonwebtoken";
 import { createId } from '@paralleldrive/cuid2';
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.SmaEmail);
+//const resend = new Resend(process.env.SmaEmail);
 
-resend.domains.verify("d91cd9bd-1176-453e-8fc1-35364d380206");
+//resend.domains.verify("d91cd9bd-1176-453e-8fc1-35364d380206");
 
 export const userRouter = createTRPCRouter({
   create: publicProcedure
@@ -51,24 +51,24 @@ export const userRouter = createTRPCRouter({
     .input(z.object({ id: z.string() }))
     .mutation( async({ input, ctx  }) => {
       try{
-        const { id } = input;
-        const user = await ctx.prisma.authUser.findFirst({
-            where: {id: id, isVerified: false},
-            select: {email: true, secureCode: true}
-        })
-        if(user?.email && user?.secureCode){        
-        const { email, secureCode } = user;
-        const data = await resend.emails.send({
-        from: "Acme <onboarding@resend.dev>",
-        to: ["aidycodes@gmail.com"],
-        subject: "Verify your email address",
-        html: "<strong>It works!</strong>",
+    //     const { id } = input;
+    //     const user = await ctx.prisma.authUser.findFirst({
+    //         where: {id: id, isVerified: false},
+    //         select: {email: true, secureCode: true}
+    //     })
+    //     if(user?.email && user?.secureCode){        
+    //     const { email, secureCode } = user;
+    //     const data = await resend.emails.send({
+    //     from: "Acme <onboarding@resend.dev>",
+    //     to: ["aidycodes@gmail.com"],
+    //     subject: "Verify your email address",
+    //     html: "<strong>It works!</strong>",
        
-    });
+    // });
   
 
   
-  }
+//  }
         return {
             message: "Verification code sent successfully"
         }
