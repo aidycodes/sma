@@ -117,7 +117,7 @@ const SignIn = ({ setIsFlipped }: {setIsFlipped: React.Dispatch<React.SetStateAc
                     <button onClick={handleSubmit((data) => onSubmit(data))} 
             className={`bg-blue-700 w-[200px] px-8 h-12 !text-slate-200 hover:!text-white disabled:cursor-not-allowed disabled:opacity-50 
             font-semibold text-lg cursor-pointer text-primary rounded-[10px] mt-8 hover:brightness-125`} 
-            disabled={!!Object.keys(errors).length || Object.values(watchAllFields).filter((key) => key === "").length !== 0 || isSubmitting} 
+            disabled={!!Object.keys(errors).length || Object.values(watchAllFields).filter((key) => key === "").length !== 0 || isSubmitting || isSuccess} 
             >{!isLoading ? <> Sign In!</> : <Loading/> }</button>
            
         </form>       
