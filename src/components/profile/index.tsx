@@ -70,7 +70,7 @@ const Profile = ({ userid, cover, avatar, username,  followsUser,
         {username && username?.charAt(0).toUpperCase() + username?.slice(1)}
         </h2>
         <div>
-            {followers_cnt &&
+            {followers_cnt > 0 &&
         <h4>{millify(followers_cnt)} followers</h4>
             }
         </div>

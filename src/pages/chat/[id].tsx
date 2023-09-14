@@ -15,7 +15,7 @@ const ChatPage = () => {
   return (
     <div>
       <Navbar/>
-    <div className="mt-20  w-full h-[calc(100vh-80px)]  mx-auto overflow-y-hidden">
+    <div className="mt-16 lg:mt-20  w-full h-[calc(100vh-80px)]  mx-auto overflow-y-hidden">
         <div className="h-screen flex">
         <ContactList setCreateMessage={setCreateMessage} createMessage={createMessage} />
         <Chat/>

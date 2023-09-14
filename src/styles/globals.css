@@ -14,6 +14,9 @@
   --text-box: #ffffff;
   --altchat: #ffffff;
   --light-speical-header: #374151;
+  --form-bg:#e2e8f0;
+  --form-input-border:#cbd5e1;
+  --select:#e2e8f0;
   
   /*#ffb3ba*/
 }
@@ -29,6 +32,9 @@
   --border-color: #212124;
   --text-box: #3f3f46;
   --altchat: #3f3f46;
+    --form-bg:#27272a;
+  --form-input-border:#030712;
+  --select:#52525b;
 
 }
 /*#0ff0fc */
@@ -40,6 +46,7 @@
   --border-color: #ffffff;
    --text-box: #ffb3ba;
    --altchat: #F2D2BD;
+   --select:#F2D2BD;
 }
 [data-theme="dark-blue"] {
   --background: #050a30;
@@ -50,6 +57,9 @@
    --text-box: #050a30;
    --dark-blue-only-border: #0000ff;
    --altchat: #0066ff;
+   --form-bg:#172554;
+  --form-input-border:#030712;
+  --select:#1e40af;
 }
 
 body {
@@ -68,6 +78,19 @@ body {
   background-color: var(--foreground);
  
 }
+
+.select-bg {
+  background-color: var(--select);
+}
+
+.form-bg{
+  background-color: var(--form-bg);
+}
+
+.form-input-border{
+  border: 1px solid var(--form-input-border);
+}
+
 .fakeTextBox {
   background-color: var(--text-box);
 }

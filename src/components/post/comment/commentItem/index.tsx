@@ -38,6 +38,7 @@ const CommentItem = ({
     const currentUser = useCurrentUserProfile()
     const [showUserToolTip, setShowUserToolTip] = React.useState(false)
     const ref = React.useRef<HTMLDivElement>(null)
+    
  
     const likeComment = useLikeComment(postid, commentid, type)
     const unlikeComment = useUnlikeComment(postid, commentid, type )
@@ -49,7 +50,7 @@ const CommentItem = ({
     }, [])
 
   return (
-    <div ref={ref} className="  rounded-md  mr-4 ">    
+    <div ref={ref} className="  rounded-md  mr-4 " >    
       <div className="flex gap-2">
        <div className="flex flex-col items-center gap-2 w pl-8 mt-2">
             <div className="w-12 h-12 rounded-[50px] relative mr-auto  ">
@@ -58,12 +59,12 @@ const CommentItem = ({
                             alt="avatar"  />
             </div>    
             </div>  
-    <div className=" py-2 rounded-md  fg ">  
+    <div className=" py-2 rounded-md  fg " onMouseLeave={() => setShowUserToolTip(false)}>  
       <div className=" items-stretch flex-col flex" >
         <div className=" pl-4 p-2 rounded-xl  backdrop-brightness-200" >
           <div>
             <div className="flex items-center gap-2" > 
-              <div  onMouseOver={() => setShowUserToolTip(true)}  onMouseLeave={() => setShowUserToolTip(false)}>
+              <div  onMouseOver={() => setShowUserToolTip(true)}  >
                 <Link href={`/user/${userid}`}>
                 <h2 className="text-md font-semibold cursor-pointer hover:underline" 
                 >{username}</h2>

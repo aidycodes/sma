@@ -23,7 +23,7 @@ const RadiusSelector
             <div className="md:ml-auto">
            <div className={`flex flex-col items-center mt-auto   md:mr-4 md:mb-8 md:mt-2 lg:mr-2 ${feed === 'follower' || feed === 'activity' ? 'opacity-30 blur-[2px]' : 'opacity-100'}`}>
              <label className="opacity-60" htmlFor="distance">Distance</label>
-            <select onChange={(e) => handleRadius(e.target.value)} name='distance' className={`rounded-xl p-1 text-black bg-zinc-500 ${feed === 'follower' || feed === 'activity' ? 'cursor-default' :  'cursor-pointer'} }`} 
+            <select onChange={(e) => handleRadius(e.target.value)} name='distance' className={`rounded-xl p-1 text-black select-bg ${feed === 'follower' || feed === 'activity' ? 'cursor-default' :  'cursor-pointer'} }`} 
                     disabled={feed === 'follower' || feed === 'activity'}>             
             <option className="text-black font-semibold rounded-md" value={5}>5 Miles</option>
             <option className="text-black font-semibold rounded-md" value={10}>10 Miles</option>

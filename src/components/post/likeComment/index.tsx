@@ -2,8 +2,8 @@ import Image from 'next/image'
 import React from 'react'
 import useCurrentUserProfile from '~/hooks/api/useCurrentUserProfile'
 
-const LikeComment = ({ postid, userLikes, like, unlike, commentRef, posterId }:
-     { postid: string, userLikes: boolean, posterId: string,
+const LikeComment = ({ postid, userLikes, like, unlike, commentRef, posterId, optimistic = false }:
+     { postid: string, userLikes: boolean, posterId: string, optimistic: boolean,
        like: any, unlike: any 
       commentRef: React.RefObject<HTMLDivElement>}) => {
 
@@ -18,9 +18,9 @@ const LikeComment = ({ postid, userLikes, like, unlike, commentRef, posterId }:
     <div>
         <hr className="border-gray-600"/>
             <div className="flex  justify-center text-xl items-center 2 transition-opacity  ">
-                <button className={`${postid === 'optimistic' ? 'opacity-30' : 'opacity-100'} flex items-center gap-2 p-4 transition-opacity justify-center cursor-pointer
+                <button className={`${optimistic ? 'opacity-30' : 'opacity-100'} flex items-center gap-2 p-4 transition-opacity justify-center cursor-pointer
                                      hover:backdrop-brightness-200 basis-1/2 `}
-                                     disabled={postid === 'optimistic'}
+                                     disabled={optimistic}
                         onClick={userLikes ? () => unlike.mutate({postid:postid}) : 
                     () => like.mutate({postid:postid, userid:posterId, currentUser:profile?.username})}
                                      >

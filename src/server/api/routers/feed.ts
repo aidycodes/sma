@@ -102,6 +102,7 @@ export const feedRouter = createTRPCRouter({
         .input(z.object({ cursor:z.object({created_at_postid:z.string()}).optional(),
              lat: z.number(), lng: z.number(), radius: z.number() }))
         .query(async ({ input, ctx }) => {
+            try{
             const { cursor, lat, lng, radius } = input
 
             const cursorDate = cursor ? cursor.created_at_postid : '0'
@@ -191,12 +192,19 @@ export const feedRouter = createTRPCRouter({
                     nextCursor,
                     posts
                 }
+            }catch(err){
+                if(err instanceof Error){
+             throw new TRPCError({message: err.message, code: "INTERNAL_SERVER_ERROR"})
+                } else {
+                    console.log('unexpected error', err)
+                }}
                 
             }),
          getGeoFeed_home: privateProcedure
         .input(z.object({ cursor:z.object({created_at_postid:z.string()}).optional(),
              lat: z.number(), lng: z.number(), radius: z.number() }))
         .query(async ({ input, ctx }) => {
+            
             const { cursor, lat, lng, radius } = input
 
             const cursorDate = cursor ? cursor.created_at_postid : '0'
@@ -331,7 +339,7 @@ export const feedRouter = createTRPCRouter({
                         },
                         comments: {
                             orderBy:{
-                                updated_at: "asc",
+                                created_at: "asc",
                             },
                             include: {
                                 user: {
@@ -388,7 +396,7 @@ export const feedRouter = createTRPCRouter({
                         },
                         comments: {
                             orderBy:{
-                                updated_at: "asc",
+                                created_at: "asc",
                             },
                             include: {
                                 user: {

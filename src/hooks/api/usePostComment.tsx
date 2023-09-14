@@ -3,7 +3,7 @@ import { toast } from 'react-hot-toast'
 import { api } from '~/utils/api'
 import useCurrentUserProfile from './useCurrentUserProfile'
 import { useAtom } from "jotai";
-import { currentLocationAtom, FeedDirectorAtom, radiusAtom } from "~/jotai/store";
+import { ActivityFeedAtom, currentLocationAtom, FeedDirectorAtom, radiusAtom } from "~/jotai/store";
 
 const usePostComment = (postid: string, type: string = 'normal') => {
 
@@ -14,6 +14,8 @@ const usePostComment = (postid: string, type: string = 'normal') => {
     const [ [, procedure] ] = useAtom(FeedDirectorAtom)
     const [currentLocation] = useAtom(currentLocationAtom)
     const [ radius ] = useAtom(radiusAtom)
+    const { data } = api.userQuery.getUsersGeoData.useQuery()
+    const [activityFeed, setActivityFeed] = useAtom(ActivityFeedAtom)
 
     const postType = type === 'geo' ? 'geoComment' : 'comment' 
 
@@ -79,8 +81,8 @@ const usePostComment = (postid: string, type: string = 'normal') => {
                    
         trpc.feed.getGeoFeed_home.cancel()
             trpc.feed.getGeoFeed_home.setInfiniteData(
-                {lat: currentLocation.lat,
-                lng:currentLocation.lng,
+                {lat: data.geoData.lat,
+                lng:data.geoData.lng,
                 radius:radius},
              (data: any) => {
                     if(data){
@@ -89,6 +91,7 @@ const usePostComment = (postid: string, type: string = 'normal') => {
                 })
             
         trpc.feed.getActivityFeed.cancel()
+       setActivityFeed((feed) => postCommentMergedFeed(feed, postid, profile, postData))
             trpc.feed.getActivityFeed.setInfiniteData(
                 {},
              (data: any) => {
@@ -104,6 +107,7 @@ const usePostComment = (postid: string, type: string = 'normal') => {
                 toast.error('error creating comment')
             },
             onSuccess: () => {
+                toast.success('comment created')
             if(page === 'user' && profileId){
                 trpc.userQuery.getUserPosts.invalidate()
         }
@@ -152,3 +156,20 @@ function handleOptimisticPostUpdate(data: any, postid: string, profile: any, pos
               
               return {...data, pages:updatedData}
 }
+
+function postCommentMergedFeed(oldData: any, postid: string, profile: any, postData: any) {
+             const updatedData = oldData?.map((post: any) => {             
+                        if(post.postid === postid) {
+                            return {...post, comment_cnt:post.comment_cnt+1, comments:[...post.comments, {...postData, commentid:'opitmistic',
+                             likes_cnt:0, likes:[], 
+                             created_at:new Date(),
+                             updated_at: new Date(),
+                             user:{profile:{avatar:profile.avatar, username:profile.username, userid:profile.userid}},
+                             userid:profile.userid
+                            }]}
+                        }
+                        return post
+                        })
+              
+              return updatedData
+                    }

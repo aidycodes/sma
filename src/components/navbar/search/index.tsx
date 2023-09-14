@@ -1,6 +1,5 @@
 import { UserProfile } from '@prisma/client'
 import React from 'react'
-import { useOutsideClick } from '~/hooks/useOutsideClick'
 import { SearchUsers } from '..'
 import SearchItem from './SearchItem'
 

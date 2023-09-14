@@ -98,7 +98,7 @@ const SignUp = ({ setIsFlipped }:
   return (
     <div className="w-full overflow-hidden relative">
         <BorderLine/>
-       <div className={`flex items-center justify-center font-semibold text-4xl mt-6 text-slate-400 ${cabin.className}`}> 
+       <div className={`flex items-center justify-center font-semibold text-4xl mt-6  ${cabin.className}`}> 
         Sign Up
          <Image className="rounded-xl object-contain grey-scale mt-8 brightness-150 " width={20} height={20}
                     alt="img" src="/icons/spin.svg" />

@@ -21,7 +21,7 @@ const ScrollContainer = ({ children, hasNextPage, isLoading, fetchNextPage, isFe
      const [showScrollButton, setShowScrollButton] = useState(false);
      
 
-     const   user  = useCurrentUserProfile()
+     const user = useCurrentUserProfile()
 
       const messages = children?.sort((a, b) => a.created_at - b.created_at).map((message: any, i) => (
      <div key={message?.messageid} className={`${user?.userid === message?.userid ? 'ml-auto' : 'mr-auto'}`}>

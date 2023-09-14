@@ -12,7 +12,7 @@ const VerifyEmail = () => {
     const [launch, setLaunch] = React.useState<boolean>(false)
 
     const [code, setCode] = 
-        React.useState<string>(router?.query?.verify[1] ? router?.query?.verify[1] as string : '')
+        React.useState<string>(router?.query?.verify[1] && Array.isArray(router?.query?.verify) ? router?.query?.verify[1] as string : '')
 
     const { mutate, isSuccess, isError, isLoading, data:user } = api.user.verify.useMutation()
     const { mutate:resendMutate, isSuccess:resendIsSucc,
@@ -35,7 +35,7 @@ const VerifyEmail = () => {
     }, [isSuccess])
     
         React.useEffect(() => {
-        if(router?.query?.verify[1]){
+        if(router?.query?.verify[1] && Array.isArray(router?.query?.verify)){
             mutate({id:router?.query?.verify[0] as string, secureCode:router.query.verify[1] as string})
         }
     }, [])
@@ -47,6 +47,12 @@ const VerifyEmail = () => {
         }, 1000);
         return () => clearTimeout(timer)
     }, [])
+
+        React.useEffect(() => {
+      if(isSuccess){
+        toast.success('Email verified successfully')
+      }
+    }, [isSuccess])
 
 
   return (
@@ -68,7 +74,7 @@ const VerifyEmail = () => {
             {!isLoading && !isSuccess ?
             <div className="relative pb-2">
                         <button className="bg-blue-700 hover:brightness-125 text-white rounded-xl px-4 h-10 mt-4 w-[100px]"
-                        onClick={() =>  mutate({id:router?.query?.verify[0] as string, secureCode:code}) } disabled={isLoading}
+                        onClick={() =>  mutate({id:router?.query?.verify as string, secureCode:code}) } disabled={isLoading}
                         >{!isLoading ? 'Submit' : <Loading/>}</button>
             </div>
                         : 
@@ -89,12 +95,12 @@ const VerifyEmail = () => {
             <div className="mt-12 flex flex-col justify-center items-center">
         
                 <p className="text-md flex flex-col ">If you did not receive the email,  <span className="text-blue-600 font-semibold cursor-pointer hover:font-bold"
-                    onClick={() => resendMutate({id:router?.query?.verify[0] as string})}
+                    onClick={() => resendMutate({id:router?.query?.verify as string})}
             >click to resend</span></p>
             <div className="h-10">
             {resendIsLoading && <p className="text-sm text-gray-500">Sending...</p>}
             {resendIsError && <p className="text-sm text-red-500">Error sending email</p>}
-            {resendIsSucc && <p className="text-sm text-green-500">Email sent</p>}
+            {resendIsSucc && <p className="text-sm text-green-500">Email sent!</p>}
             </div>
             </div>
         </div>

@@ -3,7 +3,7 @@ import { toast } from 'react-hot-toast'
 import { api } from '~/utils/api'
 import useCurrentUserProfile from './useCurrentUserProfile'
 import { useAtom } from "jotai";
-import { currentLocationAtom, FeedDirectorAtom, radiusAtom } from "~/jotai/store";
+import { ActivityFeedAtom, currentLocationAtom, FeedDirectorAtom, radiusAtom } from "~/jotai/store";
 import { TypeOf } from 'zod';
 
 export type QueryParams = {
@@ -21,6 +21,8 @@ const useLikeComment= (postid: string, commentid: string, type: string = 'normal
     const [ [, procedure] ] = useAtom(FeedDirectorAtom)
     const [currentLocation] = useAtom(currentLocationAtom)
     const [ radius ] = useAtom(radiusAtom)
+    const { data } = api.userQuery.getUsersGeoData.useQuery()
+    const [activityFeed, setActivityFeed] = useAtom(ActivityFeedAtom)
 
     const postType = type === 'geo' ? 'geoComment' : 'comment' 
 
@@ -86,8 +88,8 @@ const useLikeComment= (postid: string, commentid: string, type: string = 'normal
                   
         trpc.feed.getGeoFeed_home.cancel()
             trpc.feed.getGeoFeed_home.setInfiniteData(
-                {lat: currentLocation.lat,
-                lng:currentLocation.lng,
+                {lat: data?.geoData?.lat,
+                lng:data?.geoData?.lng,
                 radius:radius},
              (data: any) => {
               if(data){
@@ -96,6 +98,7 @@ const useLikeComment= (postid: string, commentid: string, type: string = 'normal
                 })
             
         trpc.feed.getActivityFeed.cancel()
+        setActivityFeed((feed) => optimisticLikeCommentMergedFeed(commentid, feed, postid, userid, username, 'add')) 
             trpc.feed.getActivityFeed.setInfiniteData(
                 {},
               (data: any) => {
@@ -159,4 +162,22 @@ function optimisticLikeComment(commentid: string, data: any, postid: string, use
         })
         return {...data, pages:updatedData}
       } 
-    
+
+function optimisticLikeCommentMergedFeed(commentid: string, data: any, postid: string, userid: string, username: string, type: string) {
+     const updatedData = data?.map((post: any) => {
+         
+            if(post.postid === postid) {
+              return {...post, comments:post.comments.map((comment: any) => {
+                if(comment.commentid === commentid) {
+                  if(type === 'add'){
+                  return {...comment, commentid:'opitmistic', likes_cnt:comment.likes_cnt+1, likes:[...comment.likes, {user:{id:userid, username}}]}
+                  }
+                }   
+                return comment
+              })}
+            }
+            return post
+          })
+     
+        return updatedData
+      }

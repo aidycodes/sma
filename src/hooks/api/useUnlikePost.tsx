@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { toast } from "react-hot-toast"
 import useCurrentUserProfile from './useCurrentUserProfile'
 import { useAtom } from "jotai";
-import { currentLocationAtom, FeedDirectorAtom, radiusAtom } from "~/jotai/store";
+import { ActivityFeedAtom, currentLocationAtom, FeedDirectorAtom, radiusAtom } from "~/jotai/store";
 
 const useUnlikePost = (type: string = 'normal') => {
 
@@ -14,6 +14,8 @@ const useUnlikePost = (type: string = 'normal') => {
     const [page, queryParam] = params.asPath.substr(1).split('/')
     const [ [, procedure] ] = useAtom(FeedDirectorAtom)
     const [currentLocation] = useAtom(currentLocationAtom)
+    const { data } = api.userQuery.getUsersGeoData.useQuery()
+    const [activityFeed, setActivityFeed] = useAtom(ActivityFeedAtom)
     const postType = type === 'geo' ? 'geoPost' : 'post' 
 
     return  api[postType].unlike.useMutation({
@@ -68,22 +70,22 @@ const useUnlikePost = (type: string = 'normal') => {
                     }
                 })
             }
-        trpc.feed.getGeoFeed_current.cancel()
-            trpc.feed.getGeoFeed_current.setInfiniteData(
-                {lat: currentLocation.lat,
-                lng:currentLocation.lng,
-                radius:radius},
-             (old: any) => {
-                if(old){
-                     return unLikePost(old, unlikedPost, profile?.userid)
-                    }
-                })
+        // trpc.feed.getGeoFeed_current.cancel()
+        //     trpc.feed.getGeoFeed_current.setInfiniteData(
+        //         {lat: currentLocation.lat,
+        //         lng:currentLocation.lng,
+        //         radius:radius},
+        //      (old: any) => {
+        //         if(old){
+        //              return unLikePost(old, unlikedPost, profile?.userid)
+        //             }
+        //         })
             
         
         trpc.feed.getGeoFeed_home.cancel()
             trpc.feed.getGeoFeed_home.setInfiniteData(
-                {lat: currentLocation.lat,
-                lng:currentLocation.lng,
+                {lat: data.geoData.lat,
+                lng:data.geoData.lng,
                 radius:radius},
              (old: any) => {
                 if(old){
@@ -92,6 +94,7 @@ const useUnlikePost = (type: string = 'normal') => {
                 })
             
         trpc.feed.getActivityFeed.cancel()
+            setActivityFeed((old: any) => unlikePostMergedFeed(old, unlikedPost, profile?.userid))
             trpc.feed.getActivityFeed.setInfiniteData(
                 {},
              (old: any) => {
@@ -148,7 +151,7 @@ function unLikePost(data: any, unlikedPost: { postid: string }, userid: string) 
     const pages = data.pages.map((page: any) => {
                     const post = page.posts.map((post: any) => {
                         if(post.postid === unlikedPost.postid){
-                            return {...post, postid:'optimistic', likes_cnt: post.likes_cnt - 1, likes: likes}
+                            return {...post, optimistic:true, likes_cnt: post.likes_cnt - 1, likes: likes}
                           }
                             return post
                     })
@@ -156,3 +159,18 @@ function unLikePost(data: any, unlikedPost: { postid: string }, userid: string) 
                 })
     return {...data, pages }
 }
+
+function unlikePostMergedFeed(data: any, unlikedPost: { postid: string }, userid: string) {
+                    
+    const unliked = data.map((post: any) =>  {
+                        if(post.postid === unlikedPost.postid){
+                            return {...post, optimistic:true, likes_cnt: post.likes_cnt - 1,
+                                likes: [...post.likes.filter((like: any) => like.user.profile.userid !== userid)]}
+                        }
+                        return post
+    })   
+            if(!unliked){
+                return data
+            }
+            return unliked
+    }

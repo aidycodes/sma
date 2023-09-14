@@ -53,7 +53,9 @@ const Navbar = () => {
             <Image src={currentUser?.avatar ? currentUser?.avatar :  '/icons/user.svg'}  fill className="rounded-[50px]" alt="user avatar"/>
            </div>
           </Link>
+          <Link href="/dashboard">
           <h1 className="text-xs md:text-sm mr-2 ">Dashboard</h1>
+          </Link>
         </div>
    
         <div className="mr-auto  mt-1 hidden  sm:flex relative">
@@ -61,7 +63,7 @@ const Navbar = () => {
           onChange={(e) => setSearch(e.target.value) }
           placeholder="Search users..."/>
           { search?.length > 0 && (
-          <SearchBox users={users} isFetching={isFetching} isFetched={isFetched} refe={ref}
+          <SearchBox users={users} isFetching={isFetching} isFetched={isFetched} ref={ref}
           isLoading={isLoading} isRefetching={isRefetching} search={search} />
           )}
            

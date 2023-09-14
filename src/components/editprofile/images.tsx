@@ -26,13 +26,10 @@ const Images = ( user: UserProfile) => {
 
 
   return (
-    <div className="fg p-8 rounded-md shadow-md mt-12">
+    <div className="form-bg p-8 rounded-md shadow-md mt-12">
         <h1 className="text-center pb-4 font-semibold tracking-widest">Profile Images</h1>
       <div>  
-         <div className={`${theme === 'light' || theme === 'lightFix' || theme === 'lightFix' || theme === 'neon' || theme === 'neonFix' || theme === 'neonFix' ? 'sticky2' :
-           theme === 'dark-blue' || theme === 'dark-blueFix' || theme === 'dark-blueFix' ? 'highlight-1 border-blue-600 border-2 '    
-         :'sticky-dark'} 
-                          rounded-xl p-4 shadow-lg mt-2`}>
+       
         <h2 className="font-semibold tracking-widest pb-4">Avatar</h2>   
         <div className="pb-10 flex gap-8 items-center">
           
@@ -50,13 +47,9 @@ const Images = ( user: UserProfile) => {
           toast.error('Upload Failed')
         }}
       />
-    </div>  
+    
       </div>
-    </div>
-         <div className={`${theme === 'light' || theme === 'lightFix' || theme === 'neon' || theme === 'neonFix' ? 'sticky2' : 
-          theme === 'dark-blue' || theme === 'dark-blueFix' ? 'highlight-1 border-blue-600 border-2 ' :
-         'sticky-dark'} 
-                          rounded-xl p-4 shadow-lg mt-6`}>      
+     
         <h2 className="font-semibold tracking-widest pb-4 ">Banner</h2>
 
         {!coverImg ? <div className="text-center w-80 h-20 mb-4 font-semibold  ">No banner uploaded</div> :

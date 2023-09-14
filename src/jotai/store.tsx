@@ -19,6 +19,9 @@ export const FeedDirectorAtom = atom(['geo', 'getFollowerFeed']
 }
 )
 
+export const ActivityFeedAtom = atom<any[]>([])
+
+
 export const radiusAtom = atom(5,
     (get, set, arg) => {
         set(radiusAtom, arg)

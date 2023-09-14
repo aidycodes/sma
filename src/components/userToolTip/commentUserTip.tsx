@@ -24,7 +24,7 @@ const CommentUserToolTip = ({username, userid: id, avatar }: Props) => {
    const { unFollowUser } = useUnfollowUser(id)    
     const { data }  = useIsFollowerFollowing(id)
     
-   
+   console.log({id})
     if(!data) return null
    
     return(
@@ -36,18 +36,18 @@ const CommentUserToolTip = ({username, userid: id, avatar }: Props) => {
         </div>
             <div className="flex flex-col">
                 <h2 className="font-semibold text-xl">
-                {username}1
+                {username}
                 </h2>
                 {data.followsUser && <h4 className="text-xs  ">You are following</h4>}
                 </div>
                 
         </div>
         <div className="flex justify-center gap-4 pt-4 ">
-        {currentUser?.userid !== userid && <> <ProfileButton label={"message"} icon={'/icons/comment-alt-message.svg'}/>
+        {currentUser?.userid !== id && <> <ProfileButton label={"message"} icon={'/icons/comment-alt-message.svg'}/>
          <ProfileButton label={data.followsUser ? "following" : "follow"} 
             icon={data.followsUser ? "/icons/tick.svg" : "/icons/tick.svg"} 
             isTrue={data.followsUser}
-         onClick={!data.followsUser ? () => { followUser.mutate({id:id, currentUser:'yourmom'})} :
+         onClick={!data.followsUser ? () => { followUser.mutate({id:id, currentUser:currentUser?.username})} :
                                          () => unFollowUser.mutate({id:id})
         } 
          />

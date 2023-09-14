@@ -50,13 +50,13 @@ const Details = ( user: UserProfile  ) => {
 
 
   return (
-     <div className="fg p-8 rounded-md shadow-md mt-12 ">
+     <div className="form-bg p-8 rounded-md shadow-md mt-12 ">
         <h1 className="text-center pb-4 font-semibold tracking-widest">Edit Profile</h1>
         
         <form className="flex flex-col gap-4 " onSubmit={onSubmit}>
             <div className="relative max-w-full flex flex-col h-20">
                 <h2 className=" font-semibold tracking-widest pb-2">Username</h2>                 
-                    <input className={`rounded-md p-1 w-full outline-none 
+                    <input className={`rounded-md p-1 w-full outline-none form-input-border 
                     ${errors.username?.message && 'outline-red-400 outline-dashed'}`}
                                                                 {...register("username")} />
         {errors.username && 
@@ -65,17 +65,17 @@ const Details = ( user: UserProfile  ) => {
 
         <div className="relative max-w-full flex flex-col h-20">
             <h2 className="font-semibold tracking-widest pb-2">Work</h2>    
-                <input className="rounded-md p-1 outline-none" {...register("work")} />
+                <input className="rounded-md p-1 outline-none form-input-border" {...register("work")} />
         </div>
 
         <div className="relative max-w-full flex flex-col h-20">
             <h2 className="font-semibold tracking-widest">Education</h2>
-                <input className="rounded-md p-1 outline-none" {...register("education")} />
+                <input className="rounded-md p-1 outline-none form-input-border" {...register("education")} />
         </div>
 
         <div className="relative max-w-full flex flex-col h-20">
             <h2 className="font-semibold tracking-widest ">Bio</h2> 
-                <textarea className="rounded-md p-1 h-40 w-full outline-none" {...register("bio")} />            
+                <textarea className="rounded-md p-1 h-40 w-full outline-none form-input-border" {...register("bio")} />            
         </div>
        
             <SubmitButton isLoading={editProfile.isLoading} label="Update" type="submit" />

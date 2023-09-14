@@ -42,7 +42,7 @@ const DisplayLocation = ( { data, isLoading, type }: {data: GeoUser | undefined 
 
   return (
       <div className={`flex flex-col   shadow-xl ${theme === 'light' || theme === 'lightFix' ? 'highlight-1 sticky-content text-slate-700' :
-       theme === 'dark' || theme === 'darkFix' ? 'highlight-1 sticky-content-dark' :
+       theme === 'dark' || theme === 'darkFix' ? 'highlight-1 ' :
        theme === 'dark-blue' || theme === 'dark-blueFix' ? 'highlight-1 border-blue-600 border-2 ' :
        'highlight sticky-content'}
          p-2 w-fit  rounded-lg   `}>

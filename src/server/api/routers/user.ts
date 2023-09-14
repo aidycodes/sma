@@ -5,11 +5,6 @@ import { createTRPCRouter, publicProcedure, privateProcedure } from "~/server/ap
 import { TRPCError } from "@trpc/server";
 import jwt from "jsonwebtoken";
 import { createId } from '@paralleldrive/cuid2';
-import { Resend } from "resend";
-
-//const resend = new Resend(process.env.SmaEmail);
-
-//resend.domains.verify("d91cd9bd-1176-453e-8fc1-35364d380206");
 
 export const userRouter = createTRPCRouter({
   create: publicProcedure
@@ -27,7 +22,16 @@ export const userRouter = createTRPCRouter({
     attributes: { email, username, secureCode }
 	
 });
-
+  const request = await fetch('https://sma-mailserver.vercel.app/api', {
+        method: 'POST',
+         headers: {
+      "Content-Type": "application/json",
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+     body: JSON.stringify({email, username, secureCode, id:user.userId}),
+    })
+        
+  console.log({request})
     // const session = await auth.createSession(user.userId);
     //     const sessionCookie = auth.createSessionCookie(session).serialize();
     //      const token = jwt.sign({ user: user.userId }, 'secret')
@@ -51,27 +55,26 @@ export const userRouter = createTRPCRouter({
     .input(z.object({ id: z.string() }))
     .mutation( async({ input, ctx  }) => {
       try{
-    //     const { id } = input;
-    //     const user = await ctx.prisma.authUser.findFirst({
-    //         where: {id: id, isVerified: false},
-    //         select: {email: true, secureCode: true}
-    //     })
-    //     if(user?.email && user?.secureCode){        
-    //     const { email, secureCode } = user;
-    //     const data = await resend.emails.send({
-    //     from: "Acme <onboarding@resend.dev>",
-    //     to: ["aidycodes@gmail.com"],
-    //     subject: "Verify your email address",
-    //     html: "<strong>It works!</strong>",
-       
-    // });
-  
-
-  
-//  }
+        const { id } = input;
+        const user = await ctx.prisma.authUser.findFirst({
+            where: {id: id, isVerified: false},
+            select: {email: true, secureCode: true, username: true}
+        })
+        if(user?.email && user?.secureCode){        
+        const { email, secureCode, username} = user;
+   const request = await fetch('https://sma-mailserver.vercel.app/api', {
+        method: 'POST',
+         headers: {
+      "Content-Type": "application/json",
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+     body: JSON.stringify({email, username, secureCode, id}),
+    })
+    
         return {
             message: "Verification code sent successfully"
         }
+      }
     }catch(err){
         if(err instanceof Error){
         throw new TRPCError({message: err.message, code: "INTERNAL_SERVER_ERROR"})

@@ -26,6 +26,7 @@ interface ExtendedUser {
 
 interface ExtendedPost extends Post {
     type?: string
+    optimistic?: boolean
 }
 
 interface Props extends ExtendedPost {
@@ -42,7 +43,7 @@ interface Props extends ExtendedPost {
 
 const PostItem = ( {postid, created_at, title, 
     content, meta, user, comments, showAllComments, commentRef,
-    likes_cnt, comment_cnt, likes, setFilterFeed, type }: Props ) => {
+    likes_cnt, comment_cnt, likes, setFilterFeed, type, optimistic = false }: Props ) => {
         const [commentCount, setCommentCount] = React.useState(!showAllComments ? 5 : comments.length+1)
         const ref = React.useRef<HTMLDivElement>(null)
         const like = useLikePost(type)
@@ -75,7 +76,7 @@ const PostItem = ( {postid, created_at, title,
              <PostCounter likes_cnt={likes_cnt} comment_cnt={comment_cnt}
                 userLikes={likes.some((like: any) => like?.user?.profile?.userid === currentUser?.userid)} />
            {/* like message component */}
-            <LikeComment userLikes={likes.some((like: any) => like?.user?.profile?.userid === currentUser?.userid)} 
+            <LikeComment userLikes={likes.some((like: any) => like?.user?.profile?.userid === currentUser?.userid)} optimistic={optimistic}
                          postid={postid} like={like} unlike={unlike} commentRef={ref} posterId={user?.id ? user?.id : user?.profile?.userid} />
                 
         {/* comment list component */}            

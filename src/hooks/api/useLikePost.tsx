@@ -1,5 +1,5 @@
 import { useAtom } from "jotai";
-import { currentLocationAtom, FeedDirectorAtom, radiusAtom } from "~/jotai/store";
+import { ActivityFeedAtom, currentLocationAtom, FeedDirectorAtom, radiusAtom } from "~/jotai/store";
 import { useRouter } from "next/router";
 import { toast } from "react-hot-toast"
 import { api } from "~/utils/api"
@@ -19,6 +19,10 @@ const useLikePost = (type: string = 'normal') => {
     const [ [, procedure] ] = useAtom(FeedDirectorAtom)
     const [currentLocation] = useAtom(currentLocationAtom)
     const [ radius ] = useAtom(radiusAtom)
+    const [activityFeed, setActivityFeed] = useAtom(ActivityFeedAtom)
+    const { data } = api.userQuery.getUsersGeoData.useQuery()
+
+
 
     const postType = type === 'geo' ? 'geoPost' : 'post' 
 
@@ -62,6 +66,8 @@ const useLikePost = (type: string = 'normal') => {
 
         if(page === 'dashboard'){
               trpc.feed.getActivityFeed.cancel()
+               const updatedPages = updateLikeMergedFeed(activityFeed, likedPost, profile)
+              setActivityFeed(updatedPages)
                 trpc.feed.getActivityFeed.setInfiniteData({}, (oldData: any) => {
                     if(oldData){
                         const updatedPages = updateLike(oldData, likedPost, profile)
@@ -70,7 +76,7 @@ const useLikePost = (type: string = 'normal') => {
                     }
                 })
                   trpc.feed.getGeoFeed_home.cancel()
-                trpc.feed.getGeoFeed_home.setInfiniteData({lat:51.4545, lng:2.5879, radius:radius}, (oldData: any) => {
+                trpc.feed.getGeoFeed_home.setInfiniteData({lat:data?.geoData?.lat, lng:data?.geoData?.lng, radius:radius}, (oldData: any) => {
                     if(oldData){
                         const updatedPages = updateLike(oldData, likedPost, profile)
                         return {...oldData, pages: updatedPages}
@@ -133,7 +139,7 @@ function updateLike(oldData: any, likedPost: any, profile: any) {
                       const updatedPages = oldData.pages.map((page: any) => {
                         const updatedPosts = page.posts.map((post: any) => {
                             if(post.postid === likedPost.postid){
-                                return {...post, postid:'optimistic', likes_cnt: post.likes_cnt + 1,
+                                return {...post, optimistic:true, likes_cnt: post.likes_cnt + 1,
                                     likes: [...post.likes, {user:
                                         {profile:{userid:profile.userid, userName:profile.username, avatar:profile.avatar} }
                                         }]}
@@ -143,4 +149,18 @@ function updateLike(oldData: any, likedPost: any, profile: any) {
                         return {...page, posts: updatedPosts}
                     })
                     return updatedPages
+                }
+
+function updateLikeMergedFeed(oldData: any, likedPost: any, profile: any) {
+                      console.log(oldData)
+                        return oldData.map((post: any) => {
+                            if(post.postid === likedPost.postid){
+                                return {...post, optimistic:true, likes_cnt: post.likes_cnt + 1,
+                                    likes: [...post.likes, {user:
+                                        {profile:{userid:profile.userid, userName:profile.username, avatar:profile.avatar} }
+                                        }]}
+                            }
+                            return post
+                        })
+                       
                 }
